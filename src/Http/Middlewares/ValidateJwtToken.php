@@ -6,9 +6,9 @@ namespace JuniorFontenele\LaravelVaultServer\Http\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use Throwable;
-use VaultJWT;
-use VaultKey;
 
 class ValidateJwtToken
 {

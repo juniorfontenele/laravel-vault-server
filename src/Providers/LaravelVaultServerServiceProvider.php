@@ -10,14 +10,11 @@ use Illuminate\Support\ServiceProvider;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyRotateCommand;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultProvisionClientCommand;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
-use JuniorFontenele\LaravelVaultServer\Services\VaultClientService;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
 {
@@ -26,15 +23,14 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('vault.server_enabled', true)) {
-            $this->loadRoutesFrom(__DIR__ . '/../../routes/vault.php');
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/vault.php');
 
-            $this->publishes([
-                __DIR__ . '/../../routes/vault.php' => base_path('routes/vault.php'),
-            ], 'routes');
-        }
+        $this->publishes([
+            __DIR__ . '/../../routes/vault.php' => base_path('routes/vault.php'),
+        ], 'routes');
 
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
         $this->publishes([
             __DIR__ . '/../../database/migrations' => database_path('migrations'),
         ], 'migrations');
@@ -51,7 +47,6 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         $loader->alias('VaultKey', VaultKey::class);
         $loader->alias('VaultClientManager', VaultClientManager::class);
         $loader->alias('VaultJWT', VaultJWT::class);
-        $loader->alias('VaultClient', VaultClientService::class);
 
         /** @var Router $router */
         $router = app('router');
@@ -66,17 +61,10 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../config/vault.php', 'vault');
 
         if ($this->app->runningInConsole()) {
-            if (config('vault.server_enabled', true)) {
-                $this->commands([
-                    VaultKeyManager::class,
-                    VaultClientManagement::class,
-                ]);
-            }
-
             $this->commands([
+                VaultKeyManager::class,
+                VaultClientManagement::class,
                 VaultInstallCommand::class,
-                VaultProvisionClientCommand::class,
-                VaultKeyRotateCommand::class,
             ]);
         }
     }
