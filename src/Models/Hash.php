@@ -18,7 +18,12 @@ class Hash extends Model
 
     /** @var list<string> */
     protected $fillable = [
+        'client_id',
         'user_id',
+        'hash',
+    ];
+
+    protected $hidden = [
         'hash',
     ];
 

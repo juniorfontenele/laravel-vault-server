@@ -65,21 +65,6 @@ class Client extends Model
             ->latest('valid_from');
     }
 
-    /** @return HasMany<PrivateKey> */
-    public function privateKeys(): HasMany
-    {
-        return $this->hasMany(PrivateKey::class);
-    }
-
-    /** @return HasOne<PrivateKey> */
-    public function privateKey(): HasOne
-    {
-        return $this->hasOne(PrivateKey::class)
-            ->orderByDesc('version')
-            ->valid()
-            ->latest('valid_from');
-    }
-
     /** @return HasMany<Hash> */
     public function hashes(): HasMany
     {

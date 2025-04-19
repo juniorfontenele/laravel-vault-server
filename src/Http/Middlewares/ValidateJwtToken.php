@@ -34,7 +34,7 @@ class ValidateJwtToken
             return response()->json([
                 'error' => 'Token validation failed',
                 'message' => $e->getMessage(),
-            ], 401);
+            ], 403);
         } catch (VaultException $e) {
             Log::error('Validate JWT failed', [
                 'error' => 'Vault validation failed',
@@ -44,17 +44,7 @@ class ValidateJwtToken
             return response()->json([
                 'error' => 'Vault validation failed',
                 'message' => $e->getMessage(),
-            ], 401);
-        } catch (\Exception $e) {
-            Log::error('Validate JWT failed', [
-                'error' => 'Unexpected error',
-                'message' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'error' => 'Unexpected error',
-                'message' => $e->getMessage(),
-            ], 401);
+            ], 403);
         }
     }
 }

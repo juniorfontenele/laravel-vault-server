@@ -23,19 +23,7 @@ class JwtService
      */
     public function validate(string $jwt, array $scopes = []): void
     {
-        $kid = $this->getKidFromJwt($jwt);
-
-        if ($kid === null || $kid === '' || $kid === '0') {
-            throw new JwtException('Kid not found in JWT');
-        }
-
-        $key = VaultKey::findByKid($kid);
-
-        if (empty($key)) {
-            throw new VaultException('Public key not found for kid: ' . $kid);
-        }
-
-        $decodedJwt = $this->decode($jwt, $key->public_key);
+        $decodedJwt = $this->decode($jwt);
 
         $payload = (array) $decodedJwt;
 
@@ -53,10 +41,6 @@ class JwtService
 
         if (Cache::has('vault:jti:' . $payload['jti'])) {
             throw new JwtException('Token is blacklisted');
-        }
-
-        if ($payload['client_id'] !== $key->client_id) {
-            throw new JwtException('Invalid client_id');
         }
 
         if ($scopes !== []) {
@@ -82,8 +66,28 @@ class JwtService
         return $header['kid'] ?? null;
     }
 
-    public function decode(string $jwt, string $keyMaterial, string $algorithm = 'RS256'): object
+    public function decode(string $jwt): object
     {
-        return JWT::decode($jwt, new Key($keyMaterial, $algorithm));
+        $kid = $this->getKidFromJwt($jwt);
+
+        if ($kid === null || $kid === '' || $kid === '0') {
+            throw new JwtException('Kid not found in JWT');
+        }
+
+        $key = VaultKey::findByKid($kid);
+
+        if (empty($key)) {
+            throw new VaultException('Public key not found for kid: ' . $kid);
+        }
+
+        $decodedJwt = JWT::decode($jwt, new Key($key->public_key, 'RS256'));
+
+        $payload = (array) $decodedJwt;
+
+        if ($payload['client_id'] !== $key->client_id) {
+            throw new JwtException('Invalid client_id');
+        }
+
+        return $decodedJwt;
     }
 }
