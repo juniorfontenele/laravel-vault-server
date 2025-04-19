@@ -6,48 +6,73 @@ namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultClient;
-use JuniorFontenele\LaravelVaultServer\Models\PrivateKey;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 
 class JwtService
 {
-    public function sign(PrivateKey $privateKey, ?array $scope = [], array $claims = [], array $headers = []): string
-    {
-        $headers['kid'] = $privateKey->id;
-
-        $claims = array_merge([
-            'iss' => config('vault.issuer'),
-            'client_id' => config('vault.client_id'),
-            'nonce' => bin2hex(random_bytes(16)),
-            'iat' => time(),
-            'exp' => time() + config('vault.token_expiration_time', 60),
-            'jti' => (string) Str::uuid(),
-        ], $claims);
-
-        if (! empty($scope)) {
-            $claims['scope'] = implode(' ', $scope);
-        }
-
-        return JWT::encode($claims, $privateKey->private_key, 'RS256', $headers['kid'], $headers);
-    }
-
-    public function validate(string $jwt): object
+    /**
+     * Validate a JWT token.
+     *
+     * @param string $jwt
+     * @param array<int, string> $scopes
+     * @throws JwtException
+     * @throws VaultException
+     */
+    public function validate(string $jwt, array $scopes = []): void
     {
         $kid = $this->getKidFromJwt($jwt);
 
         if (empty($kid)) {
-            throw new VaultException('Kid not found in JWT');
+            throw new JwtException('Kid not found in JWT');
         }
 
-        $publicKey = VaultClient::getPublicKey($kid);
+        $key = VaultKey::findByKid($kid);
 
-        if (empty($publicKey)) {
+        if (empty($key)) {
             throw new VaultException('Public key not found for kid: ' . $kid);
         }
 
-        return $this->decode($jwt, $publicKey);
+        $decodedJwt = $this->decode($jwt, $key->public_key);
+
+        $payload = (array) $decodedJwt;
+
+        if (empty($payload['nonce'])) {
+            throw new JwtException('Nonce not found in JWT');
+        }
+
+        if (Cache::has('vault:nonce:' . $payload['nonce'])) {
+            throw new JwtException('Nonce already used');
+        }
+
+        if (empty($payload['jti'])) {
+            throw new JwtException('JTI not found in JWT');
+        }
+
+        if (Cache::has('vault:jti:' . $payload['jti'])) {
+            throw new JwtException('Token is blacklisted');
+        }
+
+        if ($payload['client_id'] !== $key->client_id) {
+            throw new JwtException('Invalid client_id');
+        }
+
+        if (! empty($scopes)) {
+            $scopes = array_map('strtolower', $scopes);
+
+            $tokenScopes = explode(' ', $payload['scope'] ?? '');
+
+            foreach ($scopes as $scope) {
+                if (! in_array($scope, $tokenScopes)) {
+                    throw new JwtException('Insufficient scope');
+                }
+            }
+        }
+
+        Cache::put('vault:nonce:' . $payload['nonce'], true, $payload['exp'] - time());
+        Cache::put('vault:jti:' . $payload['jti'], true, $payload['exp'] - time());
     }
 
     public function getKidFromJwt(string $jwt): ?string

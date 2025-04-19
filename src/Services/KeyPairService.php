@@ -6,10 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
-use JuniorFontenele\LaravelVaultServer\Models\PrivateKey;
 use phpseclib3\Crypt\RSA;
 
 class KeyPairService
@@ -180,16 +178,5 @@ class KeyPairService
         Event::dispatch('vault.key.cleanupRevoked', [$revoked]);
 
         return $revoked->count();
-    }
-
-    public function loadPrivateKey(): string
-    {
-        $privateKey = PrivateKey::getPrivateKey();
-
-        if (empty($privateKey)) {
-            throw new VaultException('Private key not found');
-        }
-
-        return $privateKey->private_key;
     }
 }
