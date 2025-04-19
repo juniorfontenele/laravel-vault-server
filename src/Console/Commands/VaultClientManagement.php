@@ -105,7 +105,7 @@ class VaultClientManagement extends Command
         }
 
         $this->info("Client '{$name}' created successfully.");
-        $this->info("UUID: {$client->id}");
+        $this->info("Client ID: {$client->id}");
         $this->info("Provision Token: {$client->provision_token}");
     }
 
