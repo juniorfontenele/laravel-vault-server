@@ -42,7 +42,8 @@
   },
   "autoload": {
     "psr-4": {
-      "JuniorFontenele\\LaravelVaultServer\\": "src"
+      "JuniorFontenele\\LaravelVaultServer\\": "src",
+      "JuniorFontenele\\LaravelVaultServer\\Database\\Factories\\": "database/factories/"
     }
   },
   "autoload-dev": {
