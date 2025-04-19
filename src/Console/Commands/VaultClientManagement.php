@@ -84,11 +84,7 @@ class VaultClientManagement extends Command
             required: true,
         );
 
-        if (is_array($scopes)) {
-            $scopes = array_map('trim', $scopes);
-        } else {
-            $scopes = explode(',', $scopes);
-        }
+        $scopes = is_array($scopes) ? array_map('trim', $scopes) : explode(',', $scopes);
 
         if (empty($scopes[0])) {
             $this->error('--scopes is required');

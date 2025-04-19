@@ -25,7 +25,7 @@ class JwtService
     {
         $kid = $this->getKidFromJwt($jwt);
 
-        if (empty($kid)) {
+        if ($kid === null || $kid === '' || $kid === '0') {
             throw new JwtException('Kid not found in JWT');
         }
 
@@ -59,7 +59,7 @@ class JwtService
             throw new JwtException('Invalid client_id');
         }
 
-        if (! empty($scopes)) {
+        if ($scopes !== []) {
             $scopes = array_map('strtolower', $scopes);
 
             $tokenScopes = explode(' ', $payload['scope'] ?? '');
