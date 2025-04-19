@@ -27,7 +27,7 @@ class HashService
         if ($hashModel) {
             Event::dispatch('vault.hash.updated', [$clientId, $userId]);
 
-            $hashModel->update(['client_id' => $clientId, 'hash' => $hash]);
+            $hashModel->update(['updated_by' => $clientId, 'hash' => $hash]);
             $hashModel->refresh();
 
             return $hashModel;
@@ -36,7 +36,8 @@ class HashService
         Event::dispatch('vault.hash.created', [$clientId, $userId]);
 
         return Hash::create([
-            'client_id' => $clientId,
+            'created_by' => $clientId,
+            'updated_by' => $clientId,
             'user_id' => $userId,
             'hash' => $hash,
         ]);

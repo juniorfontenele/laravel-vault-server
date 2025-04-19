@@ -18,9 +18,10 @@ class Hash extends Model
 
     /** @var list<string> */
     protected $fillable = [
-        'client_id',
         'user_id',
         'hash',
+        'created_by',
+        'updated_by',
     ];
 
     protected $hidden = [
@@ -45,9 +46,13 @@ class Hash extends Model
         return HashFactory::new();
     }
 
-    /** @return BelongsTo<Client> */
-    public function user(): BelongsTo
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class, 'created_by', 'id');
+    }
+
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(Client::class, 'updated_by', 'id');
     }
 }

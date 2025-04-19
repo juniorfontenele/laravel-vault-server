@@ -65,12 +65,6 @@ class Client extends Model
             ->latest('valid_from');
     }
 
-    /** @return HasMany<Hash> */
-    public function hashes(): HasMany
-    {
-        return $this->hasMany(Hash::class);
-    }
-
     public function isActive(): bool
     {
         return $this->is_active;
