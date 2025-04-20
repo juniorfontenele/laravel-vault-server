@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 
 class JwtService
 {
@@ -46,10 +47,19 @@ class JwtService
         if ($scopes !== []) {
             $scopes = array_map('strtolower', $scopes);
 
-            $tokenScopes = explode(' ', $payload['scope'] ?? '');
+            $client = Client::query()
+                ->active()
+                ->where('client_id', $payload['client_id'])
+                ->first();
+
+            if (! $client) {
+                throw new VaultException('Client not found');
+            }
+
+            $allowedScopes = $client->allowed_scopes ?? [];
 
             foreach ($scopes as $scope) {
-                if (! in_array($scope, $tokenScopes)) {
+                if (! in_array($scope, $allowedScopes)) {
                     throw new JwtException('Insufficient scope');
                 }
             }
