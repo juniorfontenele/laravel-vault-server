@@ -49,7 +49,7 @@ class JwtService
 
             $client = Client::query()
                 ->active()
-                ->where('client_id', $payload['client_id'])
+                ->where('id', $payload['client_id'])
                 ->first();
 
             if (! $client) {
