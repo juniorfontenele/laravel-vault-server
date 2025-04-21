@@ -86,4 +86,16 @@ class Client extends Model
     {
         $query->where('is_active', false);
     }
+
+    #[Scope]
+    protected function provisioned(Builder $query): void
+    {
+        $query->whereNotNull('provision_token');
+    }
+
+    #[Scope]
+    protected function unprovisioned(Builder $query): void
+    {
+        $query->whereNull('provision_token');
+    }
 }

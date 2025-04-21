@@ -22,7 +22,7 @@ class VaultClientManagement extends Command
      * @var string
      */
     protected $signature = 'vault:client
-        {action? : Action to perform (create|delete|list|cleanup)}
+        {action? : Action to perform (create|delete|list|cleanup|provision)}
         {--client= : Client UUID (for delete)}
         {--name= : Client name (for create)}
         {--description= : Client description (for create)}
@@ -46,6 +46,7 @@ class VaultClientManagement extends Command
             [
                 'create' => 'Create a new client',
                 'delete' => 'Delete an existing client',
+                'provision' => 'Provision an existing client',
                 'list' => 'List all clients',
                 'cleanup' => 'Cleanup inactive clients',
             ],
@@ -55,6 +56,7 @@ class VaultClientManagement extends Command
         match ($action) {
             'create' => $this->createClient(),
             'delete' => $this->deleteClient(),
+            'provision' => $this->provisionClient(),
             'list' => $this->listClients(),
             'cleanup' => $this->cleanupClients(),
             default => $this->error("Action '{$action}' not supported."),
@@ -104,9 +106,11 @@ class VaultClientManagement extends Command
             exit(static::FAILURE);
         }
 
+        $provisionToken = VaultClientManager::generateProvisionToken($client);
+
         $this->info("Client '{$name}' created successfully.");
         $this->info("Client ID: {$client->id}");
-        $this->info("Provision Token: {$client->provision_token}");
+        $this->info("Provision Token: {$provisionToken}");
     }
 
     protected function listClients(): void
@@ -166,5 +170,42 @@ class VaultClientManagement extends Command
         }
 
         $this->info("Deleted {$deleted} inactive clients.");
+    }
+
+    protected function provisionClient(): void
+    {
+        if (Client::query()->active()->count() === 0) {
+            $this->info('No clients found to provision.');
+
+            return;
+        }
+
+        $clientUuid = $this->option('client') ?? search(
+            label: 'Search for a client to provision',
+            options: fn (string $value) => Client::query()
+                ->active()
+                ->where('id', 'like', "%{$value}%")
+                ->orWhere('name', 'like', "%{$value}%")
+                ->get()
+                ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
+                ->toArray(),
+            required: true,
+        );
+
+        $client = Client::query()
+            ->active()
+            ->where('id', $clientUuid)
+            ->first();
+
+        if (! $client) {
+            $this->error("Client with UUID {$clientUuid} not found.");
+
+            return;
+        }
+
+        $provisionToken = VaultClientManager::generateProvisionToken($client);
+
+        $this->info("Client ID: {$client->id}");
+        $this->info("Provision Token: {$provisionToken}");
     }
 }

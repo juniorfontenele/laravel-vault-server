@@ -19,20 +19,27 @@ class ClientManagerService
      */
     public function createClient(string $name, array $allowedScopes = [], string $description = ''): Client
     {
-        $provisionToken = bin2hex(random_bytes(16));
-
         $client = Client::create([
             'name' => $name,
             'allowed_scopes' => $allowedScopes,
             'description' => $description,
-            'provision_token' => bcrypt($provisionToken),
         ]);
 
         Event::dispatch('vault.client.created', [$client]);
 
-        $client->provision_token = $provisionToken;
-
         return $client;
+    }
+
+    public function generateProvisionToken(Client $client): string
+    {
+        $provisionToken = bin2hex(random_bytes(16));
+
+        $client->provision_token = bcrypt($provisionToken);
+        $client->save();
+
+        Event::dispatch('vault.client.token.generated', [$client]);
+
+        return $provisionToken;
     }
 
     /**
@@ -68,6 +75,6 @@ class ClientManagerService
 
         Event::dispatch('vault.client.cleanup', [$deletedClients]);
 
-        return $deletedClients;
+        return $deletedClients->count();
     }
 }
