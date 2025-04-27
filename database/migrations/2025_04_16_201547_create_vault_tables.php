@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('allowed_scopes')->nullable();
             $table->boolean('is_active')->index()->default(true);
             $table->string('provision_token')->nullable();
+            $table->timestamp('provisioned_at')->nullable();
             $table->timestamps();
         });
 
