@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects;
 
 class ProvisionToken
 {

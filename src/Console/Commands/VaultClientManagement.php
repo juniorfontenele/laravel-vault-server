@@ -5,9 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 
 use Illuminate\Console\Command;
-use JuniorFontenele\LaravelVaultServer\Enums\Permission;
+use Illuminate\Support\Collection;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllActiveClients;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClients;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
 
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\search;
@@ -78,10 +84,10 @@ class VaultClientManagement extends Command
 
         $scopes = $this->option('scopes') ?? multiselect(
             label: 'Allowed scopes',
-            options: Permission::toArray(),
+            options: Scope::toArray(),
             default: [
-                Permission::KEYS_READ->value,
-                Permission::KEYS_ROTATE->value,
+                Scope::KEYS_READ->value,
+                Scope::KEYS_ROTATE->value,
             ],
             required: true,
         );
@@ -100,22 +106,14 @@ class VaultClientManagement extends Command
             description: $description,
         );
 
-        if (! $client) {
-            $this->error('Failed to create client.');
-
-            exit(static::FAILURE);
-        }
-
-        $provisionToken = VaultClientManager::generateProvisionToken($client);
-
         $this->info("Client '{$name}' created successfully.");
         $this->info("Client ID: {$client->id}");
-        $this->info("Provision Token: {$provisionToken}");
+        $this->info("Provision Token: {$client->provisionToken}");
     }
 
     protected function listClients(): void
     {
-        $clients = Client::query()->active()->get(['id', 'name', 'description']);
+        $clients = $this->getAllActiveClients();
 
         if ($clients->isEmpty()) {
             $this->info('No clients found.');
@@ -128,7 +126,10 @@ class VaultClientManagement extends Command
 
     protected function deleteClient(): void
     {
-        if (Client::query()->active()->count() === 0) {
+        $deleteClient = app(DeleteClient::class);
+        $clients = $this->getAllClients();
+
+        if ($clients->count() === 0) {
             $this->info('No clients found to delete.');
 
             return;
@@ -136,45 +137,37 @@ class VaultClientManagement extends Command
 
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to delete',
-            options: fn (string $value) => Client::query()
-                ->active()
+            options: fn (string $value) => $clients
                 ->where('id', 'like', "%{$value}%")
                 ->orWhere('name', 'like', "%{$value}%")
-                ->get()
                 ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
         );
 
-        $client = Client::query()->active()->where('id', $clientUuid)->first();
-
-        if (! $client) {
-            $this->error("Client with UUID {$clientUuid} not found.");
-
-            return;
-        }
-
-        $client->delete();
+        $deleteClient->handle($clientUuid);
 
         $this->info("Client with UUID {$clientUuid} deleted successfully.");
     }
 
     protected function cleanupClients(): void
     {
-        $deleted = VaultClientManager::cleanupInactiveClients();
+        $deletedClients = $this->getAllInactiveClients();
 
-        if ($deleted === 0) {
+        if ($deletedClients->count() === 0) {
             $this->info('No inactive clients found.');
 
             return;
         }
 
-        $this->info("Deleted {$deleted} inactive clients.");
+        $this->info("Deleted {$deletedClients->count()} inactive clients.");
     }
 
     protected function provisionClient(): void
     {
-        if (Client::query()->active()->count() === 0) {
+        $clients = $this->getAllActiveClients();
+
+        if ($clients->isEmpty()) {
             $this->info('No clients found to provision.');
 
             return;
@@ -182,30 +175,49 @@ class VaultClientManagement extends Command
 
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to provision',
-            options: fn (string $value) => Client::query()
-                ->active()
+            options: fn (string $value) => $clients
                 ->where('id', 'like', "%{$value}%")
                 ->orWhere('name', 'like', "%{$value}%")
-                ->get()
                 ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
         );
 
-        $client = Client::query()
-            ->active()
-            ->where('id', $clientUuid)
-            ->first();
+        $reprovisionClient = app(ReprovisionClient::class);
 
-        if (! $client) {
-            $this->error("Client with UUID {$clientUuid} not found.");
-
-            return;
-        }
-
-        $provisionToken = VaultClientManager::generateProvisionToken($client);
+        $client = $reprovisionClient->handle($clientUuid);
 
         $this->info("Client ID: {$client->id}");
-        $this->info("Provision Token: {$provisionToken}");
+        $this->info("Provision Token: {$client->provisionToken}");
+    }
+
+    /**
+     * Get all active clients.
+     *
+     * @return Collection<ClientResponseDTO>
+     */
+    protected function getAllActiveClients(): Collection
+    {
+        return collect(app(FindAllActiveClients::class)->handle());
+    }
+
+    /**
+     * Get all inactive clients.
+     *
+     * @return Collection<ClientResponseDTO>
+     */
+    protected function getAllInactiveClients(): Collection
+    {
+        return collect(app(DeleteInactiveClients::class)->handle());
+    }
+
+    /**
+     * Get all clients.
+     *
+     * @return Collection<ClientResponseDTO>
+     */
+    protected function getAllClients(): Collection
+    {
+        return collect(app(FindAllClients::class)->handle());
     }
 }

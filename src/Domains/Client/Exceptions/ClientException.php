@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\Exceptions;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions;
 
 use Exception;
 use JuniorFontenele\LaravelVaultServer\Shared\Contracts\Translatable;
@@ -15,6 +15,13 @@ class ClientException extends Exception implements Translatable
     public static function alreadyProvisioned(string $clientId): self
     {
         return static::withTranslation('Cliente :id já foi provisionado', [
+            'id' => $clientId,
+        ]);
+    }
+
+    public static function notFound(string $clientId): self
+    {
+        return static::withTranslation('Cliente :id não encontrado', [
             'id' => $clientId,
         ]);
     }

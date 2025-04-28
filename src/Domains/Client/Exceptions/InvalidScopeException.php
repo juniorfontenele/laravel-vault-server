@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\Exceptions;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions;
 
 use InvalidArgumentException;
-use JuniorFontenele\LaravelVaultServer\Client\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Shared\Contracts\Translatable;
 use JuniorFontenele\LaravelVaultServer\Shared\Traits\HasTranslations;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\Enums;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Enums;
 
-use JuniorFontenele\LaravelVaultServer\Client\Exceptions\InvalidScopeException;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\InvalidScopeException;
 
 enum Scope: string
 {

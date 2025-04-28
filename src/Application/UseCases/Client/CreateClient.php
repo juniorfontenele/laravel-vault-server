@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace App\Application\UseCases\Client;
+namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 
-use App\Application\DTOs\Client\CreateClientDTO;
-use App\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Client\Entities\Client;
-use JuniorFontenele\LaravelVaultServer\Client\Repositories\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Client\ValueObjects\AllowedScopes;
-use JuniorFontenele\LaravelVaultServer\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientDTO;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
 use Ramsey\Uuid\Uuid;
 
 class CreateClient

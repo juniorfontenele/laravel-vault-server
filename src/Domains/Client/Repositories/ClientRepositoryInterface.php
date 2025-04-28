@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\Repositories;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories;
 
-use JuniorFontenele\LaravelVaultServer\Client\Entities\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
 
 interface ClientRepositoryInterface
 {
@@ -13,4 +13,15 @@ interface ClientRepositoryInterface
     public function delete(Client $clientEntity): void;
 
     public function findById(string $clientId): ?Client;
+
+    /** @return Client[] */
+    public function findAll(): array;
+
+    /** @return Client[] */
+    public function findAllInactive(): array;
+
+    /** @return Client[] */
+    public function findAllActive(): array;
+
+    public function deleteAllInactive(): void;
 }

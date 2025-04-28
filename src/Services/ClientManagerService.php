@@ -5,7 +5,12 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClient;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientException;
 
 class ClientManagerService
 {
@@ -13,48 +18,56 @@ class ClientManagerService
      * Create a new client.
      *
      * @param string $name
-     * @param array<int, string> $allowedScopes
+     * @param string[] $allowedScopes
      * @param string $description
-     * @return Client
+     * @return CreateClientResponseDTO
      */
-    public function createClient(string $name, array $allowedScopes = [], string $description = ''): Client
+    public function createClient(string $name, array $allowedScopes = [], string $description = ''): CreateClientResponseDTO
     {
-        $client = Client::create([
-            'name' => $name,
-            'allowed_scopes' => $allowedScopes,
-            'description' => $description,
-        ]);
+        $createClient = app(CreateClient::class);
+
+        $client = $this->createClient(
+            name: $name,
+            allowedScopes: $allowedScopes,
+            description: $description,
+        );
 
         Event::dispatch('vault.client.created', [$client]);
 
         return $client;
     }
 
-    public function generateProvisionToken(Client $client): string
+    /**
+     * Reprovision a client.
+     *
+     * @param string $clientId Client ID
+     * @return string Provision token
+     * @throws ClientException
+     */
+    public function generateProvisionToken(string $clientId): string
     {
-        $provisionToken = bin2hex(random_bytes(16));
+        $reprovision = app(ReprovisionClient::class);
 
-        $client->provision_token = bcrypt($provisionToken);
-        $client->save();
+        $client = $reprovision->handle($clientId);
 
         Event::dispatch('vault.client.token.generated', [$client]);
 
-        return $provisionToken;
+        return $client->provisionToken;
     }
 
     /**
      * Delete a client.
      *
-     * @param Client $client
-     * @return bool
+     * @param string $clientId Client ID
+     * @return void
      */
-    public function deleteClient(Client $client): bool
+    public function deleteClient(string $clientId): void
     {
-        $client->delete();
+        $deleteClient = app(DeleteClient::class);
 
-        Event::dispatch('vault.client.deleted', [$client]);
+        $deleteClient->handle($clientId);
 
-        return true;
+        Event::dispatch('vault.client.deleted', [$clientId]);
     }
 
     /**
@@ -64,17 +77,12 @@ class ClientManagerService
      */
     public function cleanupInactiveClients(): int
     {
-        $deletedClients = Client::query()->inactive()->get();
-        $countDeleted = $deletedClients->count();
+        $deleteInactiveClients = app(DeleteInactiveClients::class);
 
-        if ($countDeleted === 0) {
-            return 0;
-        }
-
-        Client::query()->inactive()->delete();
+        $deletedClients = $deleteInactiveClients->handle();
 
         Event::dispatch('vault.client.cleanup', [$deletedClients]);
 
-        return $deletedClients->count();
+        return count($deletedClients);
     }
 }

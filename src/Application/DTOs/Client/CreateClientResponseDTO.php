@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Application\DTOs\Client;
+namespace JuniorFontenele\LaravelVaultServer\Application\DTOs\Client;
 
 class CreateClientResponseDTO
 {

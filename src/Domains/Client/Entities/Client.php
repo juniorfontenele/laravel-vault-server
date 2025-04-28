@@ -2,11 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Client\Entities;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Entities;
 
-use JuniorFontenele\LaravelVaultServer\Client\Exceptions\ClientException;
-use JuniorFontenele\LaravelVaultServer\Client\ValueObjects\AllowedScopes;
-use JuniorFontenele\LaravelVaultServer\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
 
 class Client
 {

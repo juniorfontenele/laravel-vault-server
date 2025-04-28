@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use Illuminate\Support\Facades\Hash;
-use JuniorFontenele\LaravelVaultServer\Client\Entities\Client;
-use JuniorFontenele\LaravelVaultServer\Client\Repositories\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Models\Client as ClientModel;
 
 class EloquentClientRepository implements ClientRepositoryInterface
@@ -46,5 +46,62 @@ class EloquentClientRepository implements ClientRepositoryInterface
     public function delete(Client $clientEntity): void
     {
         ClientModel::query()->where('id', $clientEntity->id)->delete();
+    }
+
+    /**
+     * @return Client[]
+     */
+    public function findAllInactive(): array
+    {
+        return ClientModel::query()
+            ->inactive()
+            ->map(fn (ClientModel $model) => new Client(
+                id: $model->id,
+                name: $model->name,
+                allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
+                isActive: $model->is_active,
+                description: $model->description,
+                provisionedAt: $model->provisioned_at,
+            ));
+    }
+
+    /**
+     * @return Client[]
+     */
+    public function findAllActive(): array
+    {
+        return ClientModel::query()
+            ->active()
+            ->map(fn (ClientModel $model) => new Client(
+                id: $model->id,
+                name: $model->name,
+                allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
+                isActive: $model->is_active,
+                description: $model->description,
+                provisionedAt: $model->provisioned_at,
+            ));
+    }
+
+    /**
+     * @return Client[]
+     */
+    public function findAll(): array
+    {
+        return ClientModel::query()
+            ->map(fn (ClientModel $model) => new Client(
+                id: $model->id,
+                name: $model->name,
+                allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
+                isActive: $model->is_active,
+                description: $model->description,
+                provisionedAt: $model->provisioned_at,
+            ));
+    }
+
+    public function deleteAllInactive(): void
+    {
+        ClientModel::query()
+            ->inactive()
+            ->delete();
     }
 }
