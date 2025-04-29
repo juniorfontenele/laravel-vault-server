@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Infrastructure\Persistence\Eloquent;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent;
 
 use Illuminate\Support\Facades\Hash;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
