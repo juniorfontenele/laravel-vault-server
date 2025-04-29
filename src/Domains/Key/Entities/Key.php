@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace JuniorFontenele\LaravelVaultServer\Domains\Key\Entities;
+
+use DateTimeImmutable;
+use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\ClientId;
+use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\KeyId;
+use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\PublicKey;
+
+class Key
+{
+    public function __construct(
+        protected KeyId $keyId,
+        protected ClientId $clientId,
+        protected PublicKey $publicKey,
+        protected int $keyVersion,
+        protected DateTimeImmutable $validFrom,
+        protected DateTimeImmutable $validUntil,
+        protected bool $isRevoked = false,
+        protected ?DateTimeImmutable $revokedAt = null,
+    ) {
+        //
+    }
+
+    public function keyId(): string
+    {
+        return $this->keyId->value();
+    }
+
+    public function clientId(): string
+    {
+        return $this->clientId->value();
+    }
+
+    public function publicKey(): string
+    {
+        return $this->publicKey->value();
+    }
+
+    public function keyVersion(): int
+    {
+        return $this->keyVersion;
+    }
+
+    public function validFrom(): DateTimeImmutable
+    {
+        return $this->validFrom;
+    }
+
+    public function validUntil(): DateTimeImmutable
+    {
+        return $this->validUntil;
+    }
+
+    public function isRevoked(): bool
+    {
+        return $this->isRevoked;
+    }
+
+    public function revokedAt(): ?DateTimeImmutable
+    {
+        return $this->revokedAt;
+    }
+
+    public function revoke(): void
+    {
+        $this->isRevoked = true;
+        $this->revokedAt = new DateTimeImmutable();
+    }
+}
