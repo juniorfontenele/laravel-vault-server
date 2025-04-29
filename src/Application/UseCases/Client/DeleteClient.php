@@ -13,7 +13,7 @@ class DeleteClient
     {
     }
 
-    public function handle(string $clientId): void
+    public function execute(string $clientId): void
     {
         $client = $this->clientRepository->findById($clientId);
 

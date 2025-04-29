@@ -7,11 +7,12 @@ namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Entities;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Domains\Shared\ValueObjects\Id;
 
 class Client
 {
     public function __construct(
-        public string $id,
+        protected Id $id,
         public string $name,
         public AllowedScopes $allowedScopes,
         public bool $isActive = true,
@@ -20,6 +21,11 @@ class Client
         public ?\DateTimeImmutable $provisionedAt = null,
     ) {
         //
+    }
+
+    public function id(): string
+    {
+        return $this->id->value;
     }
 
     public function provisionToken(): ?string
@@ -48,7 +54,7 @@ class Client
     public function provision(): void
     {
         if ($this->isProvisioned()) {
-            throw ClientException::alreadyProvisioned($this->id);
+            throw ClientException::alreadyProvisioned($this->id());
         }
 
         $this->provisionToken = null;

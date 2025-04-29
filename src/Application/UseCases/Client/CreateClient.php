@@ -10,7 +10,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
-use Ramsey\Uuid\Uuid;
+use JuniorFontenele\LaravelVaultServer\Domains\Shared\ValueObjects\Id;
 
 class CreateClient
 {
@@ -20,10 +20,10 @@ class CreateClient
         //
     }
 
-    public function handle(CreateClientDTO $clientDTO): CreateClientResponseDTO
+    public function execute(CreateClientDTO $clientDTO): CreateClientResponseDTO
     {
         $client = new Client(
-            id: Uuid::uuid7()->toString(),
+            id: new Id(),
             name: $clientDTO->name,
             allowedScopes: AllowedScopes::fromStringArray($clientDTO->allowedScopes),
             description: $clientDTO->description,
@@ -33,7 +33,7 @@ class CreateClient
         $this->clientRepository->save($client);
 
         return new CreateClientResponseDTO(
-            id: $client->id,
+            id: $client->id(),
             name: $client->name,
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),

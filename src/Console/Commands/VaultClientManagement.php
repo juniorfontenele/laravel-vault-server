@@ -145,7 +145,7 @@ class VaultClientManagement extends Command
             required: true,
         );
 
-        $deleteClient->handle($clientUuid);
+        $deleteClient->execute($clientUuid);
 
         $this->info("Client with UUID {$clientUuid} deleted successfully.");
     }
@@ -185,7 +185,7 @@ class VaultClientManagement extends Command
 
         $reprovisionClient = app(ReprovisionClient::class);
 
-        $client = $reprovisionClient->handle($clientUuid);
+        $client = $reprovisionClient->execute($clientUuid);
 
         $this->info("Client ID: {$client->id}");
         $this->info("Provision Token: {$client->provisionToken}");
@@ -198,7 +198,7 @@ class VaultClientManagement extends Command
      */
     protected function getAllActiveClients(): Collection
     {
-        return collect(app(FindAllActiveClients::class)->handle());
+        return collect(app(FindAllActiveClients::class)->execute());
     }
 
     /**
@@ -208,7 +208,7 @@ class VaultClientManagement extends Command
      */
     protected function getAllInactiveClients(): Collection
     {
-        return collect(app(DeleteInactiveClients::class)->handle());
+        return collect(app(DeleteInactiveClients::class)->execute());
     }
 
     /**
@@ -218,6 +218,6 @@ class VaultClientManagement extends Command
      */
     protected function getAllClients(): Collection
     {
-        return collect(app(FindAllClients::class)->handle());
+        return collect(app(FindAllClients::class)->execute());
     }
 }

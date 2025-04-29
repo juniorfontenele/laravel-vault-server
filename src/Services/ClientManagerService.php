@@ -48,7 +48,7 @@ class ClientManagerService
     {
         $reprovision = app(ReprovisionClient::class);
 
-        $client = $reprovision->handle($clientId);
+        $client = $reprovision->execute($clientId);
 
         Event::dispatch('vault.client.token.generated', [$client]);
 
@@ -65,7 +65,7 @@ class ClientManagerService
     {
         $deleteClient = app(DeleteClient::class);
 
-        $deleteClient->handle($clientId);
+        $deleteClient->execute($clientId);
 
         Event::dispatch('vault.client.deleted', [$clientId]);
     }
@@ -79,7 +79,7 @@ class ClientManagerService
     {
         $deleteInactiveClients = app(DeleteInactiveClients::class);
 
-        $deletedClients = $deleteInactiveClients->handle();
+        $deletedClients = $deleteInactiveClients->execute();
 
         Event::dispatch('vault.client.cleanup', [$deletedClients]);
 

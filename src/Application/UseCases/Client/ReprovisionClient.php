@@ -14,7 +14,7 @@ class ReprovisionClient
     {
     }
 
-    public function handle(string $clientId): CreateClientResponseDTO
+    public function execute(string $clientId): CreateClientResponseDTO
     {
         $client = $this->clientRepository->findById($clientId);
 
@@ -27,7 +27,7 @@ class ReprovisionClient
         $this->clientRepository->save($client);
 
         return new CreateClientResponseDTO(
-            id: $client->id,
+            id: $client->id(),
             name: $client->name,
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),
