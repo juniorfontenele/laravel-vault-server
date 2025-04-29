@@ -12,16 +12,16 @@ interface ClientRepositoryInterface
 
     public function delete(Client $clientEntity): void;
 
-    public function findByClientId(string $clientId): ?Client;
+    public function findClientByClientId(string $clientId): ?Client;
 
     /** @return Client[] */
-    public function findAll(): array;
+    public function findAllClients(): array;
 
     /** @return Client[] */
-    public function findAllInactive(): array;
+    public function findAllInactiveClients(): array;
 
     /** @return Client[] */
-    public function findAllActive(): array;
+    public function findAllActiveClients(): array;
 
-    public function deleteAllInactive(): void;
+    public function deleteAllInactiveClients(): void;
 }

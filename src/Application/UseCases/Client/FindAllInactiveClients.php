@@ -25,6 +25,6 @@ class FindAllInactiveClients
             name: $client->name(),
             description: $client->description(),
             allowedScopes: $client->scopes()
-        ), $this->clientRepository->findAllInactive());
+        ), $this->clientRepository->findAllInactiveClients());
     }
 }

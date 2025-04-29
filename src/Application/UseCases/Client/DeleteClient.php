@@ -15,7 +15,7 @@ class DeleteClient
 
     public function execute(string $clientId): void
     {
-        $client = $this->clientRepository->findByClientId($clientId);
+        $client = $this->clientRepository->findClientByClientId($clientId);
 
         if (is_null($client)) {
             throw ClientException::notFound($clientId);

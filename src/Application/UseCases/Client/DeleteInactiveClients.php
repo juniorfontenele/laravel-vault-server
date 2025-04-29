@@ -19,9 +19,9 @@ class DeleteInactiveClients
      */
     public function execute(): array
     {
-        $deletedClients = $this->clientRepository->findAllInactive();
+        $deletedClients = $this->clientRepository->findAllInactiveClients();
 
-        $this->clientRepository->deleteAllInactive();
+        $this->clientRepository->deleteAllInactiveClients();
 
         return array_map(fn (Client $client) => new ClientResponseDTO(
             clientId: $client->clientId(),

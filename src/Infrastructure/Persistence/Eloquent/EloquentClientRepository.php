@@ -13,7 +13,7 @@ use JuniorFontenele\LaravelVaultServer\Models\Client as ClientModel;
 
 class EloquentClientRepository implements ClientRepositoryInterface
 {
-    public function findById(string $clientId): ?Client
+    public function findClientByClientId(string $clientId): ?Client
     {
         $model = ClientModel::query()->find($clientId);
 
@@ -53,7 +53,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     /**
      * @return Client[]
      */
-    public function findAllInactive(): array
+    public function findAllInactiveClients(): array
     {
         return ClientModel::query()
             ->inactive()
@@ -71,7 +71,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     /**
      * @return Client[]
      */
-    public function findAllActive(): array
+    public function findAllActiveClients(): array
     {
         return ClientModel::query()
             ->active()
@@ -89,7 +89,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     /**
      * @return Client[]
      */
-    public function findAll(): array
+    public function findAllClients(): array
     {
         return ClientModel::query()
             ->get()
@@ -103,7 +103,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
             ))->toArray();
     }
 
-    public function deleteAllInactive(): void
+    public function deleteAllInactiveClients(): void
     {
         ClientModel::query()
             ->inactive()

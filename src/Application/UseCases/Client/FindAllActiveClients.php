@@ -25,6 +25,6 @@ class FindAllActiveClients
             name: $client->name(),
             description: $client->description(),
             allowedScopes: $client->scopes()
-        ), $this->clientRepository->findAllActive());
+        ), $this->clientRepository->findAllActiveClients());
     }
 }

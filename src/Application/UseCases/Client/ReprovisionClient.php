@@ -16,7 +16,7 @@ class ReprovisionClient
 
     public function execute(string $clientId): CreateClientResponseDTO
     {
-        $client = $this->clientRepository->findByClientId($clientId);
+        $client = $this->clientRepository->findClientByClientId($clientId);
 
         if (is_null($client)) {
             throw ClientException::notFound($clientId);
