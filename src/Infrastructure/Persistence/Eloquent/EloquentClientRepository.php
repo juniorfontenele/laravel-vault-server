@@ -36,11 +36,12 @@ class EloquentClientRepository implements ClientRepositoryInterface
         $model = ClientModel::query()->find($clientEntity->id()) ?? new ClientModel();
 
         $model->id = $clientEntity->id();
-        $model->name = $clientEntity->name;
-        $model->allowed_scopes = $clientEntity->allowedScopes->toArray();
-        $model->description = $clientEntity->description;
+        $model->name = $clientEntity->name();
+        $model->allowed_scopes = $clientEntity->scopes();
+        $model->description = $clientEntity->description();
         $model->provision_token = $clientEntity->isNotProvisioned() ? Hash::make($clientEntity->provisionToken()) : null;
-        $model->provisioned_at = $clientEntity->isNotProvisioned() ? null : $clientEntity->provisionedAt;
+        $model->provisioned_at = $clientEntity->isNotProvisioned() ? null : $clientEntity->provisionedAt();
+        $model->is_active = $clientEntity->isActive();
         $model->save();
     }
 

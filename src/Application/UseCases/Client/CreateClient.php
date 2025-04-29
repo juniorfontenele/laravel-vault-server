@@ -34,10 +34,10 @@ class CreateClient
 
         return new CreateClientResponseDTO(
             id: $client->id(),
-            name: $client->name,
+            name: $client->name(),
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),
-            description: $clientDTO->description,
+            description: $client->description(),
         );
     }
 }

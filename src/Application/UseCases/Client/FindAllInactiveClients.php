@@ -22,8 +22,8 @@ class FindAllInactiveClients
     {
         return array_map(fn (Client $client) => new ClientResponseDTO(
             id: $client->id(),
-            name: $client->name,
-            description: $client->description,
+            name: $client->name(),
+            description: $client->description(),
             allowedScopes: $client->scopes()
         ), $this->clientRepository->findAllInactive());
     }

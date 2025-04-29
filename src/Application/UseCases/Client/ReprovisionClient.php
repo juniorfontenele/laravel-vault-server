@@ -28,10 +28,10 @@ class ReprovisionClient
 
         return new CreateClientResponseDTO(
             id: $client->id(),
-            name: $client->name,
+            name: $client->name(),
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),
-            description: $client->description,
+            description: $client->description(),
         );
     }
 }

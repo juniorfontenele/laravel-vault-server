@@ -13,12 +13,12 @@ class Client
 {
     public function __construct(
         protected Id $id,
-        public string $name,
-        public AllowedScopes $allowedScopes,
-        public bool $isActive = true,
-        public ?string $description = null,
-        public ?ProvisionToken $provisionToken = null,
-        public ?\DateTimeImmutable $provisionedAt = null,
+        protected string $name,
+        protected AllowedScopes $allowedScopes,
+        protected bool $isActive = true,
+        protected ?string $description = null,
+        protected ?ProvisionToken $provisionToken = null,
+        protected ?\DateTimeImmutable $provisionedAt = null,
     ) {
         //
     }
@@ -28,9 +28,24 @@ class Client
         return $this->id->value;
     }
 
+    public function name(): string
+    {
+        return $this->name;
+    }
+
+    public function description(): ?string
+    {
+        return $this->description;
+    }
+
     public function provisionToken(): ?string
     {
         return $this->provisionToken?->__toString();
+    }
+
+    public function provisionedAt(): ?\DateTimeImmutable
+    {
+        return $this->provisionedAt;
     }
 
     /**

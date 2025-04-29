@@ -25,9 +25,9 @@ class DeleteInactiveClients
 
         return array_map(fn (Client $client) => new ClientResponseDTO(
             id: $client->id(),
-            name: $client->name,
+            name: $client->name(),
             allowedScopes: $client->scopes(),
-            description: $client->description,
+            description: $client->description(),
         ), $deletedClients);
     }
 }
