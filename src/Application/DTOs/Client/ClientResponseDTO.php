@@ -7,7 +7,7 @@ namespace JuniorFontenele\LaravelVaultServer\Application\DTOs\Client;
 class ClientResponseDTO
 {
     public function __construct(
-        public readonly string $id,
+        public readonly string $clientId,
         public readonly string $name,
         public readonly array $allowedScopes,
         public readonly ?string $description,
@@ -15,12 +15,12 @@ class ClientResponseDTO
     }
 
     /**
-     * @return array{id: string, name: string, allowed_scopes: array<string>, description: ?string}
+     * @return array{client_id: string, name: string, allowed_scopes: array<string>, description: ?string}
      */
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'client_id' => $this->clientId,
             'name' => $this->name,
             'allowed_scopes' => implode(',', $this->allowedScopes),
             'description' => $this->description,

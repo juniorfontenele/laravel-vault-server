@@ -7,14 +7,14 @@ namespace JuniorFontenele\LaravelVaultServer\Application\DTOs\Client;
 class CreateClientResponseDTO
 {
     /**
-     * @param string $id
+     * @param string $clientId
      * @param string $name
      * @param ?string $description
      * @param string[] $allowedScopes
      * @param string $provisionToken
      */
     public function __construct(
-        public string $id,
+        public string $clientId,
         public string $name,
         public array $allowedScopes,
         public string $provisionToken,
@@ -24,12 +24,12 @@ class CreateClientResponseDTO
     }
 
     /**
-     * @return array{id: string, name: string, allowed_scopes: array<string>, description: ?string, provision_token: string}
+     * @return array{client_id: string, name: string, allowed_scopes: array<string>, description: ?string, provision_token: string}
      */
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
+            'client_id' => $this->clientId,
             'name' => $this->name,
             'allowed_scopes' => implode(',', $this->allowedScopes),
             'description' => $this->description,

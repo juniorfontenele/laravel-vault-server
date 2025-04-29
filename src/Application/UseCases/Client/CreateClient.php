@@ -33,7 +33,7 @@ class CreateClient
         $this->clientRepository->save($client);
 
         return new CreateClientResponseDTO(
-            id: $client->clientId(),
+            clientId: $client->clientId(),
             name: $client->name(),
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),

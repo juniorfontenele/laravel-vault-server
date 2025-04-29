@@ -108,7 +108,7 @@ class VaultClientManagement extends Command
         );
 
         $this->info("Client '{$name}' created successfully.");
-        $this->info("Client ID: {$client->id}");
+        $this->info("Client ID: {$client->clientId}");
         $this->info("Provision Token: {$client->provisionToken}");
     }
 
@@ -124,7 +124,7 @@ class VaultClientManagement extends Command
 
         $rows = $clients->map(function (ClientResponseDTO $client) {
             return [
-                'ID' => $client->id,
+                'ID' => $client->clientId,
                 'Name' => $client->name,
                 'Description' => $client->description,
                 'Scopes' => implode(', ', $client->allowedScopes),
@@ -149,7 +149,7 @@ class VaultClientManagement extends Command
             label: 'Search for a client to delete',
             options: fn (string $value) => $clients
                 ->filter(function (ClientResponseDTO $client) use ($value) {
-                    return str_contains($client->id, $value) || str_contains($client->name, $value);
+                    return str_contains($client->clientId, $value) || str_contains($client->name, $value);
                 })
                 ->mapWithKeys(fn ($client) => [$client->clientId => "{$client->name} - {$client->clientId}"])
                 ->toArray(),
@@ -188,7 +188,7 @@ class VaultClientManagement extends Command
             label: 'Search for a client to provision',
             options: fn (string $value) => $clients
                 ->filter(function (ClientResponseDTO $client) use ($value) {
-                    return str_contains($client->id, $value) || str_contains($client->name, $value);
+                    return str_contains($client->clientId, $value) || str_contains($client->name, $value);
                 })
                 ->mapWithKeys(fn ($client) => [$client->clientId => "{$client->name} - {$client->clientId}"])
                 ->toArray(),
@@ -199,7 +199,7 @@ class VaultClientManagement extends Command
 
         $client = $reprovisionClient->execute($clientUuid);
 
-        $this->info("Client ID: {$client->id}");
+        $this->info("Client ID: {$client->clientId}");
         $this->info("Provision Token: {$client->provisionToken}");
     }
 
