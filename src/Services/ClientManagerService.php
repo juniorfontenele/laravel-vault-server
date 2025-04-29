@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\Event;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientDTO;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClient;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
@@ -26,11 +27,13 @@ class ClientManagerService
     {
         $createClient = app(CreateClient::class);
 
-        $client = $this->createClient(
+        $clientDTO = new CreateClientDTO(
             name: $name,
             allowedScopes: $allowedScopes,
             description: $description,
         );
+
+        $client = $createClient->execute($clientDTO);
 
         Event::dispatch('vault.client.created', [$client]);
 

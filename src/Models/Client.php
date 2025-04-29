@@ -37,6 +37,7 @@ class Client extends Model
         return [
             'is_active' => 'boolean',
             'allowed_scopes' => 'array',
+            'provisioned_at' => 'datetime',
         ];
     }
 

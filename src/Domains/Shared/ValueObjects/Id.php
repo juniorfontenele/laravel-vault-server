@@ -9,11 +9,11 @@ use Ramsey\Uuid\Uuid;
 
 class Id
 {
-    public function __construct(public readonly ?string $value = null)
+    public readonly string $value;
+
+    public function __construct(?string $value = null)
     {
-        if (is_null($this->value)) {
-            $this->value = Uuid::uuid7()->toString();
-        }
+        $this->value = $value ?? Uuid::uuid7()->toString();
 
         if (! Uuid::isValid($this->value)) {
             throw IdException::invalidUuid($this->value);
