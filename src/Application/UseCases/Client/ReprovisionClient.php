@@ -27,7 +27,7 @@ class ReprovisionClient
         $this->clientRepository->save($client);
 
         return new CreateClientResponseDTO(
-            id: $client->id(),
+            id: $client->clientId(),
             name: $client->name(),
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),

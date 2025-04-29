@@ -151,7 +151,7 @@ class VaultClientManagement extends Command
                 ->filter(function (ClientResponseDTO $client) use ($value) {
                     return str_contains($client->id, $value) || str_contains($client->name, $value);
                 })
-                ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
+                ->mapWithKeys(fn ($client) => [$client->clientId => "{$client->name} - {$client->clientId}"])
                 ->toArray(),
             required: true,
         );
@@ -190,7 +190,7 @@ class VaultClientManagement extends Command
                 ->filter(function (ClientResponseDTO $client) use ($value) {
                     return str_contains($client->id, $value) || str_contains($client->name, $value);
                 })
-                ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
+                ->mapWithKeys(fn ($client) => [$client->clientId => "{$client->name} - {$client->clientId}"])
                 ->toArray(),
             required: true,
         );

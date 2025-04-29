@@ -24,7 +24,7 @@ class DeleteInactiveClients
         $this->clientRepository->deleteAllInactive();
 
         return array_map(fn (Client $client) => new ClientResponseDTO(
-            id: $client->id(),
+            id: $client->clientId(),
             name: $client->name(),
             allowedScopes: $client->scopes(),
             description: $client->description(),

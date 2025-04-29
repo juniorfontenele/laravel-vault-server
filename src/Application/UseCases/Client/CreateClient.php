@@ -9,8 +9,8 @@ use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientRespo
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ClientId;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
-use JuniorFontenele\LaravelVaultServer\Domains\Shared\ValueObjects\Id;
 
 class CreateClient
 {
@@ -23,7 +23,7 @@ class CreateClient
     public function execute(CreateClientDTO $clientDTO): CreateClientResponseDTO
     {
         $client = new Client(
-            id: new Id(),
+            clientId: new ClientId(),
             name: $clientDTO->name,
             allowedScopes: AllowedScopes::fromStringArray($clientDTO->allowedScopes),
             description: $clientDTO->description,
@@ -33,7 +33,7 @@ class CreateClient
         $this->clientRepository->save($client);
 
         return new CreateClientResponseDTO(
-            id: $client->id(),
+            id: $client->clientId(),
             name: $client->name(),
             allowedScopes: $client->scopes(),
             provisionToken: $client->provisionToken(),

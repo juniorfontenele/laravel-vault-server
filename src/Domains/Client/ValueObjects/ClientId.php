@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Shared\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects;
 
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Exceptions\IdException;
 use Ramsey\Uuid\Uuid;
 
-class Id
+class ClientId
 {
     public readonly string $value;
 
