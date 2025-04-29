@@ -4,12 +4,14 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Providers;
 
+use App\Infrastructure\Persistence\Eloquent\EloquentClientRepository;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
@@ -64,6 +66,8 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         Client::unguard();
         Hash::unguard();
         Key::unguard();
+
+        $this->app->bind(ClientRepositoryInterface::class, EloquentClientRepository::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/vault.php', 'vault');
 
