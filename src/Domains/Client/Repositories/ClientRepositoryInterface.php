@@ -12,7 +12,7 @@ interface ClientRepositoryInterface
 
     public function delete(Client $clientEntity): void;
 
-    public function findById(string $clientId): ?Client;
+    public function findByClientId(string $clientId): ?Client;
 
     /** @return Client[] */
     public function findAll(): array;
