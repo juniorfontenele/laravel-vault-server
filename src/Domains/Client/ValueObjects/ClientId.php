@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Shared\Exceptions\IdException;
+use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientIdException;
 use Ramsey\Uuid\Uuid;
 
 class ClientId
@@ -16,7 +16,7 @@ class ClientId
         $this->value = $value ?? Uuid::uuid7()->toString();
 
         if (! Uuid::isValid($this->value)) {
-            throw IdException::invalidUuid($this->value);
+            throw ClientIdException::invalidClientId($this->value);
         }
     }
 }

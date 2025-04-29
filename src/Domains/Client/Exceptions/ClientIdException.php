@@ -2,19 +2,19 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Shared\Exceptions;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions;
 
 use JuniorFontenele\LaravelVaultServer\Shared\Contracts\Translatable;
 use JuniorFontenele\LaravelVaultServer\Shared\Traits\HasTranslations;
 
-class IdException extends \Exception implements Translatable
+class ClientIdException extends \Exception implements Translatable
 {
     use HasTranslations;
 
-    public static function invalidUuid(string $id): static
+    public static function invalidClientId(string $clientId): static
     {
         return static::withTranslation('O id :id não é um UUID válido', [
-            'id' => $id,
+            'id' => $clientId,
         ]);
     }
 }
