@@ -11,6 +11,7 @@ use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllActiveClients;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClients;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllInactiveClients;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
 use JuniorFontenele\LaravelVaultServer\Domains\Client\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
@@ -121,7 +122,16 @@ class VaultClientManagement extends Command
             return;
         }
 
-        $this->table(['ID', 'Name', 'Description'], $clients->toArray());
+        $rows = $clients->map(function (ClientResponseDTO $client) {
+            return [
+                'ID' => $client->id,
+                'Name' => $client->name,
+                'Description' => $client->description,
+                'Scopes' => implode(', ', $client->allowedScopes),
+            ];
+        })->toArray();
+
+        $this->table(['ID', 'Name', 'Description', 'Scopes'], $rows);
     }
 
     protected function deleteClient(): void
@@ -138,8 +148,9 @@ class VaultClientManagement extends Command
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to delete',
             options: fn (string $value) => $clients
-                ->where('id', 'like', "%{$value}%")
-                ->orWhere('name', 'like', "%{$value}%")
+                ->filter(function (ClientResponseDTO $client) use ($value) {
+                    return str_contains($client->id, $value) || str_contains($client->name, $value);
+                })
                 ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
@@ -152,7 +163,7 @@ class VaultClientManagement extends Command
 
     protected function cleanupClients(): void
     {
-        $deletedClients = $this->getAllInactiveClients();
+        $deletedClients = collect(app(DeleteInactiveClients::class)->execute());
 
         if ($deletedClients->count() === 0) {
             $this->info('No inactive clients found.');
@@ -176,8 +187,9 @@ class VaultClientManagement extends Command
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to provision',
             options: fn (string $value) => $clients
-                ->where('id', 'like', "%{$value}%")
-                ->orWhere('name', 'like', "%{$value}%")
+                ->filter(function (ClientResponseDTO $client) use ($value) {
+                    return str_contains($client->id, $value) || str_contains($client->name, $value);
+                })
                 ->mapWithKeys(fn ($client) => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
@@ -208,7 +220,7 @@ class VaultClientManagement extends Command
      */
     protected function getAllInactiveClients(): Collection
     {
-        return collect(app(DeleteInactiveClients::class)->execute());
+        return collect(app(FindAllInactiveClients::class)->execute());
     }
 
     /**

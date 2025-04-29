@@ -56,6 +56,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     {
         return ClientModel::query()
             ->inactive()
+            ->get()
             ->map(fn (ClientModel $model) => new Client(
                 id: new Id($model->id),
                 name: $model->name,
@@ -63,7 +64,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 isActive: $model->is_active,
                 description: $model->description,
                 provisionedAt: $model->provisioned_at,
-            ));
+            ))->toArray();
     }
 
     /**
@@ -73,6 +74,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     {
         return ClientModel::query()
             ->active()
+            ->get()
             ->map(fn (ClientModel $model) => new Client(
                 id: new Id($model->id),
                 name: $model->name,
@@ -80,7 +82,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 isActive: $model->is_active,
                 description: $model->description,
                 provisionedAt: $model->provisioned_at,
-            ));
+            ))->toArray();
     }
 
     /**
@@ -89,6 +91,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
     public function findAll(): array
     {
         return ClientModel::query()
+            ->get()
             ->map(fn (ClientModel $model) => new Client(
                 id: new Id($model->id),
                 name: $model->name,
@@ -96,7 +99,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 isActive: $model->is_active,
                 description: $model->description,
                 provisionedAt: $model->provisioned_at,
-            ));
+            ))->toArray();
     }
 
     public function deleteAllInactive(): void
