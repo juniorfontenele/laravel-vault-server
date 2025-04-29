@@ -47,29 +47,6 @@ class AllowedScopes
         return in_array($scope, $this->scopes, true);
     }
 
-    public function add(Scope|string $scope): void
-    {
-        if (is_string($scope)) {
-            $scope = Scope::fromString($scope);
-        }
-
-        if (! in_array($scope, $this->scopes, true)) {
-            $this->scopes[] = $scope;
-        }
-    }
-
-    public function remove(Scope|string $scope): void
-    {
-        if (is_string($scope)) {
-            $scope = Scope::fromString($scope);
-        }
-
-        $this->scopes = array_filter(
-            $this->scopes,
-            fn ($existingScope) => $existingScope !== $scope
-        );
-    }
-
     /**
      * @param string[] $scopes
      */
