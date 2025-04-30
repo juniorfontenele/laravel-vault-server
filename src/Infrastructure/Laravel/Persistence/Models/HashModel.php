@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;

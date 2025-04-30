@@ -6,8 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
 use phpseclib3\Crypt\RSA;
 
 class KeyPairService

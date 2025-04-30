@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services;
 
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
 
 class HashService
 {

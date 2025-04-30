@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\JuniorFontenele\LaravelVaultServer\Models\Client>

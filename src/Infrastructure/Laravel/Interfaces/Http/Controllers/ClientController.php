@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Resources\KeyResource;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
 
 class ClientController
 {

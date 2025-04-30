@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Exceptions\VaultException;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
 
 class JwtService
 {

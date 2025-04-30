@@ -6,8 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\C
 
 use Illuminate\Console\Command;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
