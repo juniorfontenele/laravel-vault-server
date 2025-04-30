@@ -6,8 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Models\Key;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 use phpseclib3\Crypt\RSA;
 
 class KeyPairService
@@ -15,10 +15,10 @@ class KeyPairService
     /**
      * Rotate a key.
      *
-     * @param Key $key
-     * @return array{0: Key, 1: string}
+     * @param KeyModel $key
+     * @return array{0: KeyModel, 1: string}
      */
-    public function rotate(Key $key, int $expiresIn = 365): array
+    public function rotate(KeyModel $key, int $expiresIn = 365): array
     {
         return DB::transaction(function () use ($key, $expiresIn) {
             [$publicKey, $privateKey] = $this->generateKeyPair();
@@ -41,17 +41,17 @@ class KeyPairService
     /**
      * Create a new key for a client.
      *
-     * @param Client $client
+     * @param ClientModel $client
      * @param int $bits
      * @param int $expiresIn
-     * @return array{0: Key, 1: string}
+     * @return array{0: KeyModel, 1: string}
      */
-    public function createKeyForClient(Client $client, int $bits = 2048, int $expiresIn = 365): array
+    public function createKeyForClient(ClientModel $client, int $bits = 2048, int $expiresIn = 365): array
     {
         [$publicKey, $privateKey] = $this->generateKeyPair($bits);
 
         return DB::transaction(function () use ($client, $publicKey, $privateKey, $expiresIn) {
-            $client->keys()->valid()->each(fn (Key $key) => $this->revokeKey($key));
+            $client->keys()->valid()->each(fn (KeyModel $key) => $this->revokeKey($key));
 
             $key = $client->keys()->create([
                 'public_key' => $publicKey,
@@ -85,20 +85,20 @@ class KeyPairService
      * Find a key by its KID.
      *
      * @param string $kid
-     * @return Key|null
+     * @return KeyModel|null
      */
-    public function findByKid(string $kid): ?Key
+    public function findByKid(string $kid): ?KeyModel
     {
         Event::dispatch('vault.key.findByKid', [$kid]);
 
-        return Key::query()->valid()->where('id', $kid)->first();
+        return KeyModel::query()->valid()->where('id', $kid)->first();
     }
 
-    public function findByClientId(string $clientId): ?Key
+    public function findByClientId(string $clientId): ?KeyModel
     {
         Event::dispatch('vault.key.findByClientId', [$clientId]);
 
-        $client = Client::query()
+        $client = ClientModel::query()
             ->active()
             ->where('id', $clientId)
             ->first();
@@ -112,10 +112,10 @@ class KeyPairService
 
     /**
      * Revoke a key.
-     * @param Key $key
+     * @param KeyModel $key
      * @return bool
      */
-    public function revokeKey(Key $key): bool
+    public function revokeKey(KeyModel $key): bool
     {
         $key->revoke();
 
@@ -126,10 +126,10 @@ class KeyPairService
 
     /**
      * Delete a key.
-     * @param Key $key
+     * @param KeyModel $key
      * @return bool
      */
-    public function deleteKey(Key $key): bool
+    public function deleteKey(KeyModel $key): bool
     {
         $key->delete();
 
@@ -144,7 +144,7 @@ class KeyPairService
      */
     public function cleanupExpiredKeys(): int
     {
-        $expired = Key::query()->expired()->get();
+        $expired = KeyModel::query()->expired()->get();
 
         if ($expired->isEmpty()) {
             return 0;
@@ -165,7 +165,7 @@ class KeyPairService
      */
     public function cleanupRevokedKeys(): int
     {
-        $revoked = Key::query()->revoked()->get();
+        $revoked = KeyModel::query()->revoked()->get();
 
         if ($revoked->isEmpty()) {
             return 0;

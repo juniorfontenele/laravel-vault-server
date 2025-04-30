@@ -9,7 +9,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
-use JuniorFontenele\LaravelVaultServer\Models\Client as ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel as ClientModel;
 
 class EloquentClientRepository implements ClientRepositoryInterface
 {

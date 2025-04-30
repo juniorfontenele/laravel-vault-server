@@ -16,9 +16,9 @@ use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent\EloquentClientRepository;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Models\Hash;
-use JuniorFontenele\LaravelVaultServer\Models\Key;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
@@ -63,9 +63,9 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Client::unguard();
-        Hash::unguard();
-        Key::unguard();
+        ClientModel::unguard();
+        HashModel::unguard();
+        KeyModel::unguard();
 
         $this->app->bind(ClientRepositoryInterface::class, EloquentClientRepository::class);
 

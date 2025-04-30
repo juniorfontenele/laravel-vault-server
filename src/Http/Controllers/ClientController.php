@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Http\Resources\KeyResource;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 
 class ClientController
 {
@@ -24,7 +24,7 @@ class ClientController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $client = Client::query()
+        $client = ClientModel::query()
             ->active()
             ->where('id', $clientId)
             ->firstOrFail();

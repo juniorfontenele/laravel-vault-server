@@ -5,22 +5,22 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Models\Hash;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
 
 class HashService
 {
-    public function getByUserId(string $userId): ?Hash
+    public function getByUserId(string $userId): ?HashModel
     {
         Event::dispatch('vault.hash.get', [$userId]);
 
-        return Hash::query()
+        return HashModel::query()
             ->where('user_id', $userId)
             ->first();
     }
 
-    public function store(string $clientId, string $userId, string $hash): Hash
+    public function store(string $clientId, string $userId, string $hash): HashModel
     {
-        $hashModel = Hash::query()
+        $hashModel = HashModel::query()
             ->where('user_id', $userId)
             ->first();
 
@@ -35,7 +35,7 @@ class HashService
 
         Event::dispatch('vault.hash.created', [$clientId, $userId]);
 
-        return Hash::create([
+        return HashModel::create([
             'created_by' => $clientId,
             'updated_by' => $clientId,
             'user_id' => $userId,
@@ -45,7 +45,7 @@ class HashService
 
     public function delete(string $userId): bool
     {
-        $hashModel = Hash::query()
+        $hashModel = HashModel::query()
             ->where('user_id', $userId)
             ->first();
 

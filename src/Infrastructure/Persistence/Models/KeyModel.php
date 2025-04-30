@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Models;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\KeyFactory;
 
-class Key extends Model
+class KeyModel extends Model
 {
     /** @use HasFactory<KeyFactory> */
     use HasFactory;
@@ -64,10 +64,10 @@ class Key extends Model
         return KeyFactory::new();
     }
 
-    /** @return BelongsTo<Client> */
+    /** @return BelongsTo<ClientModel> */
     public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(ClientModel::class);
     }
 
     /**

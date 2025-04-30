@@ -6,8 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 
 use Illuminate\Console\Command;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Models\Key;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
@@ -57,9 +57,9 @@ class VaultKeyManager extends Command
         return $action;
     }
 
-    protected function getClient(): Client
+    protected function getClient(): ClientModel
     {
-        if (Client::count() === 0) {
+        if (ClientModel::count() === 0) {
             $this->error('No clients found. Please create a client first.');
 
             exit(static::FAILURE);
@@ -67,7 +67,7 @@ class VaultKeyManager extends Command
 
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client',
-            options: fn (string $value) => Client::query()
+            options: fn (string $value) => ClientModel::query()
                 ->where('id', 'like', "%{$value}%")
                 ->orWhere('name', 'like', "%{$value}%")
                 ->get()
@@ -76,7 +76,7 @@ class VaultKeyManager extends Command
             required: true,
         );
 
-        $client = Client::where('id', $clientUuid)->first();
+        $client = ClientModel::where('id', $clientUuid)->first();
 
         if (! $client) {
             $this->error("Client with UUID {$clientUuid} not found.");
@@ -164,7 +164,7 @@ class VaultKeyManager extends Command
         exit(static::SUCCESS);
     }
 
-    protected function getKeyForClient(Client $client): Key
+    protected function getKeyForClient(ClientModel $client): KeyModel
     {
         $keys = $client->keys()->valid()->get();
 

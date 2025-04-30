@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Models;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\ClientFactory;
 
-class Client extends Model
+class ClientModel extends Model
 {
     /** @use HasFactory<ClientFactory> */
     use HasFactory;
@@ -51,16 +51,16 @@ class Client extends Model
         return ClientFactory::new();
     }
 
-    /** @return HasMany<Key> */
+    /** @return HasMany<KeyModel> */
     public function keys(): HasMany
     {
-        return $this->hasMany(Key::class);
+        return $this->hasMany(KeyModel::class);
     }
 
-    /** @return HasOne<Key> */
+    /** @return HasOne<KeyModel> */
     public function key(): HasOne
     {
-        return $this->hasOne(Key::class)
+        return $this->hasOne(KeyModel::class)
             ->orderByDesc('version')
             ->valid()
             ->latest('valid_from');

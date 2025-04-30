@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Models;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\HashFactory;
 
-class Hash extends Model
+class HashModel extends Model
 {
     /** @use HasFactory<HashFactory> */
     use HasFactory;
@@ -48,11 +48,11 @@ class Hash extends Model
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(Client::class, 'created_by', 'id');
+        return $this->belongsTo(ClientModel::class, 'created_by', 'id');
     }
 
     public function updater(): BelongsTo
     {
-        return $this->belongsTo(Client::class, 'updated_by', 'id');
+        return $this->belongsTo(ClientModel::class, 'updated_by', 'id');
     }
 }

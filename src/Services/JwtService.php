@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 
 class JwtService
 {
@@ -47,7 +47,7 @@ class JwtService
         if ($scopes !== []) {
             $scopes = array_map('strtolower', $scopes);
 
-            $client = Client::query()
+            $client = ClientModel::query()
                 ->active()
                 ->where('id', $payload['client_id'])
                 ->first();
