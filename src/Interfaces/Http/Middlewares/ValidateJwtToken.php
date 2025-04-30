@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
 
 class ValidateJwtToken
 {

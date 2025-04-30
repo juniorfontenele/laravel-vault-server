@@ -9,7 +9,7 @@ use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Cache;
 use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 
 class JwtService

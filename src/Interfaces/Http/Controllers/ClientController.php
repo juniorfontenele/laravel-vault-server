@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Resources\KeyResource;
 

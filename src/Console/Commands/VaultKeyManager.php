@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 
 use Illuminate\Console\Command;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 
