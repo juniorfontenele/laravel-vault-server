@@ -7,8 +7,8 @@ namespace JuniorFontenele\LaravelVaultServer\Interfaces\Http\Middlewares;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use JuniorFontenele\LaravelVaultServer\Exceptions\JwtException;
-use JuniorFontenele\LaravelVaultServer\Exceptions\VaultException;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Exceptions\JwtException;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Exceptions\VaultException;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
 
 class ValidateJwtToken
