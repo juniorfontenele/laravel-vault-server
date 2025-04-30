@@ -7,9 +7,6 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Providers;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
@@ -19,6 +16,9 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientM
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\KeyPairService;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultClientManagement;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultInstallCommand;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultKeyManager;
 use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Middlewares\ValidateJwtToken;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
