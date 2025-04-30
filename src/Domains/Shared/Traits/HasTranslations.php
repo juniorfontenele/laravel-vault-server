@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Shared\Traits;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Shared\Traits;
 
 trait HasTranslations
 {

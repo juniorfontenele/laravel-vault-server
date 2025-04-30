@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Shared\Contracts;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts;
 
 interface Translatable
 {

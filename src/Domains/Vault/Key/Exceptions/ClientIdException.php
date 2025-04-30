@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Exceptions;
 
-use JuniorFontenele\LaravelVaultServer\Shared\Contracts\Translatable;
-use JuniorFontenele\LaravelVaultServer\Shared\Traits\HasTranslations;
+use JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts\Translatable;
+use JuniorFontenele\LaravelVaultServer\Domains\Shared\Traits\HasTranslations;
 
 class ClientIdException extends \Exception implements Translatable
 {
