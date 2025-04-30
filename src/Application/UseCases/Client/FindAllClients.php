@@ -5,8 +5,8 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 
 class FindAllClients
 {

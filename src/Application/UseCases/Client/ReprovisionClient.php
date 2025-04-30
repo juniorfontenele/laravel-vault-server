@@ -5,8 +5,8 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientException;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
 class ReprovisionClient
 {

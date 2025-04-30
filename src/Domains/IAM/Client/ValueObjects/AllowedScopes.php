@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Enums\Scope;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\InvalidScopeException;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\InvalidScopeException;
 
 class AllowedScopes
 {

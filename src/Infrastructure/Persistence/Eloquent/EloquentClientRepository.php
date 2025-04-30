@@ -5,10 +5,10 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent;
 
 use Illuminate\Support\Facades\Hash;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ClientId;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Models\Client as ClientModel;
 
 class EloquentClientRepository implements ClientRepositoryInterface

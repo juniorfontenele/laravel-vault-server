@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientIdException;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientIdException;
 use Ramsey\Uuid\Uuid;
 
 class ClientId

@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories;
+namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 
 interface ClientRepositoryInterface
 {

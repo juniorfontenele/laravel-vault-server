@@ -11,7 +11,7 @@ use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClient;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
 class ClientManagerService
 {

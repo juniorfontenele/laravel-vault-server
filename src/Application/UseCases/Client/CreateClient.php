@@ -6,11 +6,11 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientDTO;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Entities\Client;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\Repositories\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\AllowedScopes;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ClientId;
-use JuniorFontenele\LaravelVaultServer\Domains\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
 
 class CreateClient
 {
