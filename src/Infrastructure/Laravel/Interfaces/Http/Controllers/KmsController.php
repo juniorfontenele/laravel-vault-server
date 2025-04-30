@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Interfaces\Http\Controllers;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers;
 
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Resources\KeyResource;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Resources\KeyResource;
 
 class KmsController
 {

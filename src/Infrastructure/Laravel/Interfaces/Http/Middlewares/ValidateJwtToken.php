@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Interfaces\Http\Middlewares;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Middlewares;
 
 use Closure;
 use Illuminate\Http\Request;

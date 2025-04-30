@@ -11,15 +11,15 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientReposi
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console\Commands\VaultClientManagement;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console\Commands\VaultInstallCommand;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console\Commands\VaultKeyManager;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent\EloquentClientRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\KeyPairService;
-use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultClientManagement;
-use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultInstallCommand;
-use JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands\VaultKeyManager;
-use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Middlewares\ValidateJwtToken;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
 {

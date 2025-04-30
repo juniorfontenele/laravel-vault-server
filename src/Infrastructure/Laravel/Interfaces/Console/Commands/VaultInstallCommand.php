@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Interfaces\Console\Commands;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console\Commands;
 
 use Illuminate\Console\Command;
 
