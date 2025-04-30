@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Key\Exceptions;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Exceptions;
 
 use JuniorFontenele\LaravelVaultServer\Shared\Contracts\Translatable;
 use JuniorFontenele\LaravelVaultServer\Shared\Traits\HasTranslations;

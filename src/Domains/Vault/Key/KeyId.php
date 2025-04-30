@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Key\Exceptions\KeyIdException;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Exceptions\KeyIdException;
 use Ramsey\Uuid\Uuid;
 
 class KeyId

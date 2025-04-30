@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Key\Repositories;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Key\Entities\Key;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key;
 
 interface KeyRepositoryInterface
 {

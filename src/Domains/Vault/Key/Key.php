@@ -2,12 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Key\Entities;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key;
 
 use DateTimeImmutable;
-use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\ClientId;
-use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\KeyId;
-use JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects\PublicKey;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\ValueObjects\ClientId;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\ValueObjects\PublicKey;
 
 class Key
 {

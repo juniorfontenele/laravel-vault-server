@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\Key\ValueObjects;
+namespace JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\ValueObjects;
 
-use JuniorFontenele\LaravelVaultServer\Domains\Key\Exceptions\PublicKeyException;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Exceptions\PublicKeyException;
 
 class PublicKey
 {
