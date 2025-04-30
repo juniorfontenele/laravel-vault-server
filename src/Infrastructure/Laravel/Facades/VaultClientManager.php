@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\ClientManagerService;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services\ClientManagerService;
 
 class VaultClientManager extends Facade
 {
