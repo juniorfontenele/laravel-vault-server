@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use JuniorFontenele\LaravelVaultServer\Services\JwtService;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\JwtService;
 
 class VaultJWT extends Facade
 {

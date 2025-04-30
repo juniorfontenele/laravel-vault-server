@@ -19,7 +19,7 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent\Eloqu
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
-use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\KeyPairService;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
 {

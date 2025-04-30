@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Services;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Services;
 
 use Illuminate\Support\Facades\Event;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;

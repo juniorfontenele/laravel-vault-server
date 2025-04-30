@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use JuniorFontenele\LaravelVaultServer\Services\HashService;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\HashService;
 
 class VaultHash extends Facade
 {
