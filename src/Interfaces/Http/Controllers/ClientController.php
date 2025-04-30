@@ -2,15 +2,15 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
+namespace JuniorFontenele\LaravelVaultServer\Interfaces\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Http\Resources\KeyResource;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Resources\KeyResource;
 
 class ClientController
 {

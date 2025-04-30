@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
+namespace JuniorFontenele\LaravelVaultServer\Interfaces\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
-use JuniorFontenele\LaravelVaultServer\Http\Resources\HashResource;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Resources\HashResource;
 
 class HashController
 {

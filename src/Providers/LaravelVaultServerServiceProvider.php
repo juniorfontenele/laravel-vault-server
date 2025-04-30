@@ -14,12 +14,12 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientReposi
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Eloquent\EloquentClientRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\HashModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Persistence\Models\KeyModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Services\KeyPairService;
+use JuniorFontenele\LaravelVaultServer\Interfaces\Http\Middlewares\ValidateJwtToken;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
 {
