@@ -8,7 +8,7 @@ use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 
-class FindAllInactiveClients
+class FindAllClientsUseCase
 {
     public function __construct(
         private readonly ClientRepositoryInterface $clientRepository,
@@ -25,6 +25,6 @@ class FindAllInactiveClients
             name: $client->name(),
             description: $client->description(),
             allowedScopes: $client->scopes()
-        ), $this->clientRepository->findAllInactiveClients());
+        ), $this->clientRepository->findAllClients());
     }
 }

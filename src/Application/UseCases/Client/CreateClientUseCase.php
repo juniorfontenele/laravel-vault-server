@@ -12,7 +12,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientReposi
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
 
-class CreateClient
+class CreateClientUseCase
 {
     public function __construct(
         protected ClientRepositoryInterface $clientRepository

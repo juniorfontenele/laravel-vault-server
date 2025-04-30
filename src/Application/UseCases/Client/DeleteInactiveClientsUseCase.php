@@ -8,11 +8,10 @@ use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 
-class FindAllActiveClients
+class DeleteInactiveClientsUseCase
 {
-    public function __construct(
-        private readonly ClientRepositoryInterface $clientRepository,
-    ) {
+    public function __construct(protected readonly ClientRepositoryInterface $clientRepository)
+    {
     }
 
     /**
@@ -20,11 +19,15 @@ class FindAllActiveClients
      */
     public function execute(): array
     {
+        $deletedClients = $this->clientRepository->findAllInactiveClients();
+
+        $this->clientRepository->deleteAllInactiveClients();
+
         return array_map(fn (Client $client) => new ClientResponseDTO(
             clientId: $client->clientId(),
             name: $client->name(),
+            allowedScopes: $client->scopes(),
             description: $client->description(),
-            allowedScopes: $client->scopes()
-        ), $this->clientRepository->findAllActiveClients());
+        ), $deletedClients);
     }
 }

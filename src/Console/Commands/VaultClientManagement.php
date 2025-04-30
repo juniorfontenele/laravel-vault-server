@@ -7,12 +7,12 @@ namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllActiveClients;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClients;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllInactiveClients;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClientsUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllActiveClientsUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllInactiveClientsUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 
@@ -136,7 +136,7 @@ class VaultClientManagement extends Command
 
     protected function deleteClient(): void
     {
-        $deleteClient = app(DeleteClient::class);
+        $deleteClient = app(DeleteClientUseCase::class);
         $clients = $this->getAllClients();
 
         if ($clients->count() === 0) {
@@ -163,7 +163,7 @@ class VaultClientManagement extends Command
 
     protected function cleanupClients(): void
     {
-        $deletedClients = collect(app(DeleteInactiveClients::class)->execute());
+        $deletedClients = collect(app(DeleteInactiveClientsUseCase::class)->execute());
 
         if ($deletedClients->count() === 0) {
             $this->info('No inactive clients found.');
@@ -195,7 +195,7 @@ class VaultClientManagement extends Command
             required: true,
         );
 
-        $reprovisionClient = app(ReprovisionClient::class);
+        $reprovisionClient = app(ReprovisionClientUseCase::class);
 
         $client = $reprovisionClient->execute($clientUuid);
 
@@ -210,7 +210,7 @@ class VaultClientManagement extends Command
      */
     protected function getAllActiveClients(): Collection
     {
-        return collect(app(FindAllActiveClients::class)->execute());
+        return collect(app(FindAllActiveClientsUseCase::class)->execute());
     }
 
     /**
@@ -220,7 +220,7 @@ class VaultClientManagement extends Command
      */
     protected function getAllInactiveClients(): Collection
     {
-        return collect(app(FindAllInactiveClients::class)->execute());
+        return collect(app(FindAllInactiveClientsUseCase::class)->execute());
     }
 
     /**
@@ -230,6 +230,6 @@ class VaultClientManagement extends Command
      */
     protected function getAllClients(): Collection
     {
-        return collect(app(FindAllClients::class)->execute());
+        return collect(app(FindAllClientsUseCase::class)->execute());
     }
 }

@@ -8,7 +8,7 @@ use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientRespo
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
-class ReprovisionClient
+class ReprovisionClientUseCase
 {
     public function __construct(protected readonly ClientRepositoryInterface $clientRepository)
     {

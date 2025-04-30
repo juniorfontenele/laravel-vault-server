@@ -7,10 +7,10 @@ namespace JuniorFontenele\LaravelVaultServer\Services;
 use Illuminate\Support\Facades\Event;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientDTO;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClient;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClient;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClients;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClient;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClientsUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
 class ClientManagerService
@@ -25,7 +25,7 @@ class ClientManagerService
      */
     public function createClient(string $name, array $allowedScopes = [], string $description = ''): CreateClientResponseDTO
     {
-        $createClient = app(CreateClient::class);
+        $createClient = app(CreateClientUseCase::class);
 
         $clientDTO = new CreateClientDTO(
             name: $name,
@@ -49,7 +49,7 @@ class ClientManagerService
      */
     public function generateProvisionToken(string $clientId): string
     {
-        $reprovision = app(ReprovisionClient::class);
+        $reprovision = app(ReprovisionClientUseCase::class);
 
         $client = $reprovision->execute($clientId);
 
@@ -66,7 +66,7 @@ class ClientManagerService
      */
     public function deleteClient(string $clientId): void
     {
-        $deleteClient = app(DeleteClient::class);
+        $deleteClient = app(DeleteClientUseCase::class);
 
         $deleteClient->execute($clientId);
 
@@ -80,7 +80,7 @@ class ClientManagerService
      */
     public function cleanupInactiveClients(): int
     {
-        $deleteInactiveClients = app(DeleteInactiveClients::class);
+        $deleteInactiveClients = app(DeleteInactiveClientsUseCase::class);
 
         $deletedClients = $deleteInactiveClients->execute();
 

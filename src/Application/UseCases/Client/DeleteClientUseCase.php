@@ -7,7 +7,7 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
-class DeleteClient
+class DeleteClientUseCase
 {
     public function __construct(protected readonly ClientRepositoryInterface $clientRepository)
     {
