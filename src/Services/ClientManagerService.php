@@ -15,6 +15,14 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientExcep
 
 class ClientManagerService
 {
+    public function __construct(
+        protected readonly CreateClientUseCase $createClientUseCase,
+        protected readonly DeleteClientUseCase $deleteClientUseCase,
+        protected readonly DeleteInactiveClientsUseCase $deleteInactiveClientsUseCase,
+        protected readonly ReprovisionClientUseCase $reprovisionClientUseCase,
+    ) {
+    }
+
     /**
      * Create a new client.
      *
@@ -25,15 +33,13 @@ class ClientManagerService
      */
     public function createClient(string $name, array $allowedScopes = [], string $description = ''): CreateClientResponseDTO
     {
-        $createClient = app(CreateClientUseCase::class);
-
         $clientDTO = new CreateClientDTO(
             name: $name,
             allowedScopes: $allowedScopes,
             description: $description,
         );
 
-        $client = $createClient->execute($clientDTO);
+        $client = $this->createClientUseCase->execute($clientDTO);
 
         Event::dispatch('vault.client.created', [$client]);
 
@@ -49,9 +55,7 @@ class ClientManagerService
      */
     public function generateProvisionToken(string $clientId): string
     {
-        $reprovision = app(ReprovisionClientUseCase::class);
-
-        $client = $reprovision->execute($clientId);
+        $client = $this->reprovisionClientUseCase->execute($clientId);
 
         Event::dispatch('vault.client.token.generated', [$client]);
 
@@ -66,9 +70,7 @@ class ClientManagerService
      */
     public function deleteClient(string $clientId): void
     {
-        $deleteClient = app(DeleteClientUseCase::class);
-
-        $deleteClient->execute($clientId);
+        $this->deleteClientUseCase->execute($clientId);
 
         Event::dispatch('vault.client.deleted', [$clientId]);
     }
@@ -80,9 +82,7 @@ class ClientManagerService
      */
     public function cleanupInactiveClients(): int
     {
-        $deleteInactiveClients = app(DeleteInactiveClientsUseCase::class);
-
-        $deletedClients = $deleteInactiveClients->execute();
+        $deletedClients = $this->deleteInactiveClientsUseCase->execute();
 
         Event::dispatch('vault.client.cleanup', [$deletedClients]);
 
