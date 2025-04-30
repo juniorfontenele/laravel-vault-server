@@ -54,7 +54,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "JuniorFontenele\\LaravelVaultServer\\Providers\\LaravelVaultServerServiceProvider"
+        "JuniorFontenele\\LaravelVaultServer\\Infrastructure\\Laravel\\Providers\\LaravelVaultServerServiceProvider"
       ],
       "dont-discover": [
         "orchestra/testbench",

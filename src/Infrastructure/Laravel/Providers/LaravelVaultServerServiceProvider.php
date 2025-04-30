@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Providers;
+namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
@@ -28,20 +28,20 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/vault.php');
+        $this->loadRoutesFrom(__DIR__ . '/../../../../routes/vault.php');
 
         $this->publishes([
-            __DIR__ . '/../../routes/vault.php' => base_path('routes/vault.php'),
+            __DIR__ . '/../../../../routes/vault.php' => base_path('routes/vault.php'),
         ], 'routes');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../../../database/migrations');
 
         $this->publishes([
-            __DIR__ . '/../../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../../../../database/migrations' => database_path('migrations'),
         ], 'migrations');
 
         $this->publishes([
-            __DIR__ . '/../../config/vault.php' => config_path('vault.php'),
+            __DIR__ . '/../../../../config/vault.php' => config_path('vault.php'),
         ], 'config');
 
         $this->app->singleton(KeyPairService::class, function ($app) {
@@ -69,7 +69,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
 
         $this->app->bind(ClientRepositoryInterface::class, EloquentClientRepository::class);
 
-        $this->mergeConfigFrom(__DIR__ . '/../../config/vault.php', 'vault');
+        $this->mergeConfigFrom(__DIR__ . '/../../../../config/vault.php', 'vault');
 
         if ($this->app->runningInConsole()) {
             $this->commands([
