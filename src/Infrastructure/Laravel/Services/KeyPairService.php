@@ -4,138 +4,143 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
-use phpseclib3\Crypt\RSA;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\CreateKeyDTO;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\CreateKeyResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\KeyResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\CleanupExpiredKeysUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\CleanupRevokedKeysUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\CreateKeyForClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\DeleteKeyUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\FindActiveKeyForClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\FindAllKeysForClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\FindAllNonRevokedKeysForClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\FindKeyByKeyIdUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\RevokeKeyUseCase;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Key\RotateKeyUseCase;
 
 class KeyPairService
 {
     /**
      * Rotate a key.
      *
-     * @param KeyModel $key
-     * @return array{0: KeyModel, 1: string}
+     * @param string $keyId
+     * @param int $keySize
+     * @param int $expiresIn
+     * @return CreateKeyResponseDTO
+     * @throws \Exception
      */
-    public function rotate(KeyModel $key, int $expiresIn = 365): array
+    public function rotate(string $keyId, int $keySize = 2048, int $expiresIn = 365): CreateKeyResponseDTO
     {
-        return DB::transaction(function () use ($key, $expiresIn) {
-            [$publicKey, $privateKey] = $this->generateKeyPair();
+        $createKeyResponseDTO = app(RotateKeyUseCase::class)->execute($keyId, $keySize, $expiresIn);
 
-            $newKey = $key->client->keys()->create([
-                'public_key' => $publicKey,
-                'valid_from' => now(),
-                'valid_until' => now()->addDays($expiresIn),
-                'is_revoked' => false,
-            ]);
+        Event::dispatch('vault.key.rotated', [$createKeyResponseDTO]);
 
-            $key->revoke();
-
-            Event::dispatch('vault.key.rotated', [$key, $newKey]);
-
-            return [$newKey, $privateKey];
-        });
+        return $createKeyResponseDTO;
     }
 
     /**
      * Create a new key for a client.
      *
-     * @param ClientModel $client
-     * @param int $bits
+     * @param string $clientId
+     * @param int $keySize
      * @param int $expiresIn
-     * @return array{0: KeyModel, 1: string}
+     * @return CreateKeyResponseDTO
+     * @throws \Exception
      */
-    public function createKeyForClient(ClientModel $client, int $bits = 2048, int $expiresIn = 365): array
+    public function createKeyForClient(string $clientId, int $keySize = 2048, int $expiresIn = 365): CreateKeyResponseDTO
     {
-        [$publicKey, $privateKey] = $this->generateKeyPair($bits);
+        $createKeyResponseDTO = app(CreateKeyForClientUseCase::class)->execute(new CreateKeyDTO(
+            clientId: $clientId,
+            keySize: $keySize,
+            expiresIn: $expiresIn,
+        ));
 
-        return DB::transaction(function () use ($client, $publicKey, $privateKey, $expiresIn) {
-            $client->keys()->valid()->each(fn (KeyModel $key) => $this->revokeKey($key));
+        Event::dispatch('vault.key.created', [$createKeyResponseDTO]);
 
-            $key = $client->keys()->create([
-                'public_key' => $publicKey,
-                'valid_from' => now(),
-                'valid_until' => now()->addDays($expiresIn),
-                'is_revoked' => false,
-            ]);
-
-            Event::dispatch('vault.key.created', [$key]);
-
-            return [$key, $privateKey];
-        });
-    }
-
-    /**
-     * Generate a new key pair.
-     *
-     * @return array{0: string, 1: string}
-     */
-    public function generateKeyPair(int $bits = 2048): array
-    {
-        $privateKey = RSA::createKey($bits);
-
-        return [
-            $privateKey->getPublicKey()->toString('PKCS8'),
-            $privateKey->toString('PKCS8'),
-        ];
+        return $createKeyResponseDTO;
     }
 
     /**
      * Find a key by its KID.
      *
      * @param string $kid
-     * @return KeyModel|null
+     * @return ?KeyResponseDTO
      */
-    public function findByKid(string $kid): ?KeyModel
+    public function findByKid(string $kid): ?KeyResponseDTO
     {
         Event::dispatch('vault.key.findByKid', [$kid]);
 
-        return KeyModel::query()->valid()->where('id', $kid)->first();
+        return app(FindKeyByKeyIdUseCase::class)->execute($kid);
     }
 
-    public function findByClientId(string $clientId): ?KeyModel
+    public function findByClientId(string $clientId): ?KeyResponseDTO
     {
         Event::dispatch('vault.key.findByClientId', [$clientId]);
 
-        $client = ClientModel::query()
-            ->active()
-            ->where('id', $clientId)
-            ->first();
+        return app(FindActiveKeyForClientUseCase::class)->execute($clientId);
+    }
 
-        if (empty($client)) {
-            return null;
-        }
+    /**
+     * Find all keys for a client.
+     *
+     * @param string $clientId
+     * @return KeyResponseDTO[]
+     */
+    public function findAllKeysByClientId(string $clientId): array
+    {
+        Event::dispatch('vault.key.findAllKeysByClientId', [$clientId]);
 
-        return $client->key;
+        return app(FindAllKeysForClientUseCase::class)->execute($clientId);
+    }
+
+    /**
+     * Find all non-revoked keys for a client.
+     *
+     * @param string $clientId
+     * @return KeyResponseDTO[]
+     */
+    public function findAllNonRevokedKeysByClientId(string $clientId): array
+    {
+        Event::dispatch('vault.key.findAllNonRevokedKeysByClientId', [$clientId]);
+
+        return app(FindAllNonRevokedKeysForClientUseCase::class)->execute($clientId);
     }
 
     /**
      * Revoke a key.
-     * @param KeyModel $key
+     * @param string $keyId
      * @return bool
      */
-    public function revokeKey(KeyModel $key): bool
+    public function revokeKey(string $keyId): bool
     {
-        $key->revoke();
+        try {
+            app(RevokeKeyUseCase::class)->execute($keyId);
 
-        Event::dispatch('vault.key.revoked', [$key->refresh()]);
+            Event::dispatch('vault.key.revoked', [$keyId]);
 
-        return true;
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
      * Delete a key.
-     * @param KeyModel $key
+     * @param string $keyId
      * @return bool
      */
-    public function deleteKey(KeyModel $key): bool
+    public function deleteKey(string $keyId): bool
     {
-        $key->delete();
+        try {
+            app(DeleteKeyUseCase::class)->execute($keyId);
 
-        Event::dispatch('vault.key.deleted', [$key]);
+            Event::dispatch('vault.key.deleted', [$keyId]);
 
-        return true;
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -144,19 +149,11 @@ class KeyPairService
      */
     public function cleanupExpiredKeys(): int
     {
-        $expired = KeyModel::query()->expired()->get();
+        $expiredCount = app(CleanupExpiredKeysUseCase::class)->execute();
 
-        if ($expired->isEmpty()) {
-            return 0;
-        }
+        Event::dispatch('vault.key.cleanupExpired', [$expiredCount]);
 
-        foreach ($expired as $key) {
-            $key->delete();
-        }
-
-        Event::dispatch('vault.key.cleanupExpired', [$expired]);
-
-        return $expired->count();
+        return $expiredCount;
     }
 
     /**
@@ -165,18 +162,10 @@ class KeyPairService
      */
     public function cleanupRevokedKeys(): int
     {
-        $revoked = KeyModel::query()->revoked()->get();
+        $revokedCount = app(CleanupRevokedKeysUseCase::class)->execute();
 
-        if ($revoked->isEmpty()) {
-            return 0;
-        }
+        Event::dispatch('vault.key.cleanupRevoked', [$revokedCount]);
 
-        foreach ($revoked as $key) {
-            $key->delete();
-        }
-
-        Event::dispatch('vault.key.cleanupRevoked', [$revoked]);
-
-        return $revoked->count();
+        return $revokedCount;
     }
 }

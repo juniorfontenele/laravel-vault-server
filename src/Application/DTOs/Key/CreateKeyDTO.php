@@ -8,18 +8,8 @@ class CreateKeyDTO
 {
     public function __construct(
         public readonly string $clientId,
-        public readonly int $days = 365,
+        public readonly int $keySize = 2048,
+        public readonly int $expiresIn = 365,
     ) {
-    }
-
-    /**
-     * @return array{client_id: string, days: int}
-     */
-    public function toArray(): array
-    {
-        return [
-            'client_id' => $this->clientId,
-            'days' => $this->days,
-        ];
     }
 }

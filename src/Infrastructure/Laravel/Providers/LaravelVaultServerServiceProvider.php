@@ -23,7 +23,6 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Larave
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services\KeyPairService;
 
 class LaravelVaultServerServiceProvider extends ServiceProvider
 {
@@ -47,10 +46,6 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../../../config/vault.php' => config_path('vault.php'),
         ], 'config');
-
-        $this->app->singleton(KeyPairService::class, function ($app) {
-            return new KeyPairService();
-        });
 
         $loader = AliasLoader::getInstance();
         $loader->alias('VaultKey', VaultKey::class);

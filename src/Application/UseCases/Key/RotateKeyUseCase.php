@@ -22,15 +22,15 @@ class RotateKeyUseCase
     ) {
     }
 
-    public function execute(string $keyId, int $days = 365): CreateKeyResponseDTO
+    public function execute(string $keyId, int $keySize = 2048, int $days = 365): CreateKeyResponseDTO
     {
         $key = $this->keyRepository->findKeyByKeyId($keyId);
 
-        if (!$key instanceof \JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key) {
+        if (! $key instanceof Key) {
             throw PublicKeyException::notFound($keyId);
         }
 
-        return $this->unitOfWork->execute(function () use ($key, $days) {
+        return $this->unitOfWork->execute(function () use ($key, $keySize, $days) {
             $nonRevokedKeys = $this->keyRepository->findAllNonRevokedKeysByClientId($key->clientId());
 
             if (count($nonRevokedKeys) > 0) {
@@ -40,7 +40,7 @@ class RotateKeyUseCase
                 }
             }
 
-            $privateKey = RSA::createKey(2048);
+            $privateKey = RSA::createKey($keySize);
 
             $newKey = new Key(
                 keyId: new KeyId(),

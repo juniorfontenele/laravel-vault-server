@@ -34,7 +34,7 @@ class CreateKeyForClientUseCase
                 $this->revokeKeyUseCase->execute($activeKey->keyId);
             }
 
-            $privateKey = RSA::createKey(2048);
+            $privateKey = RSA::createKey($createKeyDTO->keySize);
             $publicKeyString = $privateKey->getPublicKey()->toString('PKCS8');
             $privateKeyString = $privateKey->toString('PKCS8');
 
@@ -44,7 +44,7 @@ class CreateKeyForClientUseCase
                 publicKey: new PublicKey($publicKeyString),
                 version: $this->keyRepository->maxVersion($createKeyDTO->clientId) + 1,
                 validFrom: new \DateTimeImmutable(),
-                validUntil: (new \DateTimeImmutable())->modify("+{$createKeyDTO->days} days"),
+                validUntil: (new \DateTimeImmutable())->modify("+{$createKeyDTO->expiresIn} days"),
                 isRevoked: false,
             );
 

@@ -7,17 +7,17 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Key;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\KeyResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
 
-class FindActiveKeyForClientUseCase
+class FindKeyByKeyIdUseCase
 {
     public function __construct(
-        private readonly KeyRepositoryInterface $keyRepository,
+        protected readonly KeyRepositoryInterface $keyRepository,
     ) {
         //
     }
 
-    public function execute(string $clientId): ?KeyResponseDTO
+    public function execute(string $keyId): ?KeyResponseDTO
     {
-        $key = $this->keyRepository->findActiveKeyByClientId($clientId);
+        $key = $this->keyRepository->findKeyByKeyId($keyId);
 
         if (! $key) {
             return null;
