@@ -27,7 +27,7 @@ class KeyFactory extends Factory
 
         return [
             'public_key' => $publicKey,
-            'revoked' => false,
+            'is_revoked' => false,
             'valid_from' => now(),
             'valid_until' => now()->addDays(30),
         ];

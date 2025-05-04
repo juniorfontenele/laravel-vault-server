@@ -27,7 +27,7 @@ class KeyPairService
                 'public_key' => $publicKey,
                 'valid_from' => now(),
                 'valid_until' => now()->addDays($expiresIn),
-                'revoked' => false,
+                'is_revoked' => false,
             ]);
 
             $key->revoke();
@@ -57,7 +57,7 @@ class KeyPairService
                 'public_key' => $publicKey,
                 'valid_from' => now(),
                 'valid_until' => now()->addDays($expiresIn),
-                'revoked' => false,
+                'is_revoked' => false,
             ]);
 
             Event::dispatch('vault.key.created', [$key]);

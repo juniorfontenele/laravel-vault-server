@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignUuid('client_id')->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
             $table->longText('public_key');
             $table->unsignedBigInteger('version')->index();
-            $table->boolean('revoked')->index()->default(false);
+            $table->boolean('is_revoked')->index()->default(false);
             $table->timestamp('valid_from');
             $table->timestamp('valid_until');
             $table->timestamp('revoked_at')->nullable();

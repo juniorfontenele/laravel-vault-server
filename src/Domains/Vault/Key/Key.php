@@ -14,7 +14,7 @@ class Key
         protected KeyId $keyId,
         protected ClientId $clientId,
         protected PublicKey $publicKey,
-        protected int $keyVersion,
+        protected int $version,
         protected DateTimeImmutable $validFrom,
         protected DateTimeImmutable $validUntil,
         protected bool $isRevoked = false,
@@ -38,9 +38,9 @@ class Key
         return $this->publicKey->value();
     }
 
-    public function keyVersion(): int
+    public function version(): int
     {
-        return $this->keyVersion;
+        return $this->version;
     }
 
     public function validFrom(): DateTimeImmutable

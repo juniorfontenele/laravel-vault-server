@@ -54,13 +54,13 @@ class ClientModel extends Model
     /** @return HasMany<KeyModel> */
     public function keys(): HasMany
     {
-        return $this->hasMany(KeyModel::class);
+        return $this->hasMany(KeyModel::class, 'client_id');
     }
 
     /** @return HasOne<KeyModel> */
     public function key(): HasOne
     {
-        return $this->hasOne(KeyModel::class)
+        return $this->hasOne(KeyModel::class, 'client_id')
             ->orderByDesc('version')
             ->valid()
             ->latest('valid_from');

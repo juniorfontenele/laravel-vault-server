@@ -23,7 +23,7 @@ class KeyModel extends Model
     /** @var list<string> */
     protected $fillable = [
         'public_key',
-        'revoked',
+        'is_revoked',
         'valid_from',
         'valid_until',
     ];
@@ -31,16 +31,6 @@ class KeyModel extends Model
     protected $hidden = [
         'private_key',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (self $key) {
-            $maxVersion = $key->client->keys()
-                ->max('version') ?? 0;
-
-            $key->version = $maxVersion + 1;
-        });
-    }
 
     public function getTable(): string
     {
@@ -52,7 +42,7 @@ class KeyModel extends Model
     {
         return [
             'is_active' => 'boolean',
-            'revoked' => 'boolean',
+            'is_revoked' => 'boolean',
             'valid_from' => 'datetime',
             'valid_until' => 'datetime',
             'revoked_at' => 'datetime',
@@ -67,7 +57,7 @@ class KeyModel extends Model
     /** @return BelongsTo<ClientModel> */
     public function client(): BelongsTo
     {
-        return $this->belongsTo(ClientModel::class);
+        return $this->belongsTo(ClientModel::class, 'client_id');
     }
 
     /**
@@ -77,7 +67,7 @@ class KeyModel extends Model
      */
     public function revoke(): bool
     {
-        $this->revoked = true;
+        $this->is_revoked = true;
         $this->revoked_at = now();
         $this->save();
 
@@ -113,7 +103,7 @@ class KeyModel extends Model
      */
     public function isRevoked(): bool
     {
-        return $this->revoked;
+        return $this->is_revoked;
     }
 
     /**
@@ -142,7 +132,7 @@ class KeyModel extends Model
     #[Scope]
     protected function valid(Builder $query): void
     {
-        $query->where('revoked', false)
+        $query->where('is_revoked', false)
             ->where('valid_until', '>', now())
             ->where('valid_from', '<=', now());
     }
@@ -150,7 +140,7 @@ class KeyModel extends Model
     #[Scope]
     protected function revoked(Builder $query): void
     {
-        $query->where('revoked', true);
+        $query->where('is_revoked', true);
     }
 
     #[Scope]

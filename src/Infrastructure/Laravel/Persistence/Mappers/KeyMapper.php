@@ -18,7 +18,7 @@ class KeyMapper
             keyId: new KeyId($keyModel->id),
             clientId: new ClientId($keyModel->client_id),
             publicKey: new PublicKey($keyModel->public_key),
-            keyVersion: $keyModel->key_version,
+            version: $keyModel->version,
             validFrom: $keyModel->valid_from,
             validUntil: $keyModel->valid_until,
             isRevoked: $keyModel->is_revoked,
@@ -26,14 +26,14 @@ class KeyMapper
         );
     }
 
-    public static function toEloquent(Key $key): KeyModel
+    public static function toEloquent(Key $key, ?KeyModel $keyModel = null): KeyModel
     {
-        $keyModel = new KeyModel();
+        $keyModel = $keyModel ?? new KeyModel();
 
         $keyModel->id = $key->keyId();
         $keyModel->client_id = $key->clientId();
         $keyModel->public_key = $key->publicKey();
-        $keyModel->key_version = $key->keyVersion();
+        $keyModel->version = $key->version();
         $keyModel->valid_from = $key->validFrom();
         $keyModel->valid_until = $key->validUntil();
         $keyModel->is_revoked = $key->isRevoked();
