@@ -6,6 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Key;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\KeyResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key;
 
 class FindActiveKeyForClientUseCase
 {
@@ -19,7 +20,7 @@ class FindActiveKeyForClientUseCase
     {
         $key = $this->keyRepository->findActiveKeyByClientId($clientId);
 
-        if (! $key) {
+        if (! $key instanceof Key) {
             return null;
         }
 
