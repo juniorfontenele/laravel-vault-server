@@ -52,11 +52,6 @@ class PublicKey
 
         // Check if the content of the key is a valid base64 string
         $keyContent = preg_replace('/\s+/', '', $matches[1]);
-
-        if (base64_decode($keyContent, true) === false) {
-            return false;
-        }
-
-        return true;
+        return base64_decode($keyContent, true) !== false;
     }
 }

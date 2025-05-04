@@ -19,7 +19,7 @@ class RevokeKeyUseCase
     {
         $key = $this->keyRepository->findKeyByKeyId($keyId);
 
-        if (! $key) {
+        if (!$key instanceof \JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key) {
             throw PublicKeyException::notFound($keyId);
         }
 
