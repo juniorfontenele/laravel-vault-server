@@ -15,4 +15,11 @@ class PublicKeyException extends \Exception implements Translatable
     {
         return static::withTranslation('A chave pública não é válida.');
     }
+
+    public static function notFound(string $keyId): static
+    {
+        return static::withTranslation('A chave pública com o ID :keyId não foi encontrada.', [
+            'keyId' => $keyId,
+        ]);
+    }
 }
