@@ -5,12 +5,10 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Resources\KeyResource;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ProvisionClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 
 class ClientController
 {
@@ -24,33 +22,15 @@ class ClientController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $client = ClientModel::query()
-            ->active()
-            ->where('id', $clientId)
-            ->firstOrFail();
-
-        if ($client->provision_token === null) {
-            return response()->json(['error' => 'Client is already provisioned'], 403);
+        try {
+            $createKeyResponseDTO = app(ProvisionClientUseCase::class)
+                ->execute($clientId, $request->input('provision_token'));
+        } catch (ClientException $e) {
+            return response()->json(['error' => __('Failed to provision client: :message', ['message' => $e->getMessage()])], 422);
         }
 
-        $provisionToken = $request->input('provision_token');
+        Event::dispatch('vault.client.provisioned', [$clientId, $createKeyResponseDTO->keyId]);
 
-        if (! password_verify($provisionToken, $client->provision_token)) {
-            return response()->json(['error' => 'Invalid provision token'], 403);
-        }
-
-        return DB::transaction(function () use ($client) {
-            [$key, $privateKey] = VaultKey::createKeyForClient($client);
-
-            $client->update([
-                'provision_token' => null,
-            ]);
-
-            Event::dispatch('vault.client.provisioned', [$client, $key]);
-
-            $key->private_key = $privateKey;
-
-            return $key->toResource(KeyResource::class);
-        });
+        return response()->json($createKeyResponseDTO->toArray(), 201);
     }
 }

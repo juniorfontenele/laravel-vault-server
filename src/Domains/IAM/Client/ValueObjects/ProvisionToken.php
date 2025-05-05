@@ -22,4 +22,13 @@ class ProvisionToken
     {
         return $this->value();
     }
+
+    public function verify(ProvisionToken|string $userProvidedToken): bool
+    {
+        if ($userProvidedToken instanceof ProvisionToken) {
+            $userProvidedToken = $userProvidedToken->value();
+        }
+
+        return password_verify($userProvidedToken, $this->value());
+    }
 }

@@ -65,14 +65,23 @@ class Client
         return ! $this->isProvisioned();
     }
 
-    public function provision(): void
+    public function provision(ProvisionToken|string $userProvidedToken): void
     {
         if ($this->isProvisioned()) {
             throw ClientException::alreadyProvisioned($this->clientId());
         }
 
+        if (! $this->verifyProvisionToken($userProvidedToken)) {
+            throw ClientException::invalidProvisionToken($this->clientId());
+        }
+
         $this->provisionToken = null;
         $this->provisionedAt = new \DateTimeImmutable();
+    }
+
+    public function verifyProvisionToken(ProvisionToken|string $userProvidedToken): bool
+    {
+        return $this->provisionToken->verify($userProvidedToken);
     }
 
     public function reprovision(): void
