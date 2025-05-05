@@ -9,6 +9,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel as ClientModel;
 
 class EloquentClientRepository implements ClientRepositoryInterface
@@ -27,6 +28,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
             allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
             isActive: $model->is_active,
             description: $model->description,
+            provisionToken: $model->provision_token ? new ProvisionToken($model->provision_token) : null,
             provisionedAt: $model->provisioned_at,
         );
     }
@@ -64,6 +66,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
                 isActive: $model->is_active,
                 description: $model->description,
+                provisionToken: $model->provision_token ? new ProvisionToken($model->provision_token) : null,
                 provisionedAt: $model->provisioned_at,
             ))->toArray();
     }
@@ -82,6 +85,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
                 isActive: $model->is_active,
                 description: $model->description,
+                provisionToken: $model->provision_token ? new ProvisionToken($model->provision_token) : null,
                 provisionedAt: $model->provisioned_at,
             ))->toArray();
     }
@@ -99,6 +103,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
                 isActive: $model->is_active,
                 description: $model->description,
+                provisionToken: $model->provision_token ? new ProvisionToken($model->provision_token) : null,
                 provisionedAt: $model->provisioned_at,
             ))->toArray();
     }

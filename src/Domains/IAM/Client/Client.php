@@ -39,7 +39,7 @@ class Client
 
     public function provisionToken(): ?string
     {
-        return $this->provisionToken?->__toString();
+        return $this->provisionToken?->plainValue();
     }
 
     public function provisionedAt(): ?\DateTimeImmutable

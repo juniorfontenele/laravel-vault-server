@@ -8,14 +8,29 @@ class ProvisionToken
 {
     protected string $value;
 
-    public function __construct()
+    protected ?string $plainValue;
+
+    public function __construct(?string $value = null)
     {
-        $this->value = bin2hex(random_bytes(16));
+        if (is_null($value)) {
+            $this->plainValue = bin2hex(random_bytes(16));
+
+            $this->value = password_hash($this->plainValue, PASSWORD_BCRYPT);
+        } else {
+            $this->value = $value;
+
+            $this->plainValue = null;
+        }
     }
 
     public function value(): string
     {
         return $this->value;
+    }
+
+    public function plainValue(): string
+    {
+        return $this->plainValue;
     }
 
     public function __toString(): string
