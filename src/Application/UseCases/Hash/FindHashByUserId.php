@@ -6,6 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Hash\HashResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Hash;
 
 class FindHashByUserId
 {
@@ -19,7 +20,7 @@ class FindHashByUserId
     {
         $hash = $this->hashRepository->findActiveHashByUserId($userId);
 
-        if (! $hash) {
+        if (! $hash instanceof Hash) {
             return null;
         }
 
