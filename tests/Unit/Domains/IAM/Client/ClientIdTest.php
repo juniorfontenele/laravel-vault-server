@@ -16,14 +16,14 @@ class ClientIdTest extends TestCase
         $uuid = Uuid::uuid4()->toString();
         $clientId = new ClientId($uuid);
 
-        $this->assertEquals($uuid, $clientId->value);
+        $this->assertEquals($uuid, $clientId->value());
     }
 
     public function testCreateClientIdWithoutUuidGeneratesOne(): void
     {
         $clientId = new ClientId();
 
-        $this->assertTrue(Uuid::isValid($clientId->value));
+        $this->assertTrue(Uuid::isValid($clientId->value()));
     }
 
     public function testCreateClientIdWithInvalidUuidThrowsException(): void

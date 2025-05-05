@@ -43,7 +43,7 @@ class ClientTest extends TestCase
 
     public function testClientCreation(): void
     {
-        $this->assertEquals($this->clientId->value, $this->client->clientId());
+        $this->assertEquals($this->clientId->value(), $this->client->clientId());
         $this->assertEquals('Test Client', $this->client->name());
         $this->assertEquals('Test Description', $this->client->description());
         $this->assertCount(2, $this->client->scopes());

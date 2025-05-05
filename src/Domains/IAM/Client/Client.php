@@ -24,7 +24,7 @@ class Client
 
     public function clientId(): string
     {
-        return $this->clientId->value;
+        return $this->clientId->value();
     }
 
     public function name(): string
