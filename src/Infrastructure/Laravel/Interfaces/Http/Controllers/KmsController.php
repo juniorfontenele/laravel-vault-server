@@ -5,37 +5,34 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers;
 
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Resources\KeyResource;
 
 class KmsController
 {
     public function show(string $kid)
     {
-        $key = VaultKey::findByKid($kid);
+        $keyResponseDTO = VaultKey::findByKid($kid);
 
-        if (! $key) {
+        if (! $keyResponseDTO) {
             return response()->json([
                 'message' => 'No key found.',
             ], 404);
         }
 
-        return $key->toResource(KeyResource::class);
+        return response()->json($keyResponseDTO->toArray());
     }
 
     public function rotate(string $kid)
     {
-        $key = VaultKey::findByKid($kid);
+        $keyResponseDTO = VaultKey::findByKid($kid);
 
-        if (! $key) {
+        if (! $keyResponseDTO) {
             return response()->json([
                 'message' => 'No key found.',
             ], 404);
         }
 
-        [$newKey, $privateKey] = VaultKey::rotate($key);
+        $createKeyResponseDTO = VaultKey::rotate($keyResponseDTO->keyId);
 
-        $newKey->private_key = $privateKey;
-
-        return $newKey->toResource(KeyResource::class);
+        return response()->json($createKeyResponseDTO->toArray(), 201);
     }
 }

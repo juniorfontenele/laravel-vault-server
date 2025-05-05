@@ -84,17 +84,17 @@ class JwtService
             throw new JwtException('Kid not found in JWT');
         }
 
-        $key = VaultKey::findByKid($kid);
+        $keyResponseDTO = VaultKey::findByKid($kid);
 
-        if (empty($key)) {
+        if (empty($keyResponseDTO)) {
             throw new VaultException('Public key not found for kid: ' . $kid);
         }
 
-        $decodedJwt = JWT::decode($jwt, new Key($key->public_key, 'RS256'));
+        $decodedJwt = JWT::decode($jwt, new Key($keyResponseDTO->publicKey, 'RS256'));
 
         $payload = (array) $decodedJwt;
 
-        if ($payload['client_id'] !== $key->client_id) {
+        if ($payload['client_id'] !== $keyResponseDTO->clientId) {
             throw new JwtException('Invalid client_id');
         }
 
