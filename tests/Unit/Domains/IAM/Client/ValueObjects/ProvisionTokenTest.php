@@ -30,7 +30,7 @@ class ProvisionTokenTest extends TestCase
         $token1 = new ProvisionToken();
         $token2 = new ProvisionToken();
 
-        $this->assertTrue($token1->verify($token1->plainValue()));
-        $this->assertFalse($token1->verify($token2->plainValue()));
+        $this->assertTrue($token1->verify($token1));
+        $this->assertFalse($token1->verify($token2));
     }
 }
