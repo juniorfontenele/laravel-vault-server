@@ -5,14 +5,14 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Models\Hash;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<Hash>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<HashModel>
  */
 class HashFactory extends Factory
 {
-    protected $model = Hash::class;
+    protected $model = HashModel::class;
 
     /**
      * Define the model's default state.

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('allowed_scopes')->nullable();
             $table->boolean('is_active')->index()->default(true);
             $table->string('provision_token')->nullable();
+            $table->timestamp('provisioned_at')->nullable();
             $table->timestamps();
         });
 
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->foreignUuid('client_id')->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
             $table->longText('public_key');
             $table->unsignedBigInteger('version')->index();
-            $table->boolean('revoked')->index()->default(false);
+            $table->boolean('is_revoked')->index()->default(false);
             $table->timestamp('valid_from');
             $table->timestamp('valid_until');
             $table->timestamp('revoked_at')->nullable();
@@ -38,8 +39,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id')->index();
             $table->longText('hash');
-            $table->uuid('created_by')->index();
-            $table->uuid('updated_by')->index();
+            $table->unsignedInteger('version')->index();
+            $table->boolean('is_revoked')->index()->default(false);
+            $table->timestamp('revoked_at')->nullable();
             $table->timestamps();
         });
     }

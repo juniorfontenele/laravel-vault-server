@@ -3,10 +3,10 @@
 declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Route;
-use JuniorFontenele\LaravelVaultServer\Enums\Permission;
-use JuniorFontenele\LaravelVaultServer\Http\Controllers\ClientController;
-use JuniorFontenele\LaravelVaultServer\Http\Controllers\HashController;
-use JuniorFontenele\LaravelVaultServer\Http\Controllers\KmsController;
+use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\ClientController;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\HashController;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\KmsController;
 
 Route::group([
     'prefix' => config('vault.url_prefix', 'vault'),
@@ -17,19 +17,19 @@ Route::group([
         ->name('client.provision');
 
     Route::get('/hash/{userId}', [HashController::class, 'show'])
-        ->middleware(['vault.jwt:' . Permission::HASHES_READ->value])
+        ->middleware(['vault.jwt:' . Scope::HASHES_READ->value])
         ->name('hash.get');
 
     Route::post('/hash/{userId}', [HashController::class, 'store'])
-        ->middleware(['vault.jwt:' . Permission::HASHES_CREATE->value])
+        ->middleware(['vault.jwt:' . Scope::HASHES_CREATE->value])
         ->name('hash.store');
 
     Route::delete('/hash/{userId}', [HashController::class, 'destroy'])
-        ->middleware(['vault.jwt:' . Permission::HASHES_DELETE->value])
+        ->middleware(['vault.jwt:' . Scope::HASHES_DELETE->value])
         ->name('hash.destroy');
 
     Route::post('/kms/{kid}/rotate', [KmsController::class, 'rotate'])
-        ->middleware(['vault.jwt:' . Permission::KEYS_ROTATE->value])
+        ->middleware(['vault.jwt:' . Scope::KEYS_ROTATE->value])
         ->name('kms.rotate');
 
     Route::get('/kms/{kid}', [KmsController::class, 'show'])

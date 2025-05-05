@@ -35,7 +35,7 @@ class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
-            \JuniorFontenele\LaravelVaultServer\Providers\LaravelVaultServerServiceProvider::class,
+            \JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Providers\LaravelVaultServerServiceProvider::class,
         ];
     }
 
