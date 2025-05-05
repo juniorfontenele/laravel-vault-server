@@ -13,7 +13,7 @@ class KeyIdException extends \Exception implements Translatable
 
     public static function invalidKeyId(string $keyId): static
     {
-        return static::withTranslation('O id da chave :id é inválido.', [
+        return static::withTranslation('O id :id da chave é inválido.', [
             'id' => $keyId,
         ]);
     }

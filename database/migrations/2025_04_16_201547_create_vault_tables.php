@@ -39,8 +39,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id')->index();
             $table->longText('hash');
-            $table->uuid('created_by')->index();
-            $table->uuid('updated_by')->index();
+            $table->unsignedInteger('version')->index();
+            $table->boolean('is_revoked')->index()->default(false);
+            $table->timestamp('revoked_at')->nullable();
             $table->timestamps();
         });
     }

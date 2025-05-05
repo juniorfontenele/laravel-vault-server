@@ -7,20 +7,18 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\H
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultHash;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Resources\HashResource;
 
 class HashController
 {
     public function show(Request $request, string $userId)
     {
-        $hashModel = VaultHash::getByUserId($userId);
+        $hashResponseDTO = VaultHash::getByUserId($userId);
 
-        if (! $hashModel) {
+        if (! $hashResponseDTO) {
             return response()->json(['error' => 'Hash not found'], 404);
         }
 
-        return $hashModel->toResource(HashResource::class);
+        return response()->json($hashResponseDTO->toArray());
     }
 
     public function store(Request $request, string $userId)
@@ -33,23 +31,22 @@ class HashController
             return response()->json(['error' => $validator->errors()], 422);
         }
 
-        $decodedToken = VaultJWT::decode($request->bearerToken());
-
-        $hashModel = VaultHash::store(
-            $decodedToken->client_id,
+        $hashResponseDTO = VaultHash::store(
             $userId,
-            $request->input('hash')
+            $validator->validated()['hash'],
         );
 
-        return $hashModel->toResource(HashResource::class);
+        return response()->json($hashResponseDTO->toArray(), 201);
     }
 
     public function destroy(string $userId)
     {
-        if (VaultHash::delete($userId)) {
-            return response()->noContent();
-        }
+        try {
+            VaultHash::delete($userId);
 
-        return response()->json(['error' => 'Failed to delete hash for user ' . $userId], 422);
+            return response()->noContent();
+        } catch (\Exception $e) {
+            return response()->json(['error' => __('Failed to delete hash for user :userId', ['userId' => $userId])], 422);
+        }
     }
 }

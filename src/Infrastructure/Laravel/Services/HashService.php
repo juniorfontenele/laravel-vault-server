@@ -5,58 +5,35 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services;
 
 use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Application\DTOs\Hash\HashResponseDTO;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\DeleteHashesForUserId;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\FindHashByUserId;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\StoreHashForUserId;
 
 class HashService
 {
-    public function getByUserId(string $userId): ?HashModel
+    public function getByUserId(string $userId): ?HashResponseDTO
     {
         Event::dispatch('vault.hash.get', [$userId]);
 
-        return HashModel::query()
-            ->where('user_id', $userId)
-            ->first();
+        return app(FindHashByUserId::class)
+            ->execute($userId);
     }
 
-    public function store(string $clientId, string $userId, string $hash): HashModel
+    public function store(string $userId, string $hash): HashResponseDTO
     {
-        $hashModel = HashModel::query()
-            ->where('user_id', $userId)
-            ->first();
+        $hashResponseDTO = app(StoreHashForUserId::class)->execute($userId, $hash);
 
-        if ($hashModel) {
-            Event::dispatch('vault.hash.updated', [$clientId, $userId]);
+        Event::dispatch('vault.hash.created', [$userId]);
 
-            $hashModel->update(['updated_by' => $clientId, 'hash' => $hash]);
-            $hashModel->refresh();
-
-            return $hashModel;
-        }
-
-        Event::dispatch('vault.hash.created', [$clientId, $userId]);
-
-        return HashModel::create([
-            'created_by' => $clientId,
-            'updated_by' => $clientId,
-            'user_id' => $userId,
-            'hash' => $hash,
-        ]);
+        return $hashResponseDTO;
     }
 
-    public function delete(string $userId): bool
+    public function delete(string $userId): void
     {
-        $hashModel = HashModel::query()
-            ->where('user_id', $userId)
-            ->first();
-
-        if (! $hashModel) {
-            return false;
-        }
-
-        $hashModel->delete();
+        app(DeleteHashesForUserId::class)
+            ->execute($userId);
 
         Event::dispatch('vault.hash.deleted', [$userId]);
-
-        return true;
     }
 }
