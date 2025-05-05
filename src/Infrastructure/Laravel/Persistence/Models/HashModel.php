@@ -4,10 +4,11 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\HashFactory;
 
 class HashModel extends Model
@@ -20,8 +21,9 @@ class HashModel extends Model
     protected $fillable = [
         'user_id',
         'hash',
-        'created_by',
-        'updated_by',
+        'version',
+        'is_revoked',
+        'revoked_at',
     ];
 
     protected $hidden = [
@@ -32,7 +34,8 @@ class HashModel extends Model
     protected function casts(): array
     {
         return [
-            //
+            'is_revoked' => 'boolean',
+            'revoked_at' => 'datetime',
         ];
     }
 
@@ -46,13 +49,15 @@ class HashModel extends Model
         return HashFactory::new();
     }
 
-    public function creator(): BelongsTo
+    #[Scope]
+    protected function nonRevoked(Builder $query)
     {
-        return $this->belongsTo(ClientModel::class, 'created_by', 'id');
+        $query->where('is_revoked', false);
     }
 
-    public function updater(): BelongsTo
+    #[Scope]
+    protected function revoked(Builder $query)
     {
-        return $this->belongsTo(ClientModel::class, 'updated_by', 'id');
+        $query->where('is_revoked', true);
     }
 }

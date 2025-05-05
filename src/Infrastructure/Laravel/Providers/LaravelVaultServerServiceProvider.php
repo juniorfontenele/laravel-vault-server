@@ -9,6 +9,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts\UnitOfWorkInterface;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
@@ -18,6 +19,7 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Console\Commands\VaultKeyManager;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentClientRepository;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentHashRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentKeyRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\LaravelUnitOfWork;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
@@ -68,6 +70,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
 
         $this->app->bind(ClientRepositoryInterface::class, EloquentClientRepository::class);
         $this->app->bind(KeyRepositoryInterface::class, EloquentKeyRepository::class);
+        $this->app->bind(HashRepositoryInterface::class, EloquentHashRepository::class);
         $this->app->bind(UnitOfWorkInterface::class, LaravelUnitOfWork::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../../../../config/vault.php', 'vault');
