@@ -9,14 +9,24 @@ use Ramsey\Uuid\Uuid;
 
 class ClientId
 {
-    public readonly string $value;
+    protected readonly string $value;
 
     public function __construct(?string $value = null)
     {
         $this->value = $value ?? Uuid::uuid7()->toString();
 
-        if (! Uuid::isValid($this->value)) {
-            throw ClientIdException::invalidClientId($this->value);
+        if (! Uuid::isValid($this->value())) {
+            throw ClientIdException::invalidClientId($this->value());
         }
+    }
+
+    public function value(): string
+    {
+        return $this->value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->value();
     }
 }

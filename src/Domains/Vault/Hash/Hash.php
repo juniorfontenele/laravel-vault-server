@@ -48,10 +48,4 @@ class Hash
     {
         return $this->revokedAt;
     }
-
-    public function revoke(): void
-    {
-        $this->isRevoked = true;
-        $this->revokedAt = new \DateTimeImmutable();
-    }
 }
