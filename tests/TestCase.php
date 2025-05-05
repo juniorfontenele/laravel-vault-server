@@ -4,15 +4,19 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Tests;
 
+use Carbon\CarbonImmutable;
+use Firebase\JWT\JWT;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Date;
+use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ProvisionClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-
-use function Orchestra\Testbench\workbench_path;
+use Ramsey\Uuid\Uuid;
 
 class TestCase extends OrchestraTestCase
 {
-    protected $enablesPackageDiscoveries = false;
+    protected $enablesPackageDiscoveries = true;
 
     protected bool $loadWorkbenchMigrations = false;
 
@@ -21,11 +25,16 @@ class TestCase extends OrchestraTestCase
         parent::setUp();
 
         $this->setUpDatabase($this->app);
-    }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
+        // Always run package migrations for feature tests
+        if (str_contains(get_class($this), 'Feature')) {
+            $this->loadVaultMigrations();
+        }
+
+        // For tests that explicitly set this flag
+        if ($this->loadWorkbenchMigrations) {
+            $this->loadVaultMigrations();
+        }
     }
 
     /**
@@ -58,7 +67,12 @@ class TestCase extends OrchestraTestCase
                 'database' => ':memory:',
                 'prefix' => '',
             ]);
+
+            // Configure the vault table prefix
+            $config->set('vault.migrations.table_prefix', 'vault_');
         });
+
+        Date::use(CarbonImmutable::class);
     }
 
     /**
@@ -70,27 +84,69 @@ class TestCase extends OrchestraTestCase
     {
         $schema = $app['db']->connection()->getSchemaBuilder();
 
-        // Create tables
-
+        // Create basic tables needed for tests
         $schema->create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email');
         });
     }
 
-    protected function defineDatabaseMigrations()
+    /**
+     * Load vault migrations manually
+     */
+    protected function loadVaultMigrations(): void
     {
-        if (! $this->loadWorkbenchMigrations) {
-            return;
-        }
+        // Find all migration files in the package's migrations directory
+        $migrationPath = realpath(dirname(__DIR__) . '/database/migrations');
 
-        $this->loadMigrationsFrom(
-            workbench_path('database/migrations')
-        );
+        if ($migrationPath) {
+            $this->loadMigrationsFrom($migrationPath);
+        }
     }
 
     protected function getLaravelVersion()
     {
         return (float) app()->version();
+    }
+
+    protected function getJwtToken(): string
+    {
+        $client = VaultClientManager::createClient(
+            name: 'Test Client',
+            allowedScopes: ['keys:read', 'keys:rotate', 'keys:delete', 'hashes:read', 'hashes:create', 'hashes:delete'],
+        );
+
+        $createKeyResponseDTO = app(ProvisionClientUseCase::class)->execute(
+            clientId: $client->clientId,
+            provisionToken: $client->provisionToken,
+        );
+
+        $jwtPayload = [
+            'jti' => Uuid::uuid7()->toString(),
+            'nonce' => bin2hex(random_bytes(16)),
+            'iss' => 'testing',
+            'iat' => time(),
+            'exp' => time() + now()->addMinutes(5)->timestamp,
+            'client_id' => $client->clientId,
+            'scopes' => $client->allowedScopes,
+            'kid' => $createKeyResponseDTO->keyId,
+        ];
+
+        $token = JWT::encode(
+            $jwtPayload,
+            $createKeyResponseDTO->privateKey,
+            'RS256',
+            $createKeyResponseDTO->keyId
+        );
+
+        return $token;
+    }
+
+    protected function updateAuthorizationHeaders()
+    {
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->getJwtToken(),
+            'Accept' => 'application/json',
+        ]);
     }
 }

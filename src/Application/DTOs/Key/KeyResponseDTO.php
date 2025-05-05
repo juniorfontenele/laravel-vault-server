@@ -31,7 +31,7 @@ class KeyResponseDTO
             'valid_from' => $this->validFrom->format('Y-m-d H:i:s'),
             'valid_until' => $this->validUntil->format('Y-m-d H:i:s'),
             'is_revoked' => $this->isRevoked,
-            'revoked_at' => $this->revokedAt->format('Y-m-d H:i:s'),
+            'revoked_at' => $this->revokedAt?->format('Y-m-d H:i:s'),
         ];
     }
 }

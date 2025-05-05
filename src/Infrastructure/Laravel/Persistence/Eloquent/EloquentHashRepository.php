@@ -6,6 +6,8 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\
 
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Hash;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\HashId;
+use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\ValueObjects\UserId;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
 
 class EloquentHashRepository implements HashRepositoryInterface
@@ -23,8 +25,8 @@ class EloquentHashRepository implements HashRepositoryInterface
         }
 
         return new Hash(
-            hashId: $nonRevokedHash->id,
-            userId: $nonRevokedHash->user_id,
+            hashId: new HashId($nonRevokedHash->id),
+            userId: new UserId($nonRevokedHash->user_id),
             hash: $nonRevokedHash->hash,
             version: $nonRevokedHash->version,
             isRevoked: $nonRevokedHash->is_revoked,
@@ -71,8 +73,8 @@ class EloquentHashRepository implements HashRepositoryInterface
             ->get()
             ->map(
                 static fn (HashModel $hashModel): Hash => new Hash(
-                    hashId: $hashModel->id,
-                    userId: $hashModel->user_id,
+                    hashId: new HashId($hashModel->id),
+                    userId: new UserId($hashModel->user_id),
                     hash: $hashModel->hash,
                     version: $hashModel->version,
                     isRevoked: $hashModel->is_revoked,
@@ -93,8 +95,8 @@ class EloquentHashRepository implements HashRepositoryInterface
             ->get()
             ->map(
                 static fn (HashModel $hashModel): Hash => new Hash(
-                    hashId: $hashModel->id,
-                    userId: $hashModel->user_id,
+                    hashId: new HashId($hashModel->id),
+                    userId: new UserId($hashModel->user_id),
                     hash: $hashModel->hash,
                     version: $hashModel->version,
                     isRevoked: $hashModel->is_revoked,
@@ -114,8 +116,8 @@ class EloquentHashRepository implements HashRepositoryInterface
             ->get()
             ->map(
                 static fn (HashModel $hashModel): Hash => new Hash(
-                    hashId: $hashModel->id,
-                    userId: $hashModel->user_id,
+                    hashId: new HashId($hashModel->id),
+                    userId: new UserId($hashModel->user_id),
                     hash: $hashModel->hash,
                     version: $hashModel->version,
                     isRevoked: $hashModel->is_revoked,
@@ -134,8 +136,8 @@ class EloquentHashRepository implements HashRepositoryInterface
             ->get()
             ->map(
                 static fn (HashModel $hashModel): Hash => new Hash(
-                    hashId: $hashModel->id,
-                    userId: $hashModel->user_id,
+                    hashId: new HashId($hashModel->id),
+                    userId: new UserId($hashModel->user_id),
                     hash: $hashModel->hash,
                     version: $hashModel->version,
                     isRevoked: $hashModel->is_revoked,
