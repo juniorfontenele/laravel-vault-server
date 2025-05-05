@@ -81,7 +81,7 @@ class Client
 
     public function verifyProvisionToken(ProvisionToken|string $userProvidedToken): bool
     {
-        return $this->provisionToken->verify($userProvidedToken);
+        return $this->provisionToken?->verify($userProvidedToken);
     }
 
     public function reprovision(): void
