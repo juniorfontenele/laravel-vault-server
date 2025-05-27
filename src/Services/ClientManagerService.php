@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services;
+namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\Event;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;

@@ -17,9 +17,9 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloque
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentHashRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentKeyRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\LaravelUnitOfWork;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services\ClientManagerService;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services\JwtService;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Services\KeyPairService;
+use JuniorFontenele\LaravelVaultServer\Services\ClientManagerService;
+use JuniorFontenele\LaravelVaultServer\Services\JwtService;
+use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
 class LaravelVaultServerServiceProviderTest extends TestCase
