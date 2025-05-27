@@ -7,10 +7,10 @@ namespace JuniorFontenele\LaravelVaultServer\Tests\Unit\Domains\IAM\Client;
 use DateTimeImmutable;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
 class ClientTest extends TestCase

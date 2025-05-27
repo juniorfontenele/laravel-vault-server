@@ -33,20 +33,20 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../../../../routes/vault.php');
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/vault.php');
 
         $this->publishes([
-            __DIR__ . '/../../../../routes/vault.php' => base_path('routes/vault.php'),
+            __DIR__ . '/../../routes/vault.php' => base_path('routes/vault.php'),
         ], 'routes');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../../../../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
 
         $this->publishes([
-            __DIR__ . '/../../../../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../../database/migrations' => database_path('migrations'),
         ], 'migrations');
 
         $this->publishes([
-            __DIR__ . '/../../../../config/vault.php' => config_path('vault.php'),
+            __DIR__ . '/../../config/vault.php' => config_path('vault.php'),
         ], 'config');
 
         $loader = AliasLoader::getInstance();
@@ -73,7 +73,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         $this->app->bind(HashRepositoryInterface::class, EloquentHashRepository::class);
         $this->app->bind(UnitOfWorkInterface::class, LaravelUnitOfWork::class);
 
-        $this->mergeConfigFrom(__DIR__ . '/../../../../config/vault.php', 'vault');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/vault.php', 'vault');
 
         if ($this->app->runningInConsole()) {
             $this->commands([

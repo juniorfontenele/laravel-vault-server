@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client;
 
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 
 class Client
 {

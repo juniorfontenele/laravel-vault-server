@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Tests\Unit\Domains\IAM\Client\ValueObjects;
 
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\InvalidScopeException;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Exceptions\InvalidScopeException;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
 class AllowedScopesTest extends TestCase

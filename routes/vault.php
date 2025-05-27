@@ -3,7 +3,7 @@
 declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Route;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Http\Controllers\ClientController;
 use JuniorFontenele\LaravelVaultServer\Http\Controllers\HashController;
 use JuniorFontenele\LaravelVaultServer\Http\Controllers\KmsController;

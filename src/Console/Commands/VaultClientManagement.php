@@ -13,7 +13,7 @@ use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllActive
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllInactiveClientsUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClientUseCase;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 
 use function Laravel\Prompts\multiselect;

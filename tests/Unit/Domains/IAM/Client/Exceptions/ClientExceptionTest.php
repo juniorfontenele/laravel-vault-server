@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Tests\Unit\Domains\IAM\Client\Exceptions;
 
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
 class ClientExceptionTest extends TestCase

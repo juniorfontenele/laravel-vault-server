@@ -6,7 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Application\UseCases\Client;
 
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 
 class ReprovisionClientUseCase
 {

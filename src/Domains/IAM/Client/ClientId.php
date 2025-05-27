@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client;
 
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientIdException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientIdException;
 use Ramsey\Uuid\Uuid;
 
 class ClientId

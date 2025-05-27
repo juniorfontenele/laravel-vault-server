@@ -38,6 +38,7 @@ class ClientModel extends Model
             'is_active' => 'boolean',
             'allowed_scopes' => 'array',
             'provisioned_at' => 'datetime',
+            'provision_token' => 'hashed',
         ];
     }
 

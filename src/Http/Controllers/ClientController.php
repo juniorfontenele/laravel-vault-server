@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ProvisionClientUseCase;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 
 class ClientController
 {

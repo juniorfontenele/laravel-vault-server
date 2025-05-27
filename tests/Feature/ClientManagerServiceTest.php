@@ -6,7 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Tests\Feature;
 
 use Illuminate\Support\Facades\Event;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 

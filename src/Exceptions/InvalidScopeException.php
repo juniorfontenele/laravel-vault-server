@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions;
+namespace JuniorFontenele\LaravelVaultServer\Exceptions;
 
 use InvalidArgumentException;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts\Translatable;
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Traits\HasTranslations;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 
 final class InvalidScopeException extends InvalidArgumentException implements Translatable
 {

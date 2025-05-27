@@ -7,7 +7,7 @@ namespace JuniorFontenele\LaravelVaultServer\Tests\Unit\Application\UseCases\Cli
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Client;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Exceptions\ClientException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 use Mockery;
 use Mockery\MockInterface;
