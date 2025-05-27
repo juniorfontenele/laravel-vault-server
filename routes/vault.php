@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Route;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Enums\Scope;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\ClientController;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\HashController;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Controllers\KmsController;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\ClientController;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\HashController;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\KmsController;
 
 Route::group([
     'prefix' => config('vault.url_prefix', 'vault'),
