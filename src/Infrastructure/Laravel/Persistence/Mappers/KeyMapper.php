@@ -8,7 +8,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\KeyId;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\ValueObjects\ClientId;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\ValueObjects\PublicKey;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
 
 class KeyMapper
 {

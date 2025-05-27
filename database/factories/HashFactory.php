@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Models\HashModel;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<HashModel>

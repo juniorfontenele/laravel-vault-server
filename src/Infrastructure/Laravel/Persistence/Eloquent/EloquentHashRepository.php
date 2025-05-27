@@ -8,7 +8,7 @@ use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashReposito
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Hash;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\HashId;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\ValueObjects\UserId;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Models\HashModel;
 
 class EloquentHashRepository implements HashRepositoryInterface
 {

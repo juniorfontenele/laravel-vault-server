@@ -7,8 +7,8 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Mappers\KeyMapper;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\ClientModel;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
 
 class EloquentKeyRepository implements KeyRepositoryInterface
 {
