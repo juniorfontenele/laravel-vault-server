@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades;
+namespace JuniorFontenele\LaravelVaultServer\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
+use JuniorFontenele\LaravelVaultServer\Services\HashService;
 
-class VaultKey extends Facade
+class VaultHash extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -16,6 +16,6 @@ class VaultKey extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return KeyPairService::class;
+        return HashService::class;
     }
 }

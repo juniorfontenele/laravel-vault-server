@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\KeyResponseDTO;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;

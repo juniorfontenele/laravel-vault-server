@@ -10,7 +10,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Date;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ProvisionClientUseCase;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Ramsey\Uuid\Uuid;
 

@@ -9,9 +9,9 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientReposi
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts\UnitOfWorkInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultJWT;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentClientRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentHashRepository;

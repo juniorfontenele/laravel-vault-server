@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Tests\Feature\Console\Commands;
 
 use Illuminate\Support\Facades\Artisan;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultClientManager;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
 class VaultClientManagementTest extends TestCase

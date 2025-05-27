@@ -6,7 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Interfaces\H
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Facades\VaultHash;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 
 class HashController
 {
