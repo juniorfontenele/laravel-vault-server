@@ -4,37 +4,28 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Actions\Client;
 
+use JuniorFontenele\LaravelVaultServer\Data\Client\ClientCreatedData;
 use JuniorFontenele\LaravelVaultServer\Data\Client\CreateClientData;
+use JuniorFontenele\LaravelVaultServer\Events\Client\VaultClientCreated;
 use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
 
 class CreateClientAction
 {
-    public function execute(CreateClientData $data): ClientModel
+    public function execute(CreateClientData $data): ClientCreatedData
     {
-        $validated = validator($data->toArray(), $this->rules())->validate();
+        $client = ClientModel::create($data->toArray());
 
-        $client = new ClientModel();
-        $client->name = $validated['name'];
-        $client->allowed_scopes = $validated['allowed_scopes'];
-        $client->description = $validated['description'];
-        $client->provision_token = bin2hex(random_bytes(16));
-        $client->save();
+        $clientCreatedData = new ClientCreatedData(
+            id: $client->id,
+            name: $client->name,
+            allowed_scopes: $client->allowed_scopes,
+            provision_token: $data->provision_token,
+            description: $client->description,
+            created_at: $client->created_at,
+        );
 
-        return $client;
-    }
+        event(new VaultClientCreated($clientCreatedData));
 
-    /**
-     * Validation rules for the client creation data.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules(): array
-    {
-        return [
-            'name' => ['required', 'string', 'max:255'],
-            'allowed_scopes' => ['required', 'array'],
-            'allowed_scopes.*' => ['string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ];
+        return $clientCreatedData;
     }
 }

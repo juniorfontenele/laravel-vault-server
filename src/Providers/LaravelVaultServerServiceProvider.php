@@ -4,9 +4,12 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Providers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\ServiceProvider;
+use JuniorFontenele\LaravelVaultServer\Console\Commands\Play;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
@@ -57,6 +60,8 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         /** @var Router $router */
         $router = app('router');
         $router->aliasMiddleware('vault.jwt', ValidateJwtToken::class);
+
+        Date::use(CarbonImmutable::class);
     }
 
     /**
@@ -80,6 +85,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
                 VaultKeyManager::class,
                 VaultClientManagement::class,
                 VaultInstallCommand::class,
+                Play::class,
             ]);
         }
     }

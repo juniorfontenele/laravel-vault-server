@@ -5,14 +5,14 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\Event;
+use JuniorFontenele\LaravelVaultServer\Actions\Client\CreateClientAction;
 use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientDTO;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\CreateClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\CreateClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClientsUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
 use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClientUseCase;
+use JuniorFontenele\LaravelVaultServer\Data\Client\ClientCreatedData;
+use JuniorFontenele\LaravelVaultServer\Data\Client\CreateClientData;
 use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
 
 class ClientManagerService
@@ -23,21 +23,19 @@ class ClientManagerService
      * @param string $name
      * @param string[] $allowedScopes
      * @param string $description
-     * @return CreateClientResponseDTO
+     * @return ClientCreatedData
      */
-    public function createClient(string $name, array $allowedScopes = [], string $description = ''): CreateClientResponseDTO
+    public function createClient(string $name, array $allowedScopes = [], string $description = ''): ClientCreatedData
     {
-        $clientDTO = new CreateClientDTO(
-            name: $name,
-            allowedScopes: $allowedScopes,
-            description: $description,
-        );
+        $clientData = CreateClientData::fromArray([
+            'name' => $name,
+            'allowed_scopes' => $allowedScopes,
+            'description' => $description,
+        ]);
 
-        $client = app(CreateClientUseCase::class)->execute($clientDTO);
+        $clientCreatedData = app(CreateClientAction::class)->execute($clientData);
 
-        Event::dispatch('vault.client.created', [$client]);
-
-        return $client;
+        return $clientCreatedData;
     }
 
     /**

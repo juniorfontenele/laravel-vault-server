@@ -101,15 +101,15 @@ class VaultClientManagement extends Command
             exit(static::FAILURE);
         }
 
-        $client = VaultClientManager::createClient(
+        $clientCreatedData = VaultClientManager::createClient(
             name: $name,
             allowedScopes: $scopes,
             description: $description,
         );
 
         $this->info("Client '{$name}' created successfully.");
-        $this->info("Client ID: {$client->clientId}");
-        $this->info("Provision Token: {$client->provisionToken}");
+        $this->info("Client ID: {$clientCreatedData->id}");
+        $this->info("Provision Token: {$clientCreatedData->provision_token}");
     }
 
     protected function listClients(): void
