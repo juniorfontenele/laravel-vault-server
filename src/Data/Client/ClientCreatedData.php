@@ -5,13 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Data\Client;
 
 use Carbon\CarbonImmutable;
+use JuniorFontenele\LaravelVaultServer\Data\AbstractData;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 
-final readonly class ClientCreatedData
+class ClientCreatedData extends AbstractData
 {
     /**
      * @param string $id
      * @param string $name
-     * @param string[] $allowed_scopes
+     * @param Scope[] $allowed_scopes
      * @param string $provision_token
      * @param string|null $description
      * @param CarbonImmutable|null $created_at
@@ -29,22 +31,32 @@ final readonly class ClientCreatedData
 
     public function toArray(): array
     {
-        return get_object_vars($this);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'allowed_scopes' => array_map(fn (Scope $scope) => $scope->value, $this->allowed_scopes),
+            'provision_token' => $this->provision_token,
+            'description' => $this->description,
+            'created_at' => $this->created_at?->toIso8601String(),
+        ];
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return self
+     * @return static
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             id: $data['id'],
             name: $data['name'],
-            allowed_scopes: $data['allowed_scopes'],
+            allowed_scopes: array_map(
+                fn ($scope) => Scope::from($scope),
+                $data['allowed_scopes']
+            ),
             provision_token: $data['provision_token'],
             description: $data['description'] ?? null,
-            created_at: $data['created_at'] ?? null,
+            created_at: isset($data['created_at']) ? CarbonImmutable::parse($data['created_at']) : null,
         );
     }
 }

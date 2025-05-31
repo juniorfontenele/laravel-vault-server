@@ -5,13 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Data\Client;
 
 use Carbon\CarbonImmutable;
+use JuniorFontenele\LaravelVaultServer\Data\AbstractData;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 
-final readonly class ClientData
+class ClientData extends AbstractData
 {
     /**
      * @param string $id
      * @param string $name
-     * @param string[] $allowed_scopes
+     * @param Scope[] $allowed_scopes
      * @param string|null $description
      * @param CarbonImmutable|null $provisioned_at
      * @param CarbonImmutable|null $created_at
@@ -31,23 +33,42 @@ final readonly class ClientData
 
     public function toArray(): array
     {
-        return get_object_vars($this);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'allowed_scopes' => array_map(fn (Scope $scope) => $scope->value, $this->allowed_scopes),
+            'description' => $this->description,
+            'provisioned_at' => $this->provisioned_at?->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return self
+     * @return static
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             id: $data['id'],
             name: $data['name'],
-            allowed_scopes: $data['allowed_scopes'],
+            allowed_scopes: array_map(
+                fn ($scope) => Scope::from($scope),
+                $data['allowed_scopes']
+            ),
             description: $data['description'] ?? null,
-            provisioned_at: $data['provisioned_at'] ?? null,
-            created_at: $data['created_at'] ?? null,
-            updated_at: $data['updated_at'] ?? null,
+            provisioned_at: isset($data['provisioned_at']) ? CarbonImmutable::parse($data['provisioned_at']) : null,
+            created_at: isset($data['created_at']) ? CarbonImmutable::parse($data['created_at']) : null,
+            updated_at: isset($data['updated_at']) ? CarbonImmutable::parse($data['updated_at']) : null,
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

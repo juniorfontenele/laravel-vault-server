@@ -4,18 +4,17 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Data\Client;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Validation\Rules\Enum;
-use JsonSerializable;
+use JuniorFontenele\LaravelVaultServer\Data\AbstractData;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 
-final readonly class CreateClientData implements JsonSerializable, Arrayable
+class CreateClientData extends AbstractData
 {
     public string $provision_token;
 
     /**
      * @param string $name
-     * @param string[] $allowed_scopes
+     * @param Scope[] $allowed_scopes
      * @param string|null $description
      */
     public function __construct(
@@ -24,22 +23,25 @@ final readonly class CreateClientData implements JsonSerializable, Arrayable
         public ?string $description = null,
     ) {
         $this->provision_token = bin2hex(random_bytes(16));
-
-        validator($this->toArray(), $this->rules())->validate();
     }
 
     public function toArray(): array
     {
-        return get_object_vars($this);
+        return [
+            'name' => $this->name,
+            'allowed_scopes' => array_map(fn (Scope $scope) => $scope->value, $this->allowed_scopes),
+            'description' => $this->description,
+            'provision_token' => $this->provision_token,
+        ];
     }
 
     /**
      * @param array<string, mixed> $data
-     * @return self
+     * @return static
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
-        return new self(
+        return new static(
             name: $data['name'],
             allowed_scopes: $data['allowed_scopes'],
             description: $data['description'] ?? null,
