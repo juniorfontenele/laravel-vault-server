@@ -4,26 +4,38 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\HashFactory;
 
+/**
+ * @property-read string $user_id
+ * @property string $hash
+ * @property bool $is_revoked
+ * @property CarbonImmutable|null $revoked_at
+ * @property int $version
+ * @property-read Client $creator
+ * @property-read Client $updater
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ */
 class HashModel extends Model
 {
     /** @use HasFactory<HashFactory> */
     use HasFactory;
-    use HasUuids;
+
+    protected $primaryKey = 'user_id';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     /** @var list<string> */
     protected $fillable = [
         'user_id',
         'hash',
-        'version',
-        'is_revoked',
-        'revoked_at',
     ];
 
     protected $hidden = [
@@ -35,7 +47,9 @@ class HashModel extends Model
     {
         return [
             'is_revoked' => 'boolean',
-            'revoked_at' => 'datetime',
+            'revoked_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 
@@ -49,15 +63,19 @@ class HashModel extends Model
         return HashFactory::new();
     }
 
-    #[Scope]
-    protected function nonRevoked(Builder $query)
+    /**
+     * @return BelongsTo<Client>
+     */
+    public function creator(): BelongsTo
     {
-        $query->where('is_revoked', false);
+        return $this->belongsTo(Client::class, 'created_by');
     }
 
-    #[Scope]
-    protected function revoked(Builder $query)
+    /**
+     * @return BelongsTo<Client>
+     */
+    public function updater(): BelongsTo
     {
-        $query->where('is_revoked', true);
+        return $this->belongsTo(Client::class, 'updated_by');
     }
 }

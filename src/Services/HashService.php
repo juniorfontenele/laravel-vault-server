@@ -4,36 +4,65 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
-use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Hash\HashResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\DeleteHashesForUserId;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\FindHashByUserId;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Hash\StoreHashForUserId;
+use JuniorFontenele\LaravelVaultServer\Events\Hash\HashDeleted;
+use JuniorFontenele\LaravelVaultServer\Events\Hash\HashRetrieved;
+use JuniorFontenele\LaravelVaultServer\Events\Hash\HashStored;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
+use JuniorFontenele\LaravelVaultServer\Models\HashModel;
+use JuniorFontenele\LaravelVaultServer\Queries\Hash\Filters\HashForUserId;
+use JuniorFontenele\LaravelVaultServer\Queries\Hash\HashQueryBuilder;
 
 class HashService
 {
-    public function getByUserId(string $userId): ?HashResponseDTO
+    /**
+     * Retrieve a hash by user ID.
+     *
+     * @param string $userId The ID of the user.
+     * @return HashModel|null The hash model if found, null otherwise.
+     */
+    public function get(string $userId): ?HashModel
     {
-        Event::dispatch('vault.hash.get', [$userId]);
+        $hash = (new HashQueryBuilder())
+            ->addFilter(new HashForUserId($userId))
+            ->build()
+            ->first();
 
-        return app(FindHashByUserId::class)
-            ->execute($userId);
+        event(new HashRetrieved($userId));
+
+        return $hash;
     }
 
-    public function store(string $userId, string $hash): HashResponseDTO
+    /**
+     * Store a hash for a user.
+     *
+     * @param string $userId The ID of the user.
+     * @param string $hash The hash to be stored.
+     * @return HashModel The stored hash model.
+     * @throws HashStoreException If the hash could not be stored.
+     */
+    public function store(string $userId, string $hash): HashModel
     {
-        $hashResponseDTO = app(StoreHashForUserId::class)->execute($userId, $hash);
+        $hash = HashModel::create([
+            'user_id' => $userId,
+            'hash' => $hash,
+        ]);
 
-        Event::dispatch('vault.hash.created', [$userId]);
+        if (! $hash) {
+            throw new HashStoreException($userId);
+        }
 
-        return $hashResponseDTO;
+        event(new HashStored($userId));
+
+        return $hash;
     }
 
     public function delete(string $userId): void
     {
-        app(DeleteHashesForUserId::class)
-            ->execute($userId);
+        (new HashQueryBuilder())
+            ->addFilter(new HashForUserId($userId))
+            ->build()
+            ->delete();
 
-        Event::dispatch('vault.hash.deleted', [$userId]);
+        event(new HashDeleted($userId));
     }
 }

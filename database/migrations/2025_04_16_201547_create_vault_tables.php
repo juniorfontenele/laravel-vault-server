@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->json('allowed_scopes')->nullable();
+            $table->json('allowed_scopes');
             $table->boolean('is_active')->index()->default(true);
             $table->string('provision_token')->nullable();
             $table->timestamp('provisioned_at')->nullable();
@@ -36,12 +36,10 @@ return new class extends Migration
         });
 
         Schema::create($tablePrefix . 'hashes', function (Blueprint $table) use ($tablePrefix) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id')->index();
+            $table->uuid('user_id')->primary();
             $table->longText('hash');
-            $table->unsignedInteger('version')->index();
-            $table->boolean('is_revoked')->index()->default(false);
-            $table->timestamp('revoked_at')->nullable();
+            $table->foreignUuid('created_by')->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignUuid('updated_by')->nullable()->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
