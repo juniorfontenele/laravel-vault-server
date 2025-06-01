@@ -4,28 +4,51 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Actions\Client;
 
-use JuniorFontenele\LaravelVaultServer\Data\Client\ClientCreatedData;
-use JuniorFontenele\LaravelVaultServer\Data\Client\CreateClientData;
-use JuniorFontenele\LaravelVaultServer\Events\Client\VaultClientCreated;
+use Illuminate\Validation\Rules\Enum;
+use JuniorFontenele\LaravelVaultServer\Artifacts\NewClient;
+use JuniorFontenele\LaravelVaultServer\Concerns\HasValidation;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientCreated;
 use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
 
 class CreateClientAction
 {
-    public function execute(CreateClientData $data): ClientCreatedData
+    use HasValidation;
+
+    public function __construct(protected GenerateProvisionTokenAction $generateProvisionTokenAction)
     {
-        $client = ClientModel::create($data->toArray());
+        //
+    }
 
-        $clientCreatedData = new ClientCreatedData(
-            id: $client->id,
-            name: $client->name,
-            allowed_scopes: $client->allowed_scopes,
-            provision_token: $data->provision_token,
-            description: $client->description,
-            created_at: $client->created_at,
+    public function execute(string $name, array $allowedScopes, ?string $description = null): NewClient
+    {
+        $provisionToken = $this->generateProvisionTokenAction->execute();
+
+        $validated = $this->validate([
+            'name' => $name,
+            'allowed_scopes' => $allowedScopes,
+            'description' => $description,
+            'provision_token' => $provisionToken,
+        ]);
+
+        $client = ClientModel::create($validated->toArray());
+
+        event(new ClientCreated($client));
+
+        return new NewClient(
+            $client,
+            $validated->provision_token,
         );
+    }
 
-        event(new VaultClientCreated($clientCreatedData));
-
-        return $clientCreatedData;
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'allowed_scopes' => ['required', 'array'],
+            'allowed_scopes.*' => ['required', new Enum(Scope::class)],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'provision_token' => ['required', 'string', 'size:64'],
+        ];
     }
 }

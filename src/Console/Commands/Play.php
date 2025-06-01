@@ -7,7 +7,6 @@ namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 use Illuminate\Console\Command;
 use JuniorFontenele\LaravelVaultServer\Actions\Client\CreateClientAction;
 use JuniorFontenele\LaravelVaultServer\Actions\Client\ListClientsAction;
-use JuniorFontenele\LaravelVaultServer\Data\Client\CreateClientData;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Filters\ClientFilter;
 
@@ -30,22 +29,19 @@ class Play extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(CreateClientAction $createClient, ListClientsAction $listClients): void
     {
-        $clientData = CreateClientData::createAndValidate([
-            'name' => 'Test Client',
-            'allowed_scopes' => [Scope::KEYS_READ, Scope::HASHES_CREATE],
-            'description' => 'This is a test client.',
-        ]);
+        $client = $createClient->execute(
+            name: 'Test Client',
+            allowedScopes: [Scope::KEYS_READ, Scope::KEYS_ROTATE],
+            description: 'This is a test client.',
+        );
+        dump($client);
 
-        $client = app(CreateClientAction::class)->execute($clientData);
+        $filter = new ClientFilter();
 
-        dump($client->toArray());
+        $clients = $listClients->execute($filter);
 
-        // $filter = new ClientFilter();
-
-        // $clients = app(ListClientsAction::class)->execute($filter);
-
-        // dump($clients);
+        dump($clients->toArray());
     }
 }
