@@ -166,7 +166,7 @@ class KeyPairService
      * Generate a new RSA key pair.
      *
      * @param int $keySize
-     * @return array{private_key: string, public_key: string}
+     * @return array{0: string, 1: string}
      */
     private function generateKeyPair(int $keySize = 2048): array
     {
@@ -174,8 +174,8 @@ class KeyPairService
         $publicKey = $privateKey->getPublicKey()->toString('PKCS8');
 
         return [
-            'private_key' => $privateKey->toString('PKCS8'),
-            'public_key' => $publicKey,
+            $privateKey->toString('PKCS8'),
+            $publicKey,
         ];
     }
 
