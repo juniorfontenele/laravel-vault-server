@@ -21,7 +21,7 @@ use function Laravel\Prompts\text;
 
 class VaultKeyManager extends Command
 {
-    protected $signature = 'vault:key
+    protected $signature = 'vault-server:key
         {action? : Action to perform (generate|rotate|list|revoke|cleanup)}
         {--client= : Client UUID}
         {--key-id= : Key ID (for delete)}

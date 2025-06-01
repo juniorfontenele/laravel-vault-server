@@ -25,7 +25,7 @@ class VaultClientManagement extends Command
      *
      * @var string
      */
-    protected $signature = 'vault:client
+    protected $signature = 'vault-server:client
         {action? : Action to perform (create|delete|list|cleanup|provision)}
         {--client= : Client UUID (for delete)}
         {--name= : Client name (for create)}
