@@ -13,7 +13,7 @@ use JuniorFontenele\LaravelVaultServer\Events\Client\ClientDeleted;
 use JuniorFontenele\LaravelVaultServer\Events\Client\ClientTokenGenerated;
 use JuniorFontenele\LaravelVaultServer\Events\Client\InactiveClientsCleanup;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
 
@@ -48,7 +48,7 @@ class ClientManagerService
             ]
         )->validate();
 
-        $client = ClientModel::create($validated);
+        $client = Client::create($validated);
 
         event(new ClientCreated($client));
 
@@ -67,7 +67,7 @@ class ClientManagerService
      */
     public function reprovisionClient(string $clientId): NewClient
     {
-        $client = ClientModel::find($clientId);
+        $client = Client::find($clientId);
 
         if (is_null($client)) {
             throw new ClientNotFoundException($clientId);
@@ -96,7 +96,7 @@ class ClientManagerService
      */
     public function deleteClient(string $clientId): void
     {
-        $client = ClientModel::find($clientId);
+        $client = Client::find($clientId);
 
         if (is_null($client)) {
             throw new ClientNotFoundException($clientId);
@@ -131,11 +131,11 @@ class ClientManagerService
     /**
      * Get all clients.
      *
-     * @return Collection<ClientModel>
+     * @return Collection<Client>
      */
     public function all(): Collection
     {
-        return ClientModel::all();
+        return Client::all();
     }
 
     private function generateProvisionToken(): string

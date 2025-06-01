@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -12,8 +13,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\ClientFactory;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope as ClientScope;
 
-class ClientModel extends Model
+/**
+ * @property-read string $id
+ * @property string $name
+ * @property string $description
+ * @property bool $is_active
+ * @property ClientScope[] $allowed_scopes
+ * @property string|null $provision_token
+ * @property CarbonImmutable|null $provisioned_at
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property-read KeyModel|null $key
+ * @property-read KeyModel[] $keys
+ */
+class Client extends Model
 {
     /** @use HasFactory<ClientFactory> */
     use HasFactory;
@@ -37,8 +52,10 @@ class ClientModel extends Model
         return [
             'is_active' => 'boolean',
             'allowed_scopes' => 'array',
-            'provisioned_at' => 'datetime',
+            'provisioned_at' => 'immutable_datetime',
             'provision_token' => 'hashed',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 

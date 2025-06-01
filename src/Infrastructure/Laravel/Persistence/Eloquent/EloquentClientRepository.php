@@ -10,13 +10,13 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ClientId;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\AllowedScopes;
 use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\ValueObjects\ProvisionToken;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel as ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client as Client;
 
 class EloquentClientRepository implements ClientRepositoryInterface
 {
     public function findClientByClientId(string $clientId): ?Client
     {
-        $model = ClientModel::query()->find($clientId);
+        $model = Client::query()->find($clientId);
 
         if (! $model) {
             return null;
@@ -35,7 +35,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
 
     public function save(Client $clientEntity): void
     {
-        $model = ClientModel::query()->find($clientEntity->clientId()) ?? new ClientModel();
+        $model = Client::query()->find($clientEntity->clientId()) ?? new Client();
 
         $model->id = $clientEntity->clientId();
         $model->name = $clientEntity->name();
@@ -49,7 +49,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
 
     public function delete(Client $clientEntity): void
     {
-        ClientModel::query()->where('id', $clientEntity->clientId())->delete();
+        Client::query()->where('id', $clientEntity->clientId())->delete();
     }
 
     /**
@@ -57,10 +57,10 @@ class EloquentClientRepository implements ClientRepositoryInterface
      */
     public function findAllInactiveClients(): array
     {
-        return ClientModel::query()
+        return Client::query()
             ->inactive()
             ->get()
-            ->map(fn (ClientModel $model) => new Client(
+            ->map(fn (Client $model) => new Client(
                 clientId: new ClientId($model->id),
                 name: $model->name,
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
@@ -76,10 +76,10 @@ class EloquentClientRepository implements ClientRepositoryInterface
      */
     public function findAllActiveClients(): array
     {
-        return ClientModel::query()
+        return Client::query()
             ->active()
             ->get()
-            ->map(fn (ClientModel $model) => new Client(
+            ->map(fn (Client $model) => new Client(
                 clientId: new ClientId($model->id),
                 name: $model->name,
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
@@ -95,9 +95,9 @@ class EloquentClientRepository implements ClientRepositoryInterface
      */
     public function findAllClients(): array
     {
-        return ClientModel::query()
+        return Client::query()
             ->get()
-            ->map(fn (ClientModel $model) => new Client(
+            ->map(fn (Client $model) => new Client(
                 clientId: new ClientId($model->id),
                 name: $model->name,
                 allowedScopes: AllowedScopes::fromStringArray($model->allowed_scopes),
@@ -110,7 +110,7 @@ class EloquentClientRepository implements ClientRepositoryInterface
 
     public function deleteAllInactiveClients(): void
     {
-        ClientModel::query()
+        Client::query()
             ->inactive()
             ->delete();
     }

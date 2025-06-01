@@ -9,7 +9,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 
 class ClientCreated
 {
@@ -20,7 +20,7 @@ class ClientCreated
     /**
      * Create a new event instance.
      */
-    public function __construct(public ClientModel $client)
+    public function __construct(public Client $client)
     {
         //
     }

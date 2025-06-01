@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
@@ -119,7 +119,7 @@ class VaultClientManagement extends Command
             return;
         }
 
-        $rows = $clients->map(function (ClientModel $client): array {
+        $rows = $clients->map(function (Client $client): array {
             return [
                 'ID' => $client->id,
                 'Name' => $client->name,
@@ -144,10 +144,10 @@ class VaultClientManagement extends Command
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to delete',
             options: fn (string $value) => $clients
-                ->filter(function (ClientModel $client) use ($value): bool {
+                ->filter(function (Client $client) use ($value): bool {
                     return str_contains($client->id, $value) || str_contains($client->name, $value);
                 })
-                ->mapWithKeys(fn (ClientModel $client): array => [$client->id => "{$client->name} - {$client->id}"])
+                ->mapWithKeys(fn (Client $client): array => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
         );
@@ -183,10 +183,10 @@ class VaultClientManagement extends Command
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client to provision',
             options: fn (string $value) => $clients
-                ->filter(function (ClientModel $client) use ($value): bool {
+                ->filter(function (Client $client) use ($value): bool {
                     return str_contains($client->id, $value) || str_contains($client->name, $value);
                 })
-                ->mapWithKeys(fn (ClientModel $client): array => [$client->id => "{$client->name} - {$client->id}"])
+                ->mapWithKeys(fn (Client $client): array => [$client->id => "{$client->name} - {$client->id}"])
                 ->toArray(),
             required: true,
         );
@@ -200,7 +200,7 @@ class VaultClientManagement extends Command
     /**
      * Get all active clients.
      *
-     * @return Collection<ClientModel>
+     * @return Collection<Client>
      */
     protected function getAllActiveClients(): Collection
     {
@@ -213,7 +213,7 @@ class VaultClientManagement extends Command
     /**
      * Get all inactive clients.
      *
-     * @return Collection<ClientModel>
+     * @return Collection<Client>
      */
     protected function getAllInactiveClients(): Collection
     {
@@ -226,7 +226,7 @@ class VaultClientManagement extends Command
     /**
      * Get all clients.
      *
-     * @return Collection<ClientModel>
+     * @return Collection<Client>
      */
     protected function getAllClients(): Collection
     {

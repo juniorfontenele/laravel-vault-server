@@ -7,7 +7,7 @@ namespace JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Key;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Mappers\KeyMapper;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
 
 class EloquentKeyRepository implements KeyRepositoryInterface
@@ -53,7 +53,7 @@ class EloquentKeyRepository implements KeyRepositoryInterface
 
     public function findActiveKeyByClientId(string $clientId): ?Key
     {
-        $keyModel = ClientModel::query()
+        $keyModel = Client::query()
             ->where('id', $clientId)
             ->with('key')
             ->first()

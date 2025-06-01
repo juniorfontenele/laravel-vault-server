@@ -54,10 +54,10 @@ class KeyModel extends Model
         return KeyFactory::new();
     }
 
-    /** @return BelongsTo<ClientModel> */
+    /** @return BelongsTo<Client> */
     public function client(): BelongsTo
     {
-        return $this->belongsTo(ClientModel::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
     /**
