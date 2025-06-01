@@ -21,7 +21,7 @@ use JuniorFontenele\LaravelVaultServer\Database\Factories\HashFactory;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  */
-class HashModel extends Model
+class Hash extends Model
 {
     /** @use HasFactory<HashFactory> */
     use HasFactory;
