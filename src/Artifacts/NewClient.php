@@ -10,7 +10,7 @@ class NewClient
 {
     public function __construct(
         public Client $client,
-        public string $plaintextProvisionToken,
+        public string $plaintext_provision_token,
     ) {
         //
     }

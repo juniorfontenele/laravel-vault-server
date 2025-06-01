@@ -106,7 +106,7 @@ class VaultClientManagement extends Command
 
         $this->info("Client '{$name}' created successfully.");
         $this->info("Client ID: {$newClient->client->id}");
-        $this->info("Provision Token: {$newClient->plaintextProvisionToken}");
+        $this->info("Provision Token: {$newClient->plaintext_provision_token}");
     }
 
     protected function listClients(): void
@@ -194,7 +194,7 @@ class VaultClientManagement extends Command
         $newClient = VaultClientManager::reprovisionClient($clientUuid);
 
         $this->info("Client ID: {$newClient->client->id}");
-        $this->info("Provision Token: {$newClient->plaintextProvisionToken}");
+        $this->info("Provision Token: {$newClient->plaintext_provision_token}");
     }
 
     /**

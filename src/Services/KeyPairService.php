@@ -75,8 +75,8 @@ class KeyPairService
             ]);
 
             return new NewKey(
-                key: $newKey,
-                privateKey: $privateKey,
+                $newKey,
+                $privateKey,
             );
         });
 

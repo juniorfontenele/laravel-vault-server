@@ -10,7 +10,7 @@ class NewKey
 {
     public function __construct(
         public KeyModel $key,
-        public string $privateKey,
+        public string $private_key,
     ) {
         //
     }

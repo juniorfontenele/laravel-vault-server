@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Enums;
 
-use JuniorFontenele\LaravelVaultServer\Exceptions\InvalidScopeException;
+use JuniorFontenele\LaravelVaultServer\Events\Client\InvalidScopeException;
 
 enum Scope: string
 {
@@ -43,6 +43,6 @@ enum Scope: string
 
     public static function fromString(string $value): self
     {
-        return self::tryFrom($value) ?? throw InvalidScopeException::invalidScope($value);
+        return self::tryFrom($value) ?? throw new InvalidScopeException($value);
     }
 }

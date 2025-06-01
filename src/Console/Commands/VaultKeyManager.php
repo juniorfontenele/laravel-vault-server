@@ -5,10 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 
 use Illuminate\Console\Command;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Key\KeyResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
+use Illuminate\Database\Eloquent\Collection;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
+
+use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
+use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
+use JuniorFontenele\LaravelVaultServer\Queries\Key\KeyQueryBuilder;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
@@ -17,7 +22,7 @@ use function Laravel\Prompts\text;
 class VaultKeyManager extends Command
 {
     protected $signature = 'vault:key
-        {action? : Action to perform (generate|rotate|list|delete|revoke|cleanup)}
+        {action? : Action to perform (generate|rotate|list|revoke|cleanup)}
         {--client= : Client UUID}
         {--key-id= : Key ID (for delete)}
         {--valid-days= : Validity period in days}
@@ -33,7 +38,6 @@ class VaultKeyManager extends Command
             'generate' => $this->generate(),
             'rotate' => $this->rotate(),
             'list' => $this->listKeys(),
-            'delete' => $this->deleteKey(),
             'revoke' => $this->revokeKey(),
             'cleanup' => $this->cleanupKeys(),
             default => $this->error("Action '{$action}' is not supported."),
@@ -48,7 +52,6 @@ class VaultKeyManager extends Command
                 'generate' => 'Create a new key pair',
                 'rotate' => 'Rotate an existing key pair',
                 'list' => 'List all keys for a client',
-                'delete' => 'Delete a key pair',
                 'revoke' => 'Revoke a key pair',
                 'cleanup' => 'Cleanup expired and revoked keys',
             ],
@@ -58,9 +61,13 @@ class VaultKeyManager extends Command
         return $action;
     }
 
-    protected function getClient(): ClientResponseDTO
+    protected function getClient(): Client
     {
-        $clients = collect(app(FindAllClientsUseCase::class)->execute());
+        /** @var Collection<Client> $clients */
+        $clients = (new ClientQueryBuilder())
+            ->addFilter(new ActiveClientsFilter())
+            ->build()
+            ->get();
 
         if ($clients->isEmpty()) {
             $this->error('No active clients found.');
@@ -71,18 +78,18 @@ class VaultKeyManager extends Command
         $clientUuid = $this->option('client') ?? search(
             label: 'Search for a client',
             options: fn (string $value) => $clients
-                ->filter(function (ClientResponseDTO $client) use ($value) {
+                ->filter(function (Client $client) use ($value): bool {
                     return str_contains($client->name, $value)
-                    || str_contains($client->clientId, $value);
+                    || str_contains($client->id, $value);
                 })
                 ->mapWithKeys(
-                    fn (ClientResponseDTO $client) => [$client->clientId => "{$client->name} ({$client->clientId})"],
+                    fn (Client $client) => [$client->id => "{$client->name} ({$client->id})"],
                 )
                 ->toArray(),
             required: true,
         );
 
-        $client = $clients->where('clientId', $clientUuid)->first();
+        $client = $clients->where('id', '=', $clientUuid)->first();
 
         return $client;
     }
@@ -101,14 +108,18 @@ class VaultKeyManager extends Command
             return $this->error('Invalid number of days');
         }
 
-        $createKeyResponseDTO = VaultKey::createKeyForClient($client->clientId, 2048, (int) $days);
+        $newKey = VaultKey::create(
+            clientId: $client->id,
+            keySize: 2048,
+            expiresIn: (int) $days,
+        );
 
         $this->info("Key pair generated successfully.");
-        $this->line("KID: {$createKeyResponseDTO->keyId}");
+        $this->line("KID: {$newKey->key->id}");
         $this->line("Public Key:");
-        $this->line($createKeyResponseDTO->publicKey);
+        $this->line($newKey->key->public_key);
         $this->line("Private Key:");
-        $this->line($createKeyResponseDTO->privateKey);
+        $this->line($newKey->private_key);
         $this->warn("Keep the private key safe!");
 
         exit(static::SUCCESS);
@@ -116,48 +127,14 @@ class VaultKeyManager extends Command
 
     protected function rotate()
     {
-        $client = $this->getClient();
-
-        $key = VaultKey::findByClientId($client->clientId);
-
-        if (! $key) {
-            $this->error('No valid key found for this client.');
-
-            exit(static::FAILURE);
-        }
-
-        $days = $this->option('valid-days') ?? text(
-            label: 'Validity period in days',
-            default: '365',
-            required: true,
-        );
-
-        if (! is_numeric($days) || (int) $days <= 0) {
-            return $this->error('Invalid number of days');
-        }
-
-        $createKeyResponseDto = VaultKey::rotate(
-            keyId: $key->keyId,
-            keySize: 2048,
-            expiresIn: (int) $days,
-        );
-
-        $this->info("Key pair rotated successfully.");
-        $this->line("KID: {$createKeyResponseDto->keyId}");
-        $this->line("Public Key:");
-        $this->line($createKeyResponseDto->publicKey);
-        $this->line("Private Key:");
-        $this->line($createKeyResponseDto->privateKey);
-        $this->warn("Keep the private key safe!");
-
-        exit(static::SUCCESS);
+        $this->generate();
     }
 
     protected function listKeys()
     {
         $client = $this->getClient();
 
-        $keys = collect(VaultKey::findAllKeysByClientId($client->clientId));
+        $keys = $this->getAllKeysForClientId($client->id);
 
         if ($keys->isEmpty()) {
             $this->info('No keys found for this client.');
@@ -165,90 +142,76 @@ class VaultKeyManager extends Command
             return;
         }
 
-        $this->table(['ID', 'Public Key', 'Revoked?', 'Valid From', 'Valid Until'], $keys->map(function (KeyResponseDTO $keyResponseDTO) {
+        $this->table(['ID', 'Public Key', 'Revoked?', 'Valid From', 'Valid Until'], $keys->map(function (KeyModel $keyModel): array {
             return [
-                'id' => $keyResponseDTO->keyId,
-                'public_key' => $keyResponseDTO->publicKey,
-                'is_revoked' => $keyResponseDTO->isRevoked ? '✅' : '❌',
-                'valid_from' => $keyResponseDTO->validFrom,
-                'valid_until' => $keyResponseDTO->validUntil,
+                'id' => $keyModel->id,
+                'public_key' => $keyModel->public_key,
+                'is_revoked' => $keyModel->is_revoked ? '✅' : '❌',
+                'valid_from' => $keyModel->valid_from,
+                'valid_until' => $keyModel->valid_until,
             ];
         })->toArray());
 
         exit(static::SUCCESS);
     }
 
-    protected function getKeyForClientId(string $clientId): KeyResponseDTO
+    /**
+     * Get all keys for a specific client ID.
+     *
+     * @param string $clientId
+     * @return Collection<KeyModel>
+     */
+    private function getAllKeysForClientId(string $clientId): Collection
     {
-        $keys = collect(VaultKey::findAllNonRevokedKeysByClientId($clientId));
-
-        if ($keys->isEmpty()) {
-            $this->info('No valid keys found for this client.');
-
-            exit(static::FAILURE);
-        }
-
-        $keyId = $this->option('key-id') ?? search(
-            label: 'Select a key',
-            options: fn () => $keys->mapWithKeys(
-                fn (KeyResponseDTO $key) => [$key->keyId => "{$key->keyId} (Expires: {$key->validUntil->format('Y-m-d')})"],
-            )->toArray(),
-            required: true,
-        );
-
-        $key = $keys->where('keyId', $keyId)->first();
-
-        if (! $key) {
-            $this->error('Key not found');
-
-            exit(static::FAILURE);
-        }
-
-        return $key;
+        return (new KeyQueryBuilder())
+            ->addFilter(new ByClientId($clientId))
+            ->build()
+            ->get();
     }
 
-    protected function deleteKey()
+    /**
+     * Get a key model by client ID.
+     *
+     * @param string $clientId
+     * @return KeyModel
+     */
+    private function getKeyForClientId(string $clientId): KeyModel
     {
-        $client = $this->getClient();
-
-        $key = $this->getKeyForClientId($client->clientId);
-
-        VaultKey::deleteKey($key->keyId);
-
-        $this->info("Key with ID {$key->keyId} deleted successfully.");
-
-        exit(static::SUCCESS);
+        return (new KeyQueryBuilder())
+            ->addFilter(new ByClientId($clientId))
+            ->build()
+            ->firstOrFail();
     }
 
     protected function revokeKey()
     {
         $client = $this->getClient();
 
-        $key = $this->getKeyForClientId($client->clientId);
+        $key = $this->getKeyForClientId($client->id);
 
-        VaultKey::revokeKey($key->keyId);
+        VaultKey::revokeKey($key->id);
 
-        $this->info("Key with ID {$key->keyId} revoked successfully.");
+        $this->info("Key with ID {$key->id} revoked successfully.");
 
         exit(static::SUCCESS);
     }
 
     protected function cleanupKeys(): void
     {
-        $expiredCount = VaultKey::cleanupExpiredKeys();
+        $expiredKeys = VaultKey::cleanupExpiredKeys();
 
-        if ($expiredCount === 0) {
+        if ($expiredKeys->count() === 0) {
             $this->info('No expired keys found.');
         } else {
-            $this->info("{$expiredCount} expired key(s) removed successfully.");
+            $this->info("{$expiredKeys->count()} expired key(s) removed successfully.");
         }
 
-        $revokedCount = VaultKey::cleanupRevokedKeys();
+        $revokedKeys = VaultKey::cleanupRevokedKeys();
 
-        if ($revokedCount === 0) {
+        if ($revokedKeys->count() === 0) {
             $this->info('No revoked keys found.');
         } else {
-            $this->info("{$revokedCount} revoked key(s) removed successfully.");
+            $this->info("{$revokedKeys->count()} revoked key(s) removed successfully.");
         }
 
         exit(static::SUCCESS);
