@@ -5,8 +5,6 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -92,29 +90,5 @@ class Client extends Model
     public function isInactive(): bool
     {
         return ! $this->isActive();
-    }
-
-    #[Scope]
-    protected function active(Builder $query): void
-    {
-        $query->where('is_active', true);
-    }
-
-    #[Scope]
-    protected function inactive(Builder $query): void
-    {
-        $query->where('is_active', false);
-    }
-
-    #[Scope]
-    protected function provisioned(Builder $query): void
-    {
-        $query->whereNotNull('provision_token');
-    }
-
-    #[Scope]
-    protected function unprovisioned(Builder $query): void
-    {
-        $query->whereNull('provision_token');
     }
 }

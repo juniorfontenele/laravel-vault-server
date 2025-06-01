@@ -9,8 +9,8 @@ use JuniorFontenele\LaravelVaultServer\Contracts\QueryFilterInterface;
 
 class ActiveClientsFilter implements QueryFilterInterface
 {
-    public function apply($query): Builder
+    public function apply(Builder $query): Builder
     {
-        return $query->where('is_active', true);
+        return $query->where('is_active', '=', true);
     }
 }

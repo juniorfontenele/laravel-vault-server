@@ -13,7 +13,7 @@ class ClientQueryBuilder extends AbstractQueryBuilder
     {
         parent::__construct(
             Client::class,
-            ['id', 'name', 'description', 'allowed_scopes', 'created_at', 'updated_at'],
+            ['*'],
         );
     }
 }

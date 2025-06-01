@@ -4,21 +4,31 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\KeyFactory;
 
+/**
+ * @property-read string $id
+ * @property string $client_id
+ * @property string $public_key
+ * @property bool $is_revoked
+ * @property int $version
+ * @property CarbonImmutable|null $valid_from
+ * @property CarbonImmutable|null $valid_until
+ * @property CarbonImmutable|null $revoked_at
+ * @property-read Client $client
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ */
 class KeyModel extends Model
 {
     /** @use HasFactory<KeyFactory> */
     use HasFactory;
     use HasUuids;
-
-    public ?string $private_key = null;
 
     /** @var list<string> */
     protected $fillable = [
@@ -26,10 +36,6 @@ class KeyModel extends Model
         'is_revoked',
         'valid_from',
         'valid_until',
-    ];
-
-    protected $hidden = [
-        'private_key',
     ];
 
     public function getTable(): string
@@ -43,9 +49,11 @@ class KeyModel extends Model
         return [
             'is_active' => 'boolean',
             'is_revoked' => 'boolean',
-            'valid_from' => 'datetime',
-            'valid_until' => 'datetime',
-            'revoked_at' => 'datetime',
+            'valid_from' => 'immutable_datetime',
+            'valid_until' => 'immutable_datetime',
+            'revoked_at' => 'immutable_datetime',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 
@@ -58,20 +66,6 @@ class KeyModel extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'client_id');
-    }
-
-    /**
-     * Revokes the key.
-     * This method sets the revoked attribute to true and saves the model.
-     * @return bool
-     */
-    public function revoke(): bool
-    {
-        $this->is_revoked = true;
-        $this->revoked_at = now();
-        $this->save();
-
-        return true;
     }
 
     /**
@@ -127,25 +121,5 @@ class KeyModel extends Model
     public function isInvalid(): bool
     {
         return ! $this->isValid();
-    }
-
-    #[Scope]
-    protected function valid(Builder $query): void
-    {
-        $query->where('is_revoked', false)
-            ->where('valid_until', '>', now())
-            ->where('valid_from', '<=', now());
-    }
-
-    #[Scope]
-    protected function revoked(Builder $query): void
-    {
-        $query->where('is_revoked', true);
-    }
-
-    #[Scope]
-    protected function expired(Builder $query): void
-    {
-        $query->where('valid_until', '<', now());
     }
 }

@@ -2,21 +2,21 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Hash\Filters;
+namespace JuniorFontenele\LaravelVaultServer\Queries\Key\Filters;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use JuniorFontenele\LaravelVaultServer\Contracts\QueryFilterInterface;
 
-class HashForUserId implements QueryFilterInterface
+class ByClientId implements QueryFilterInterface
 {
     public function __construct(
-        protected string $userId
+        private string $clientId,
     ) {
         //
     }
 
     public function apply(Builder $query): Builder
     {
-        return $query->where('user_id', '=', $this->userId);
+        return $query->where('client_id', '=', $this->clientId);
     }
 }
