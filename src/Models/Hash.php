@@ -7,17 +7,11 @@ namespace JuniorFontenele\LaravelVaultServer\Models;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\HashFactory;
 
 /**
  * @property-read string $user_id
  * @property string $hash
- * @property bool $is_revoked
- * @property CarbonImmutable|null $revoked_at
- * @property int $version
- * @property-read Client $creator
- * @property-read Client $updater
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  */
@@ -46,8 +40,6 @@ class Hash extends Model
     protected function casts(): array
     {
         return [
-            'is_revoked' => 'boolean',
-            'revoked_at' => 'immutable_datetime',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];
@@ -61,21 +53,5 @@ class Hash extends Model
     protected static function newFactory(): HashFactory
     {
         return HashFactory::new();
-    }
-
-    /**
-     * @return BelongsTo<Client>
-     */
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(Client::class, 'created_by');
-    }
-
-    /**
-     * @return BelongsTo<Client>
-     */
-    public function updater(): BelongsTo
-    {
-        return $this->belongsTo(Client::class, 'updated_by');
     }
 }

@@ -42,10 +42,10 @@ class HashService
      */
     public function store(string $userId, string $hash): Hash
     {
-        $hash = Hash::create([
-            'user_id' => $userId,
-            'hash' => $hash,
-        ]);
+        $hash = Hash::updateOrCreate(
+            ['user_id' => $userId],
+            ['hash' => $hash],
+        );
 
         if (! $hash) {
             throw new HashStoreException($userId);

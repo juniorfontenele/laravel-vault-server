@@ -38,8 +38,6 @@ return new class extends Migration
         Schema::create($tablePrefix . 'hashes', function (Blueprint $table) use ($tablePrefix) {
             $table->uuid('user_id')->primary();
             $table->longText('hash');
-            $table->foreignUuid('created_by')->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignUuid('updated_by')->nullable()->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
