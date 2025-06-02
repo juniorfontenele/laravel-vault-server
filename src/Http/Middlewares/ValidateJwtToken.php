@@ -9,16 +9,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use JuniorFontenele\LaravelSecureJwt\Exceptions\JwtException;
 use JuniorFontenele\LaravelSecureJwt\Exceptions\JwtValidationException;
-use JuniorFontenele\LaravelSecureJwt\Facades\SecureJwt;
-use JuniorFontenele\LaravelSecureJwt\JwtKey;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthorizedException;
-use JuniorFontenele\LaravelVaultServer\Exceptions\Jwt\InvalidJwtHeader;
-use JuniorFontenele\LaravelVaultServer\Exceptions\Jwt\KidNotFoundInJwt;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 
 class ValidateJwtToken
 {
-    public function handle(Request $request, Closure $next, $requestedScope)
+    public function handle(Request $request, Closure $next, ?string $requestedScope = null)
     {
         try {
             $token = $request->bearerToken();
@@ -27,30 +23,10 @@ class ValidateJwtToken
                 return response()->json(['error' => 'Token not provided'], 401);
             }
 
-            $kid = $this->getKidFromBase64Token($token);
+            VaultAuth::attempt($token);
 
-            $key = VaultKey::get($kid);
-
-            $decodedToken = SecureJwt::decode($token, new JwtKey(
-                $key->id,
-                $key->public_key,
-                $key->algorithm
-            ));
-
-            $authorizedScopes = $decodedToken->claim('scope');
-
-            if (is_null($authorizedScopes)) {
-                throw new JwtValidationException('No scopes found in the token');
-            }
-
-            $authorizedScopes = explode(' ', $authorizedScopes);
-            $authorizedScopes = array_map('trim', $authorizedScopes);
-            $authorizedScopes = array_map('strtolower', $authorizedScopes);
-
-            $requestedScope = strtolower($requestedScope);
-
-            if (! in_array($requestedScope, $authorizedScopes, true)) {
-                throw new ClientNotAuthorizedException($requestedScope);
+            if (! is_null($requestedScope)) {
+                VaultAuth::authorize($requestedScope);
             }
 
             return $next($request);
@@ -94,21 +70,5 @@ class ValidateJwtToken
                 'error' => 'An error occurred while validating the token',
             ], 422);
         }
-    }
-
-    private function getKidFromBase64Token(string $token): string
-    {
-        [$header, $payload, $signature] = explode('.', $token);
-        $decodedHeader = base64_decode($header);
-
-        if ($decodedHeader === false) {
-            throw new InvalidJwtHeader();
-        }
-
-        if (! isset($decodedHeader['kid'])) {
-            throw new KidNotFoundInJwt();
-        }
-
-        return $decodedHeader['kid'];
     }
 }

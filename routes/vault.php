@@ -28,7 +28,7 @@ Route::group([
         ->middleware(['vault.jwt:' . Scope::HASHES_DELETE->value])
         ->name('hash.destroy');
 
-    Route::post('/kms/{kid}/rotate', [KmsController::class, 'rotate'])
+    Route::post('/kms/rotate', [KmsController::class, 'rotate'])
         ->middleware(['vault.jwt:' . Scope::KEYS_ROTATE->value])
         ->name('kms.rotate');
 

@@ -5,14 +5,20 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Enum;
 use JuniorFontenele\LaravelVaultServer\Artifacts\NewClient;
+use JuniorFontenele\LaravelVaultServer\Artifacts\NewKey;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Events\Client\ClientCreated;
 use JuniorFontenele\LaravelVaultServer\Events\Client\ClientDeleted;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientProvisioned;
 use JuniorFontenele\LaravelVaultServer\Events\Client\ClientTokenGenerated;
 use JuniorFontenele\LaravelVaultServer\Events\Client\InactiveClientsCleanup;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientAlreadyProvisionedException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthenticatedException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
@@ -56,6 +62,49 @@ class ClientManagerService
             $client,
             $provisionToken,
         );
+    }
+
+    /**
+     * Provision a client.
+     *
+     * @param string $clientId Client ID
+     * @param string $provisionToken Provision token
+     * @return NewKey
+     * @throws ClientNotFoundException
+     * @throws ClientNotAuthenticatedException
+     * @throws ClientAlreadyProvisionedException
+     */
+    public function provisionClient(string $clientId, string $provisionToken): NewKey
+    {
+        $client = Client::find($clientId);
+
+        if (is_null($client)) {
+            throw new ClientNotFoundException($clientId);
+        }
+
+        if (is_null($client->provision_token)) {
+            throw new ClientAlreadyProvisionedException();
+        }
+
+        if (! password_verify($provisionToken, $client->provision_token)) {
+            throw new ClientNotAuthenticatedException();
+        }
+
+        $newKey = DB::transaction(function () use ($client): NewKey {
+            $client->provisioned_at = now();
+            $client->provision_token = null;
+            $client->save();
+
+            return VaultKey::create(
+                $client->id,
+                2048,
+                365
+            );
+        });
+
+        event(new ClientProvisioned($client));
+
+        return $newKey;
     }
 
     /**

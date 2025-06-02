@@ -9,8 +9,8 @@ use JuniorFontenele\LaravelVaultServer\Domains\IAM\Client\Contracts\ClientReposi
 use JuniorFontenele\LaravelVaultServer\Domains\Shared\Contracts\UnitOfWorkInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Hash\Contracts\HashRepositoryInterface;
 use JuniorFontenele\LaravelVaultServer\Domains\Vault\Key\Contracts\KeyRepositoryInterface;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentClientRepository;
@@ -18,7 +18,7 @@ use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloque
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Eloquent\EloquentKeyRepository;
 use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\LaravelUnitOfWork;
 use JuniorFontenele\LaravelVaultServer\Services\ClientManagerService;
-use JuniorFontenele\LaravelVaultServer\Services\JwtService;
+use JuniorFontenele\LaravelVaultServer\Services\JwtAuthService;
 use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
 use JuniorFontenele\LaravelVaultServer\Tests\TestCase;
 
@@ -60,7 +60,7 @@ class LaravelVaultServerServiceProviderTest extends TestCase
 
         $this->assertEquals(KeyPairService::class, get_class(VaultKey::getFacadeRoot()));
         $this->assertEquals(ClientManagerService::class, get_class(VaultClientManager::getFacadeRoot()));
-        $this->assertEquals(JwtService::class, get_class(VaultJWT::getFacadeRoot()));
+        $this->assertEquals(JwtAuthService::class, get_class(VaultAuth::getFacadeRoot()));
     }
 
     public function testMiddlewareRegistration(): void

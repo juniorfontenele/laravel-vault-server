@@ -16,8 +16,8 @@ use JuniorFontenele\LaravelVaultServer\Console\Commands\Play;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
-use JuniorFontenele\LaravelVaultServer\Facades\VaultJWT;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 
@@ -71,7 +71,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
         $loader = AliasLoader::getInstance();
         $loader->alias('VaultKey', VaultKey::class);
         $loader->alias('VaultClientManager', VaultClientManager::class);
-        $loader->alias('VaultJWT', VaultJWT::class);
+        $loader->alias('VaultJWT', VaultAuth::class);
     }
 
     private function setupMiddlewares(): void

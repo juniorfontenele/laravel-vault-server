@@ -4,35 +4,55 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
+use JuniorFontenele\LaravelVaultServer\Data\Key\KeyData;
+use JuniorFontenele\LaravelVaultServer\Data\Key\NewKeyData;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 
 class KmsController
 {
     public function show(string $kid)
     {
-        $keyResponseDTO = VaultKey::findByKid($kid);
+        $key = VaultKey::get($kid);
 
-        if (! $keyResponseDTO) {
+        if (! $key) {
             return response()->json([
                 'message' => 'No key found.',
             ], 404);
         }
 
-        return response()->json($keyResponseDTO->toArray());
+        $response = new KeyData(
+            key_id: $key->id,
+            version: $key->version,
+            public_key: $key->public_key,
+            client_id: $key->client_id,
+            valid_from: $key->valid_from->toIso8601String(),
+            valid_until: $key->valid_until->toIso8601String(),
+        );
+
+        return response()->json($response->toArray());
     }
 
-    public function rotate(string $kid)
+    public function rotate()
     {
-        $keyResponseDTO = VaultKey::findByKid($kid);
+        $key = VaultAuth::key();
 
-        if (! $keyResponseDTO) {
-            return response()->json([
-                'message' => 'No key found.',
-            ], 404);
+        if (! $key) {
+            abort(401);
         }
 
-        $createKeyResponseDTO = VaultKey::rotate($keyResponseDTO->keyId);
+        $newKey = VaultKey::rotate($key->id);
 
-        return response()->json($createKeyResponseDTO->toArray(), 201);
+        $response = new NewKeyData(
+            key_id: $newKey->key->id,
+            version: $newKey->key->version,
+            public_key: $newKey->key->public_key,
+            private_key: $newKey->private_key,
+            client_id: $newKey->key->client_id,
+            valid_from: $newKey->key->valid_from->toIso8601String(),
+            valid_until: $newKey->key->valid_until->toIso8601String(),
+        );
+
+        return response()->json($response->toArray(), 201);
     }
 }
