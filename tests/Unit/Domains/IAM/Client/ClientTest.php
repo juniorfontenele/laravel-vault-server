@@ -28,7 +28,7 @@ class ClientTest extends TestCase
         parent::setUp();
 
         $this->clientId = new ClientId();
-        $this->allowedScopes = new AllowedScopes([Scope::KEYS_READ, Scope::HASHES_READ]);
+        $this->allowedScopes = new AllowedScopes([Scope::KEYS_READ, Scope::PASSWORDS_VERIFY]);
         $this->provisionToken = new ProvisionToken();
 
         $this->client = new Client(

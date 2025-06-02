@@ -12,6 +12,15 @@ return new class extends Migration
     {
         $tablePrefix = config('vault.migrations.table_prefix', 'vault_');
 
+        Schema::create($tablePrefix . 'peppers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->unsignedBigInteger('version')->index();
+            $table->string('value');
+            $table->boolean('is_revoked')->index()->default(false);
+            $table->timestamp('revoked_at')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create($tablePrefix . 'clients', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
@@ -39,7 +48,24 @@ return new class extends Migration
         Schema::create($tablePrefix . 'hashes', function (Blueprint $table) use ($tablePrefix) {
             $table->uuid('user_id')->primary();
             $table->longText('hash');
+            $table->foreignUuid('pepper_id')->constrained($tablePrefix . 'peppers');
+            $table->boolean('needs_rehash')->default(false);
             $table->timestamps();
+        });
+
+        Schema::create($tablePrefix . 'audit', function (Blueprint $table) use ($tablePrefix) {
+            $table->id();
+            $table->string('action')->index();
+            $table->string('auditable_type');
+            $table->uuid('auditable_id');
+            $table->foreignUuid('client_id')->nullable()->constrained($tablePrefix . 'clients');
+            $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+            $table->json('context')->nullable();
+            $table->timestamps();
+
+            $table->index(['auditable_type', 'auditable_id']);
+            $table->index(['action', 'auditable_type', 'auditable_id']);
         });
     }
 
@@ -47,8 +73,10 @@ return new class extends Migration
     {
         $tablePrefix = config('vault.migrations.table_prefix', 'vault_');
 
+        Schema::dropIfExists($tablePrefix . 'audit');
         Schema::dropIfExists($tablePrefix . 'hashes');
         Schema::dropIfExists($tablePrefix . 'keys');
         Schema::dropIfExists($tablePrefix . 'clients');
+        Schema::dropIfExists($tablePrefix . 'peppers');
     }
 };

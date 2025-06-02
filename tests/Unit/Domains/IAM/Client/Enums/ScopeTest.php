@@ -15,9 +15,9 @@ class ScopeTest extends TestCase
         $this->assertEquals('Read keys', Scope::KEYS_READ->getLabel());
         $this->assertEquals('Rotate keys', Scope::KEYS_ROTATE->getLabel());
         $this->assertEquals('Delete keys', Scope::KEYS_DELETE->getLabel());
-        $this->assertEquals('Read hashes', Scope::HASHES_READ->getLabel());
-        $this->assertEquals('Create hashes', Scope::HASHES_CREATE->getLabel());
-        $this->assertEquals('Delete hashes', Scope::HASHES_DELETE->getLabel());
+        $this->assertEquals('Read hashes', Scope::PASSWORDS_VERIFY->getLabel());
+        $this->assertEquals('Create hashes', Scope::PASSWORDS_CREATE->getLabel());
+        $this->assertEquals('Delete hashes', Scope::PASSWORDS_DELETE->getLabel());
     }
 
     public function testToArray(): void

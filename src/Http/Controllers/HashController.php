@@ -10,15 +10,15 @@ use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 
 class HashController
 {
-    public function show(Request $request, string $userId)
+    public function verify(Request $request, string $userId)
     {
-        $hashResponseDTO = VaultHash::getByUserId($userId);
+        $hash = VaultHash::get($userId);
 
-        if (! $hashResponseDTO) {
+        if (! $hash) {
             return response()->json(['error' => 'Hash not found'], 404);
         }
 
-        return response()->json($hashResponseDTO->toArray());
+        return response()->json($hash->toArray());
     }
 
     public function store(Request $request, string $userId)

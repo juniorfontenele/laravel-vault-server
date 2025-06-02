@@ -11,9 +11,9 @@ enum Scope: string
     case KEYS_READ = 'keys:read';
     case KEYS_ROTATE = 'keys:rotate';
     case KEYS_DELETE = 'keys:delete';
-    case HASHES_READ = 'hashes:read';
-    case HASHES_CREATE = 'hashes:create';
-    case HASHES_DELETE = 'hashes:delete';
+    case PASSWORDS_VERIFY = 'passwords:verify';
+    case PASSWORDS_CREATE = 'passwords:create';
+    case PASSWORDS_DELETE = 'passwords:delete';
 
     public function getLabel(): string
     {
@@ -21,9 +21,9 @@ enum Scope: string
             self::KEYS_READ => 'Read keys',
             self::KEYS_ROTATE => 'Rotate keys',
             self::KEYS_DELETE => 'Delete keys',
-            self::HASHES_READ => 'Read hashes',
-            self::HASHES_CREATE => 'Create hashes',
-            self::HASHES_DELETE => 'Delete hashes',
+            self::PASSWORDS_VERIFY => 'Read passwords',
+            self::PASSWORDS_CREATE => 'Create passwords',
+            self::PASSWORDS_DELETE => 'Delete passwords',
         };
     }
 

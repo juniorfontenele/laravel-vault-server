@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use JuniorFontenele\LaravelVaultServer\Concerns\AsAuditable;
 use JuniorFontenele\LaravelVaultServer\Database\Factories\KeyFactory;
 
 /**
@@ -30,6 +31,7 @@ class Key extends Model
     /** @use HasFactory<KeyFactory> */
     use HasFactory;
     use HasUuids;
+    use AsAuditable;
 
     /** @var list<string> */
     protected $fillable = [
