@@ -113,7 +113,7 @@ class KeyPairService
      */
     public function revoke(string $keyId): void
     {
-        $key = $this->findByKeyId($keyId);
+        $key = $this->findByKeyId($keyId, false);
 
         $key->revoked_at = now();
         $key->is_revoked = true;
@@ -200,12 +200,16 @@ class KeyPairService
      * @return KeyModel
      * @throws KeyNotFoundException
      */
-    private function findByKeyId(string $keyId): KeyModel
+    private function findByKeyId(string $keyId, bool $onlyNonRevoked = true): KeyModel
     {
-        $key = (new KeyQueryBuilder())
-            ->addFilter(new ByKeyId($keyId))
-            ->addFilter(new NonRevoked())
-            ->build()
+        $query = (new KeyQueryBuilder())
+            ->addFilter(new ByKeyId($keyId));
+
+        if ($onlyNonRevoked) {
+            $query->addFilter(new NonRevoked());
+        }
+
+        $key = $query->build()
             ->first();
 
         if (! $key) {

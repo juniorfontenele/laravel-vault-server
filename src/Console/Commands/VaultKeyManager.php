@@ -13,6 +13,7 @@ use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
+use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\NonRevoked;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\KeyQueryBuilder;
 
 use function Laravel\Prompts\search;
@@ -173,23 +174,30 @@ class VaultKeyManager extends Command
      * Get a key model by client ID.
      *
      * @param string $clientId
-     * @return KeyModel
+     * @return KeyModel|null
      */
-    private function getKeyForClientId(string $clientId): KeyModel
+    private function getActiveKeyForClientId(string $clientId): ?KeyModel
     {
         return (new KeyQueryBuilder())
             ->addFilter(new ByClientId($clientId))
+            ->addFilter(new NonRevoked())
             ->build()
-            ->firstOrFail();
+            ->first();
     }
 
     protected function revokeKey()
     {
         $client = $this->getClient();
 
-        $key = $this->getKeyForClientId($client->id);
+        $key = $this->getActiveKeyForClientId($client->id);
 
-        VaultKey::revokeKey($key->id);
+        if (! $key) {
+            $this->error("Key not found for client ID {$client->id}.");
+
+            exit(static::FAILURE);
+        }
+
+        VaultKey::revoke($key->id);
 
         $this->info("Key with ID {$key->id} revoked successfully.");
 
