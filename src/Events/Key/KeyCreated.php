@@ -10,7 +10,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
 
 class KeyCreated implements ShouldDispatchAfterCommit
 {
@@ -21,7 +21,7 @@ class KeyCreated implements ShouldDispatchAfterCommit
     /**
      * Create a new event instance.
      */
-    public function __construct(public KeyModel $key)
+    public function __construct(public Key $key)
     {
         //
     }

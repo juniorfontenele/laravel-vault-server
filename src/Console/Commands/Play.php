@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 
 use Illuminate\Console\Command;
+use JuniorFontenele\LaravelSecureJwt\Facades\SecureJwt;
+use JuniorFontenele\LaravelSecureJwt\JwtKey;
 
 class Play extends Command
 {
@@ -27,6 +29,10 @@ class Play extends Command
      */
     public function handle(): void
     {
-        //
+        SecureJwt::decode('your.jwt.token.here', new JwtKey(
+            'your-key-id',
+            'your-key-value',
+            'HS256'
+        ));
     }
 }

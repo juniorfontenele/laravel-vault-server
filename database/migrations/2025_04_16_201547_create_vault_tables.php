@@ -26,6 +26,7 @@ return new class extends Migration
         Schema::create($tablePrefix . 'keys', function (Blueprint $table) use ($tablePrefix) {
             $table->uuid('id')->primary();
             $table->foreignUuid('client_id')->constrained($tablePrefix . 'clients')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('algorithm');
             $table->longText('public_key');
             $table->unsignedBigInteger('version')->index();
             $table->boolean('is_revoked')->index()->default(false);

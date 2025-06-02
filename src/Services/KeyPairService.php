@@ -14,7 +14,7 @@ use JuniorFontenele\LaravelVaultServer\Events\Key\KeyRevoked;
 use JuniorFontenele\LaravelVaultServer\Events\Key\KeyRotated;
 use JuniorFontenele\LaravelVaultServer\Events\Key\RevokedKeysCleanedUp;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Key\KeyNotFoundException;
-use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByKeyId;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\Expired;
@@ -59,14 +59,15 @@ class KeyPairService
         $newKey = DB::transaction(function () use ($clientId, $keySize, $expiresIn): NewKey {
             $clientKeys = $this->findKeysByClientId($clientId);
 
-            $clientKeys->each(function (KeyModel $clientKey) {
+            $clientKeys->each(function (Key $clientKey) {
                 $this->revoke($clientKey->id);
             });
 
             [$privateKey, $publicKey] = $this->generateKeyPair($keySize);
 
-            $newKey = KeyModel::forceCreate([
+            $newKey = Key::forceCreate([
                 'client_id' => $clientId,
+                'algorithm' => 'RS256',
                 'public_key' => $publicKey,
                 'version' => $this->getMaxVersion($clientId) + 1,
                 'valid_from' => now(),
@@ -93,10 +94,10 @@ class KeyPairService
      * Find a key by its Key ID.
      *
      * @param string $keyId
-     * @return KeyModel
+     * @return Key
      * @throws KeyNotFoundException
      */
-    public function get(string $keyId): KeyModel
+    public function get(string $keyId): Key
     {
         $key = $this->findByKeyId($keyId);
 
@@ -124,7 +125,7 @@ class KeyPairService
 
     /**
      * Cleanup expired keys.
-     * @return Collection<KeyModel> Collection of expired keys
+     * @return Collection<Key> Collection of expired keys
      */
     public function cleanupExpiredKeys(): Collection
     {
@@ -141,7 +142,7 @@ class KeyPairService
 
     /**
      * Cleanup revoked keys.
-     * @return Collection<KeyModel> Collection of revoked keys
+     * @return Collection<Key> Collection of revoked keys
      */
     public function cleanupRevokedKeys(): Collection
     {
@@ -158,7 +159,7 @@ class KeyPairService
 
     private function getMaxVersion(string $clientId): int
     {
-        return KeyModel::where('client_id', $clientId)
+        return Key::where('client_id', $clientId)
             ->max('version') ?? 0;
     }
 
@@ -183,7 +184,7 @@ class KeyPairService
      * Get all keys for a client.
      *
      * @param string $clientId
-     * @return Collection<KeyModel>
+     * @return Collection<Key>
      */
     private function findKeysByClientId(string $clientId): Collection
     {
@@ -197,10 +198,10 @@ class KeyPairService
      * Find a key by its Key ID.
      *
      * @param string $keyId
-     * @return KeyModel
+     * @return Key
      * @throws KeyNotFoundException
      */
-    private function findByKeyId(string $keyId, bool $onlyNonRevoked = true): KeyModel
+    private function findByKeyId(string $keyId, bool $onlyNonRevoked = true): Key
     {
         $query = (new KeyQueryBuilder())
             ->addFilter(new ByKeyId($keyId));

@@ -7,6 +7,11 @@ namespace JuniorFontenele\LaravelVaultServer\Providers;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use JuniorFontenele\LaravelSecureJwt\Contracts\JwtBlacklistRepositoryInterface;
+use JuniorFontenele\LaravelSecureJwt\Contracts\JwtClaimValidatorInterface;
+use JuniorFontenele\LaravelSecureJwt\Contracts\JwtDriverInterface;
+use JuniorFontenele\LaravelSecureJwt\Contracts\JwtNonceRepositoryInterface;
+use JuniorFontenele\LaravelSecureJwt\JwtConfig;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\Play;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
@@ -23,6 +28,8 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->setupBindings();
+
         $this->setupRoutes();
 
         $this->setupPublications();
@@ -40,6 +47,23 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerConfig();
+    }
+
+    private function setupBindings(): void
+    {
+        $this->app->singleton(JwtConfig::class, function (): JwtConfig {
+            return new JwtConfig(
+                issuer: config('vault.jwt.issuer'),
+                ttl: config('vault.jwt.ttl'),
+                nonceTtl: config('vault.jwt.nonce_ttl'),
+                blacklistTtl: config('vault.jwt.blacklist_ttl'),
+            );
+        });
+
+        $this->app->singleton(JwtDriverInterface::class, config('vault.providers.jwt_driver'));
+        $this->app->singleton(JwtBlacklistRepositoryInterface::class, config('vault.providers.jwt_blacklist'));
+        $this->app->singleton(JwtNonceRepositoryInterface::class, config('vault.providers.jwt_nonce'));
+        $this->app->singleton(JwtClaimValidatorInterface::class, config('vault.providers.jwt_claim_validator'));
     }
 
     private function setupAliases(): void

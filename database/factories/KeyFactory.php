@@ -5,15 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
 use phpseclib3\Crypt\RSA;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<KeyModel>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Key>
  */
 class KeyFactory extends Factory
 {
-    protected $model = KeyModel::class;
+    protected $model = Key::class;
 
     /**
      * Define the model's default state.

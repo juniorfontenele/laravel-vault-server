@@ -14,6 +14,7 @@ use JuniorFontenele\LaravelVaultServer\Database\Factories\KeyFactory;
 /**
  * @property-read string $id
  * @property string $client_id
+ * @property string $algorithm
  * @property string $public_key
  * @property bool $is_revoked
  * @property int $version
@@ -24,7 +25,7 @@ use JuniorFontenele\LaravelVaultServer\Database\Factories\KeyFactory;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  */
-class KeyModel extends Model
+class Key extends Model
 {
     /** @use HasFactory<KeyFactory> */
     use HasFactory;
@@ -32,7 +33,10 @@ class KeyModel extends Model
 
     /** @var list<string> */
     protected $fillable = [
+        'client_id',
+        'algorithm',
         'public_key',
+        'version',
         'is_revoked',
         'valid_from',
         'valid_until',

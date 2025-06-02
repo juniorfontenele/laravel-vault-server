@@ -23,8 +23,8 @@ use JuniorFontenele\LaravelVaultServer\Enums\Scope as ClientScope;
  * @property CarbonImmutable|null $provisioned_at
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
- * @property-read KeyModel|null $key
- * @property-read KeyModel[] $keys
+ * @property-read Key|null $key
+ * @property-read Key[] $keys
  */
 class Client extends Model
 {
@@ -67,16 +67,16 @@ class Client extends Model
         return ClientFactory::new();
     }
 
-    /** @return HasMany<KeyModel> */
+    /** @return HasMany<Key> */
     public function keys(): HasMany
     {
-        return $this->hasMany(KeyModel::class, 'client_id');
+        return $this->hasMany(Key::class, 'client_id');
     }
 
-    /** @return HasOne<KeyModel> */
+    /** @return HasOne<Key> */
     public function key(): HasOne
     {
-        return $this->hasOne(KeyModel::class, 'client_id')
+        return $this->hasOne(Key::class, 'client_id')
             ->orderByDesc('version')
             ->valid()
             ->latest('valid_from');

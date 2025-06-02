@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
-use JuniorFontenele\LaravelVaultServer\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
 use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
@@ -143,7 +143,7 @@ class VaultKeyManager extends Command
             return;
         }
 
-        $this->table(['ID', 'Public Key', 'Revoked?', 'Valid From', 'Valid Until'], $keys->map(function (KeyModel $keyModel): array {
+        $this->table(['ID', 'Public Key', 'Revoked?', 'Valid From', 'Valid Until'], $keys->map(function (Key $keyModel): array {
             return [
                 'id' => $keyModel->id,
                 'public_key' => $keyModel->public_key,
@@ -160,7 +160,7 @@ class VaultKeyManager extends Command
      * Get all keys for a specific client ID.
      *
      * @param string $clientId
-     * @return Collection<KeyModel>
+     * @return Collection<Key>
      */
     private function getAllKeysForClientId(string $clientId): Collection
     {
@@ -174,9 +174,9 @@ class VaultKeyManager extends Command
      * Get a key model by client ID.
      *
      * @param string $clientId
-     * @return KeyModel|null
+     * @return Key|null
      */
-    private function getActiveKeyForClientId(string $clientId): ?KeyModel
+    private function getActiveKeyForClientId(string $clientId): ?Key
     {
         return (new KeyQueryBuilder())
             ->addFilter(new ByClientId($clientId))
