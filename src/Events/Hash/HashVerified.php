@@ -10,7 +10,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class HashRetrieved
+class HashVerified
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -19,7 +19,7 @@ class HashRetrieved
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $userId)
+    public function __construct(public string $userId, public bool $isValid)
     {
         //
     }

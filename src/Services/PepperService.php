@@ -6,6 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Support\Facades\DB;
 use JuniorFontenele\LaravelVaultServer\Events\Pepper\PepperRotated;
+use JuniorFontenele\LaravelVaultServer\Models\Hash;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 
 class PepperService
@@ -14,13 +15,17 @@ class PepperService
     {
         $pepper = DB::transaction(function (): Pepper {
             $maxVersion = Pepper::max('version') ?? 0;
+            $version = $maxVersion + 1;
 
             Pepper::query()->update(['is_revoked' => true, 'revoked_at' => now()]);
+
+            Hash::query()
+                ->update(['needs_rehash' => true]);
 
             $pepperValue = bin2hex(random_bytes(16));
 
             return Pepper::create([
-                'version' => $maxVersion + 1,
+                'version' => $version,
                 'value' => $pepperValue,
             ]);
         });
