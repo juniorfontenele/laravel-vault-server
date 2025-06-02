@@ -96,7 +96,7 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/vault.php' => config_path('vault.php'),
         ], 'vault-config');
 
-        $this->publishesMigrations([
+        $this->publishes([
             __DIR__ . '/../../database/migrations' => database_path('migrations'),
         ], 'vault-migrations');
 

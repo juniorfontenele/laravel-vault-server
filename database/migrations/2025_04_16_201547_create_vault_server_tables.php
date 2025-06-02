@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
 return new class extends Migration
 {
@@ -15,7 +16,7 @@ return new class extends Migration
         Schema::create($tablePrefix . 'peppers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedBigInteger('version')->index();
-            $table->string('value');
+            $table->longText('value');
             $table->boolean('is_revoked')->index()->default(false);
             $table->timestamp('revoked_at')->nullable();
             $table->timestamps();
@@ -67,6 +68,8 @@ return new class extends Migration
             $table->index(['auditable_type', 'auditable_id']);
             $table->index(['action', 'auditable_type', 'auditable_id']);
         });
+
+        app(PepperService::class)->rotatePepper();
     }
 
     public function down(): void

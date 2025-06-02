@@ -5,11 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
 use Database\Factories\PepperFactory;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 use JuniorFontenele\LaravelVaultServer\Concerns\AsAuditable;
+use JuniorFontenele\LaravelVaultServer\Events\Pepper\PepperDecryptionFailed;
 
 /** @property-read string $id
  * @property int $version
@@ -30,6 +34,9 @@ class Pepper extends Model
     /** @var list<string> */
     protected $fillable = [
         'value',
+        'version',
+        'is_revoked',
+        'revoked_at',
     ];
 
     protected $hidden = [
@@ -61,6 +68,32 @@ class Pepper extends Model
     public function hashes(): HasMany
     {
         return $this->hasMany(Hash::class, 'pepper_id');
+    }
+
+    protected function value(): Attribute
+    {
+        return Attribute::make(
+            get: function (string $value) {
+                try {
+                    return decrypt($value);
+                } catch (DecryptException $e) {
+                    Log::emergency('Failed to decrypt pepper value', [
+                        'pepper' => [
+                            'id' => $this->id,
+                            'version' => $this->version,
+                        ],
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    event(new PepperDecryptionFailed($this));
+
+                    throw new DecryptException('Failed to decrypt pepper value for version ' . $this->version, 0, $e);
+                }
+            },
+            set: function (string $value) {
+                return encrypt($value);
+            },
+        );
     }
 
     public function isRevoked(): bool
