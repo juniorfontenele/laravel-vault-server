@@ -6,19 +6,31 @@ namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 
 class HashController
 {
     public function verify(Request $request, string $userId)
     {
-        $hash = VaultHash::get($userId);
+        $validated = validator($request->all(), [
+            'password' => ['required', 'string', 'max:255'],
+        ])->validate();
 
-        if (! $hash) {
-            return response()->json(['error' => 'Hash not found'], 404);
+        try {
+            $hashVerified = VaultHash::verify(
+                $userId,
+                $validated['password'],
+            );
+
+            if (! $hashVerified) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+
+            return response()->json(['message' => 'Authorized', 'needs_rehash' => false], 200);
+        } catch (RehashNeededException $e) {
+            return response()->json(['message' => 'Authorized', 'needs_rehash' => true], 200);
         }
-
-        return response()->json($hash->toArray());
     }
 
     public function store(Request $request, string $userId)

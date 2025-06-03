@@ -10,6 +10,7 @@ use JuniorFontenele\LaravelVaultServer\Events\Hash\HashStored;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\HashVerified;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\RehashNeeded;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
 use JuniorFontenele\LaravelVaultServer\Models\Hash;
 use JuniorFontenele\LaravelVaultServer\Queries\Hash\Filters\HashForUserId;
 use JuniorFontenele\LaravelVaultServer\Queries\Hash\HashQueryBuilder;
@@ -61,6 +62,8 @@ class HashService
 
         if ($hashVerified && $hash->needs_rehash) {
             event(new RehashNeeded($userId, $hash->pepper->version));
+
+            throw new RehashNeededException();
         }
 
         return $hashVerified;
