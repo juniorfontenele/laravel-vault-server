@@ -191,7 +191,7 @@ class VaultKeyManager extends Command
 
         $key = $this->getActiveKeyForClientId($client->id);
 
-        if (! $key) {
+        if (!$key instanceof \JuniorFontenele\LaravelVaultServer\Models\Key) {
             $this->error("Key not found for client ID {$client->id}.");
 
             exit(static::FAILURE);

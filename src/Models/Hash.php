@@ -37,6 +37,7 @@ class Hash extends Model
         'user_id',
         'hash',
         'pepper_id',
+        'needs_rehash',
     ];
 
     protected $hidden = [

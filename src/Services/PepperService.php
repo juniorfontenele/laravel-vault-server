@@ -41,4 +41,9 @@ class PepperService
             ->orderBy('version', 'desc')
             ->sole();
     }
+
+    public function getById(string $id): Pepper
+    {
+        return Pepper::findOrFail($id);
+    }
 }

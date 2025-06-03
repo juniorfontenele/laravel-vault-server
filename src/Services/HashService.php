@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
 use Illuminate\Hashing\Argon2IdHasher;
-use Illuminate\Support\Facades\Hash as FacadesHash;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\HashDeleted;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\HashStored;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\HashVerified;
@@ -41,11 +40,11 @@ class HashService
             return false;
         }
 
-        $pepper = app(PepperService::class)->getActive()->value;
-        $combinedPassword = $password . $pepper;
+        $pepper = $this->pepperService->getById($hash->pepper_id);
+        $combinedPassword = $password . $pepper->value;
         $preHash = hash('sha256', $combinedPassword);
 
-        $hashVerified = FacadesHash::check($preHash, $hash->hash);
+        $hashVerified = $this->hasher->check($preHash, $hash->hash);
 
         event(new HashVerified($userId, $hashVerified));
 
@@ -62,14 +61,18 @@ class HashService
      */
     public function store(string $userId, string $password): void
     {
-        $pepper = app(PepperService::class)->getActive()->value;
-        $combinedPassword = $password . $pepper;
+        $pepper = app(PepperService::class)->getActive();
+        $combinedPassword = $password . $pepper->value;
         $preHash = hash('sha256', $combinedPassword);
         $hashedPassword = $this->hasher->make($preHash);
 
         $hash = Hash::updateOrCreate(
             ['user_id' => $userId],
-            ['hash' => $hashedPassword],
+            [
+                'hash' => $hashedPassword,
+                'pepper_id' => $pepper->id,
+                'needs_rehash' => false,
+            ],
         );
 
         if (! $hash) {
