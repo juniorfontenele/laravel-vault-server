@@ -141,7 +141,13 @@ class JwtAuthService
      */
     private function decodeHeaderFromBase64Token(string $token): array
     {
-        [$header, $payload, $signature] = explode('.', $token);
+        $parts = explode('.', $token);
+
+        if (count($parts) !== 3) {
+            throw new InvalidJwtHeader();
+        }
+
+        [$header, $payload, $signature] = $parts;
         $decodedHeader = json_decode(base64_decode($header), true);
 
         if ($decodedHeader === false) {

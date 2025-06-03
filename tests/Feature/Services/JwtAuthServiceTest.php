@@ -16,7 +16,7 @@ uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 
 describe('JwtAuthService', function () {
     it('throws InvalidJwtHeader on invalid token', function () {
-        $service = new JwtAuthService();
+        $service = app(JwtAuthService::class);
         $this->expectException(InvalidJwtHeader::class);
         $service->attempt('invalid.token');
     });

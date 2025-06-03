@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
-use Database\Factories\PepperFactory;
+use JuniorFontenele\LaravelVaultServer\Database\Factories\PepperFactory;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

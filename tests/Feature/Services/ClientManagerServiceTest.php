@@ -27,7 +27,7 @@ uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 describe('ClientManagerService', function () {
     it('creates a client', function () {
         Event::fake();
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         expect($client)->toBeInstanceOf(NewClient::class);
         expect($client->client->name)->toBe('Test');
@@ -36,7 +36,7 @@ describe('ClientManagerService', function () {
 
     it('provisions a client', function () {
         Event::fake();
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         // Corrige para usar o nome correto do atributo
         $provisionToken = $client->plaintext_provision_token;
@@ -49,13 +49,13 @@ describe('ClientManagerService', function () {
     });
 
     it('throws ClientNotFoundException on provision with invalid id', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $this->expectException(ClientNotFoundException::class);
         $service->provisionClient('invalid', 'token');
     });
 
     it('throws ClientAlreadyProvisionedException if already provisioned', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         $client->client->provision_token = null;
         $client->client->save();
@@ -64,7 +64,7 @@ describe('ClientManagerService', function () {
     });
 
     it('throws ClientNotAuthenticatedException if provision token is invalid', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         // Simula hash correto usando Hash::make
         $client->client->provision_token = \Illuminate\Support\Facades\Hash::make('right');
@@ -75,7 +75,7 @@ describe('ClientManagerService', function () {
 
     it('reprovisions a client', function () {
         Event::fake();
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         $newClient = $service->reprovisionClient($client->client->id);
         expect($newClient)->toBeInstanceOf(NewClient::class);
@@ -83,14 +83,14 @@ describe('ClientManagerService', function () {
     });
 
     it('throws ClientNotFoundException on reprovision with invalid id', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $this->expectException(ClientNotFoundException::class);
         $service->reprovisionClient('invalid');
     });
 
     it('deletes a client', function () {
         Event::fake();
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         $service->deleteClient($client->client->id);
         expect(Client::find($client->client->id))->toBeNull();
@@ -98,14 +98,14 @@ describe('ClientManagerService', function () {
     });
 
     it('throws ClientNotFoundException on delete with invalid id', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $this->expectException(ClientNotFoundException::class);
         $service->deleteClient('invalid');
     });
 
     it('cleans up inactive clients', function () {
         Event::fake();
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         $client->client->is_active = false;
         $client->client->save();
@@ -115,7 +115,7 @@ describe('ClientManagerService', function () {
     });
 
     it('returns all clients', function () {
-        $service = new ClientManagerService();
+        $service = app(ClientManagerService::class);
         $service->createClient('Test1', [Scope::KEYS_READ->value], 'desc');
         $service->createClient('Test2', [Scope::KEYS_READ->value], 'desc');
         $all = $service->all();

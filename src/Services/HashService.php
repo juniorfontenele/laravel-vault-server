@@ -61,7 +61,7 @@ class HashService
         event(new HashVerified($userId, $hashVerified));
 
         if ($hashVerified && $hash->needs_rehash) {
-            event(new RehashNeeded($userId, $hash->pepper->version));
+            event(new RehashNeeded($userId, (string) $hash->pepper->version));
 
             throw new RehashNeededException();
         }
@@ -79,7 +79,11 @@ class HashService
      */
     public function store(string $userId, string $password): void
     {
-        $pepper = app(PepperService::class)->getActive();
+        if ($userId === '' || $password === '') {
+            throw new HashStoreException($userId);
+        }
+
+        $pepper = $this->pepperService->getActive();
         $combinedPassword = $password . $pepper->value;
         $preHash = hash(self::PREHASH_ALGORITHM, $combinedPassword);
         $hashedPassword = $this->hasher->make($preHash);

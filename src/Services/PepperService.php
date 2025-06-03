@@ -27,6 +27,7 @@ class PepperService
             return Pepper::create([
                 'version' => $version,
                 'value' => $pepperValue,
+                'is_revoked' => false,
             ]);
         });
 
