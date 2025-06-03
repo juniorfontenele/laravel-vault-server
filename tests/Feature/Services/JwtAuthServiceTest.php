@@ -29,7 +29,4 @@ describe('JwtAuthService', function () {
         expect($service->check())->toBeTrue()
             ->and($key)->not()->toBeNull();
     });
-
-    // Para cobrir autenticação real, seria necessário mockar SecureJwtFacade e dependências
-    // Adicione mais testes conforme a lógica de autenticação customizada do seu projeto
 });

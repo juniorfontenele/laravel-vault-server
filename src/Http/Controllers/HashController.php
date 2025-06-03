@@ -6,6 +6,7 @@ namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\Rules\Password;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
@@ -50,7 +51,17 @@ class HashController
     public function store(Request $request, string $userId)
     {
         $validated = validator($request->all(), [
-            'password' => ['required', 'string', 'max:255'],
+            'password' => [
+                'required',
+                'string',
+                'max:255',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+            ],
         ])->validate();
 
         try {

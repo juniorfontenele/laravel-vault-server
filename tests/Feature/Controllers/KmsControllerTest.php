@@ -33,5 +33,11 @@ it('rotates a key', function () {
         'public_key',
         'private_key',
         'client_id',
+        'version',
+        'valid_until',
+        'valid_from',
     ]);
+    $response->assertJson(['version' => 2]);
+
+    expect(Key::query()->count())->toBe(2);
 });

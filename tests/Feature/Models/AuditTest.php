@@ -17,7 +17,9 @@ it('creates audit records on model events', function () {
     $client = Client::factory()->create();
 
     expect(Audit::count())->toBe(1)
-        ->and(Audit::first()->action)->toBe(AuditAction::CREATE);
+        ->and(Audit::first()->action)->toBe(AuditAction::CREATE)
+        ->and(Audit::first()->auditable_type)->toBe(Client::class)
+        ->and(Audit::first()->auditable_id)->toBe($client->id);
 
     $retrieved = Client::find($client->id);
     $retrieved->update(['description' => 'changed']);
