@@ -122,7 +122,6 @@ class VaultKeyManager extends Command
         $this->line("Private Key:");
         $this->line($newKey->private_key);
         $this->warn("Keep the private key safe!");
-
     }
 
     protected function rotate()
@@ -151,7 +150,6 @@ class VaultKeyManager extends Command
                 'valid_until' => $keyModel->valid_until,
             ];
         })->toArray());
-
     }
 
     /**
@@ -198,7 +196,6 @@ class VaultKeyManager extends Command
         VaultKey::revoke($key->id);
 
         $this->info("Key with ID {$key->id} revoked successfully.");
-
     }
 
     protected function cleanupKeys(): void
@@ -218,6 +215,5 @@ class VaultKeyManager extends Command
         } else {
             $this->info("{$revokedKeys->count()} revoked key(s) removed successfully.");
         }
-
     }
 }
