@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types = 1);
+
+use JuniorFontenele\LaravelVaultServer\Exceptions\Jwt\InvalidJwtHeader;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
+use JuniorFontenele\LaravelVaultServer\Services\JwtAuthService;
+
+beforeEach(function () {
+    Key::query()->delete();
+    Client::query()->delete();
+});
+
+uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+
+describe('JwtAuthService', function () {
+    it('throws InvalidJwtHeader on invalid token', function () {
+        $service = new JwtAuthService();
+        $this->expectException(InvalidJwtHeader::class);
+        $service->attempt('invalid.token');
+    });
+
+    // Para cobrir autenticação real, seria necessário mockar SecureJwtFacade e dependências
+    // Adicione mais testes conforme a lógica de autenticação customizada do seu projeto
+});
