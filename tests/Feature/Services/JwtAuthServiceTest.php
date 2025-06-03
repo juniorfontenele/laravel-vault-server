@@ -21,6 +21,15 @@ describe('JwtAuthService', function () {
         $service->attempt('invalid.token');
     });
 
+    it('authenticates with a valid token', function () {
+        $token = $this->getJwtToken();
+        $service = app(JwtAuthService::class);
+        $key = $service->attempt($token);
+
+        expect($service->check())->toBeTrue()
+            ->and($key)->not()->toBeNull();
+    });
+
     // Para cobrir autenticação real, seria necessário mockar SecureJwtFacade e dependências
     // Adicione mais testes conforme a lógica de autenticação customizada do seu projeto
 });

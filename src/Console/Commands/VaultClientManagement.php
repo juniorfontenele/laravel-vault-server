@@ -95,7 +95,7 @@ class VaultClientManagement extends Command
         if (empty($scopes[0])) {
             $this->error('--scopes is required');
 
-            exit(static::FAILURE);
+            return;
         }
 
         $newClient = VaultClientManager::createClient(

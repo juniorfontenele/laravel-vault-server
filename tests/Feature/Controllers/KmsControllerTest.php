@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types = 1);
+
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
+
+uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+
+beforeEach(function () {
+    Key::query()->delete();
+    Client::query()->delete();
+});
+
+it('returns a key by id', function () {
+    $client = Client::factory()->create();
+    $newKey = VaultKey::create($client->id, 2048, 365);
+
+    $response = $this->getJson(route('vault.kms.get', $newKey->key->id));
+    $response->assertOk();
+    $response->assertJson(['key_id' => $newKey->key->id]);
+});
+
+it('rotates a key', function () {
+    $this->updateAuthorizationHeaders();
+
+    $response = $this->postJson(route('vault.kms.rotate'));
+
+    $response->assertCreated();
+    $response->assertJsonStructure([
+        'key_id',
+        'public_key',
+        'private_key',
+        'client_id',
+    ]);
+});

@@ -73,7 +73,7 @@ class VaultKeyManager extends Command
         if ($clients->isEmpty()) {
             $this->error('No active clients found.');
 
-            exit(static::FAILURE);
+            return static::FAILURE;
         }
 
         $clientUuid = $this->option('client') ?? search(
@@ -123,7 +123,6 @@ class VaultKeyManager extends Command
         $this->line($newKey->private_key);
         $this->warn("Keep the private key safe!");
 
-        exit(static::SUCCESS);
     }
 
     protected function rotate()
@@ -153,7 +152,6 @@ class VaultKeyManager extends Command
             ];
         })->toArray());
 
-        exit(static::SUCCESS);
     }
 
     /**
@@ -194,14 +192,13 @@ class VaultKeyManager extends Command
         if (! $key instanceof Key) {
             $this->error("Key not found for client ID {$client->id}.");
 
-            exit(static::FAILURE);
+            return;
         }
 
         VaultKey::revoke($key->id);
 
         $this->info("Key with ID {$key->id} revoked successfully.");
 
-        exit(static::SUCCESS);
     }
 
     protected function cleanupKeys(): void
@@ -222,6 +219,5 @@ class VaultKeyManager extends Command
             $this->info("{$revokedKeys->count()} revoked key(s) removed successfully.");
         }
 
-        exit(static::SUCCESS);
     }
 }

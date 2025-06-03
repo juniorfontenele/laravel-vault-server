@@ -112,7 +112,14 @@ class TestCase extends OrchestraTestCase
     {
         $newClient = VaultClientManager::createClient(
             name: 'Test Client',
-            allowedScopes: ['keys:read', 'keys:rotate', 'keys:delete', 'hashes:read', 'hashes:create', 'hashes:delete'],
+            allowedScopes: [
+                'keys:read',
+                'keys:rotate',
+                'keys:delete',
+                'passwords:verify',
+                'passwords:create',
+                'passwords:delete',
+            ],
         );
 
         $newKey = VaultClientManager::provisionClient(
@@ -125,6 +132,7 @@ class TestCase extends OrchestraTestCase
             'nonce' => bin2hex(random_bytes(16)),
             'iss' => 'testing',
             'iat' => time(),
+            'nbf' => time(),
             'exp' => time() + now()->addMinutes(5)->timestamp,
             'client_id' => $newClient->client->id,
             'scopes' => $newClient->client->allowed_scopes,

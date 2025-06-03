@@ -53,7 +53,6 @@ class Key extends Model
     protected function casts(): array
     {
         return [
-            'is_active' => 'boolean',
             'is_revoked' => 'boolean',
             'valid_from' => 'immutable_datetime',
             'valid_until' => 'immutable_datetime',
