@@ -5,7 +5,8 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\RateLimiter;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 
@@ -13,6 +14,17 @@ class HashController
 {
     public function verify(Request $request, string $userId)
     {
+        $ip = $request->ip();
+        $key = 'hash_verify_attempts:' . $userId . ':' . $ip;
+        $maxAttempts = 5;
+        $decaySeconds = 120;
+
+        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+            return response()->json([
+                'message' => 'Too many attempts. Please try again later.',
+            ], 429);
+        }
+
         $validated = validator($request->all(), [
             'password' => ['required', 'string', 'max:255'],
         ])->validate();
@@ -24,6 +36,8 @@ class HashController
             );
 
             if (! $hashVerified) {
+                RateLimiter::hit($key, $decaySeconds);
+
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
 
@@ -35,20 +49,20 @@ class HashController
 
     public function store(Request $request, string $userId)
     {
-        $validator = Validator::make($request->all(), [
-            'hash' => 'required|string|max:255',
-        ]);
+        $validated = validator($request->all(), [
+            'password' => ['required', 'string', 'max:255'],
+        ])->validate();
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+        try {
+            VaultHash::store(
+                $userId,
+                $validated['password'],
+            );
+
+            return response()->json(['message' => 'Password stored successfully'], 201);
+        } catch (HashStoreException $e) {
+            return response()->json(['message' => 'Failed to store password'], 422);
         }
-
-        $hashResponseDTO = VaultHash::store(
-            $userId,
-            $validator->validated()['hash'],
-        );
-
-        return response()->json($hashResponseDTO->toArray(), 201);
     }
 
     public function destroy(string $userId)
@@ -56,9 +70,9 @@ class HashController
         try {
             VaultHash::delete($userId);
 
-            return response()->noContent();
+            return response()->json(['message' => 'Password deleted successfully'], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => __('Failed to delete hash for user :userId', ['userId' => $userId])], 422);
+            return response()->json(['message' => 'Failed to delete password for user'], 422);
         }
     }
 }
