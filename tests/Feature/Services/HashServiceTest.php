@@ -15,17 +15,17 @@ use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
 beforeEach(function () {
     Hash::query()->delete();
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::query()->delete();
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::create([
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::query()->delete();
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::create([
         'version' => 1,
         'value' => 'pepper',
         'is_revoked' => false,
     ]);
     // Remove o hidden para value para facilitar o teste
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::unsetEventDispatcher();
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::unsetEventDispatcher();
 });
 
-uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 
 describe('HashService', function () {
     it('stores and verifies a hash', function () {

@@ -11,6 +11,6 @@ it('converts scope to label', function () {
 });
 
 it('throws exception on invalid value', function () {
-    $this->expectException(\JuniorFontenele\LaravelVaultServer\Events\Client\InvalidScopeException::class);
+    $this->expectException(JuniorFontenele\LaravelVaultServer\Events\Client\InvalidScopeException::class);
     Scope::fromString('invalid');
 });

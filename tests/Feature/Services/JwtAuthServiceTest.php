@@ -12,7 +12,7 @@ beforeEach(function () {
     Client::query()->delete();
 });
 
-uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 
 describe('JwtAuthService', function () {
     it('throws InvalidJwtHeader on invalid token', function () {

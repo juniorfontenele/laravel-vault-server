@@ -22,7 +22,7 @@ beforeEach(function () {
     Client::query()->delete();
 });
 
-uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 
 describe('ClientManagerService', function () {
     it('creates a client', function () {
@@ -41,7 +41,7 @@ describe('ClientManagerService', function () {
         // Corrige para usar o nome correto do atributo
         $provisionToken = $client->plaintext_provision_token;
         // Simula hash correto usando Hash::make
-        $client->client->provision_token = \Illuminate\Support\Facades\Hash::make($provisionToken);
+        $client->client->provision_token = Illuminate\Support\Facades\Hash::make($provisionToken);
         $client->client->save();
         $newKey = $service->provisionClient($client->client->id, $provisionToken);
         expect($newKey)->toBeInstanceOf(NewKey::class);
@@ -67,7 +67,7 @@ describe('ClientManagerService', function () {
         $service = app(ClientManagerService::class);
         $client = $service->createClient('Test', [Scope::KEYS_READ->value], 'desc');
         // Simula hash correto usando Hash::make
-        $client->client->provision_token = \Illuminate\Support\Facades\Hash::make('right');
+        $client->client->provision_token = Illuminate\Support\Facades\Hash::make('right');
         $client->client->save();
         $this->expectException(ClientNotAuthenticatedException::class);
         $service->provisionClient($client->client->id, 'wrong');

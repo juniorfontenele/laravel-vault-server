@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Models;
 
-use JuniorFontenele\LaravelVaultServer\Database\Factories\PepperFactory;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -13,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Log;
 use JuniorFontenele\LaravelVaultServer\Concerns\AsAuditable;
+use JuniorFontenele\LaravelVaultServer\Database\Factories\PepperFactory;
 use JuniorFontenele\LaravelVaultServer\Events\Pepper\PepperDecryptionFailed;
 
 /** @property-read string $id
