@@ -9,7 +9,6 @@ use Firebase\JWT\JWT;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Date;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ProvisionClientUseCase;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Ramsey\Uuid\Uuid;
@@ -111,14 +110,14 @@ class TestCase extends OrchestraTestCase
 
     protected function getJwtToken(): string
     {
-        $client = VaultClientManager::createClient(
+        $newClient = VaultClientManager::createClient(
             name: 'Test Client',
             allowedScopes: ['keys:read', 'keys:rotate', 'keys:delete', 'hashes:read', 'hashes:create', 'hashes:delete'],
         );
 
-        $createKeyResponseDTO = app(ProvisionClientUseCase::class)->execute(
-            clientId: $client->clientId,
-            provisionToken: $client->provisionToken,
+        $newKey = VaultClientManager::provisionClient(
+            clientId: $newClient->client->id,
+            provisionToken: $newClient->plaintext_provision_token,
         );
 
         $jwtPayload = [
@@ -127,16 +126,16 @@ class TestCase extends OrchestraTestCase
             'iss' => 'testing',
             'iat' => time(),
             'exp' => time() + now()->addMinutes(5)->timestamp,
-            'client_id' => $client->clientId,
-            'scopes' => $client->allowedScopes,
-            'kid' => $createKeyResponseDTO->keyId,
+            'client_id' => $newClient->client->id,
+            'scopes' => $newClient->client->allowed_scopes,
+            'kid' => $newKey->key->id,
         ];
 
         $token = JWT::encode(
             $jwtPayload,
-            $createKeyResponseDTO->privateKey,
+            $newKey->private_key,
             'RS256',
-            $createKeyResponseDTO->keyId
+            $newKey->key->id
         );
 
         return $token;
