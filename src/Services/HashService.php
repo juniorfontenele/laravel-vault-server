@@ -61,7 +61,7 @@ class HashService
         event(new HashVerified($userId, $hashVerified));
 
         if ($hashVerified && $hash->needs_rehash) {
-            event(new RehashNeeded($userId, (string) $hash->pepper->version));
+            event(new RehashNeeded($userId, $hash->pepper->version));
 
             throw new RehashNeededException();
         }

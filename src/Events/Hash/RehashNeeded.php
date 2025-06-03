@@ -19,7 +19,7 @@ class RehashNeeded
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $userId, public string $pepperVersion)
+    public function __construct(public string $userId, public int $pepperVersion)
     {
         //
     }
