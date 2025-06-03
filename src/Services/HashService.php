@@ -79,7 +79,11 @@ class HashService
      */
     public function store(string $userId, string $password): void
     {
-        $pepper = app(PepperService::class)->getActive();
+        if ($userId === '' || $password === '') {
+            throw new HashStoreException($userId);
+        }
+
+        $pepper = $this->pepperService->getActive();
         $combinedPassword = $password . $pepper->value;
         $preHash = hash(self::PREHASH_ALGORITHM, $combinedPassword);
         $hashedPassword = $this->hasher->make($preHash);

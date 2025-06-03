@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Database\Factories;
+namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;

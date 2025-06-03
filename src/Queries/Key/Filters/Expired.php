@@ -11,6 +11,6 @@ class Expired implements QueryFilterInterface
 {
     public function apply(Builder $query): Builder
     {
-        return $query->where('expires_at', '<=', now());
+        return $query->where('valid_until', '<=', now());
     }
 }

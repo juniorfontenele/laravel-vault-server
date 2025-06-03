@@ -26,6 +26,8 @@ class KeyFactory extends Factory
         $publicKey = $privateKey->getPublicKey()->toString('PKCS8');
 
         return [
+            'algorithm' => 'RS256',
+            'version' => 1,
             'public_key' => $publicKey,
             'is_revoked' => false,
             'valid_from' => now(),

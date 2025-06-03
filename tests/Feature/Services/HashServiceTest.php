@@ -15,22 +15,25 @@ use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
 beforeEach(function () {
     Hash::query()->delete();
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::query()->delete();
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::create([
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::query()->delete();
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::create([
         'version' => 1,
         'value' => 'pepper',
         'is_revoked' => false,
     ]);
     // Remove o hidden para value para facilitar o teste
-    \JuniorFontenele\LaravelVaultServer\Models\Pepper::unsetEventDispatcher();
+    JuniorFontenele\LaravelVaultServer\Models\Pepper::unsetEventDispatcher();
 });
 
-uses(\JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
+uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
 
 describe('HashService', function () {
     it('stores and verifies a hash', function () {
         Event::fake();
-        $service = new HashService(app(\JuniorFontenele\LaravelVaultServer\Services\PepperService::class), new Argon2IdHasher());
+        $service = app()->make(HashService::class, [
+            'pepperService' => app(PepperService::class),
+            'hasher' => new Argon2IdHasher(),
+        ]);
         $userId = 'user-1';
         $service->store($userId, 'password');
         expect(Hash::where('user_id', $userId)->first())->not()->toBeNull();
@@ -40,13 +43,19 @@ describe('HashService', function () {
     });
 
     it('throws HashStoreException on store failure', function () {
-        $service = new HashService(app(\JuniorFontenele\LaravelVaultServer\Services\PepperService::class), new Argon2IdHasher());
+        $service = app()->make(HashService::class, [
+            'pepperService' => app(PepperService::class),
+            'hasher' => new Argon2IdHasher(),
+        ]);
         $this->expectException(HashStoreException::class);
         $service->store('', '');
     });
 
     it('throws RehashNeededException if needs rehash', function () {
-        $service = new HashService(app(\JuniorFontenele\LaravelVaultServer\Services\PepperService::class), new Argon2IdHasher());
+        $service = app()->make(HashService::class, [
+            'pepperService' => app(PepperService::class),
+            'hasher' => new Argon2IdHasher(),
+        ]);
         $userId = 'user-2';
         $service->store($userId, 'password');
         // Simula needs_rehash
@@ -57,7 +66,10 @@ describe('HashService', function () {
 
     it('deletes a hash', function () {
         Event::fake();
-        $service = new HashService(app(\JuniorFontenele\LaravelVaultServer\Services\PepperService::class), new Argon2IdHasher());
+        $service = app()->make(HashService::class, [
+            'pepperService' => app(PepperService::class),
+            'hasher' => new Argon2IdHasher(),
+        ]);
         $userId = 'user-3';
         $service->store($userId, 'password');
         $service->delete($userId);
