@@ -5,15 +5,15 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Infrastructure\Laravel\Persistence\Models\KeyModel;
+use JuniorFontenele\LaravelVaultServer\Models\Key;
 use phpseclib3\Crypt\RSA;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<KeyModel>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Key>
  */
 class KeyFactory extends Factory
 {
-    protected $model = KeyModel::class;
+    protected $model = Key::class;
 
     /**
      * Define the model's default state.
@@ -26,6 +26,8 @@ class KeyFactory extends Factory
         $publicKey = $privateKey->getPublicKey()->toString('PKCS8');
 
         return [
+            'algorithm' => 'RS256',
+            'version' => 1,
             'public_key' => $publicKey,
             'is_revoked' => false,
             'valid_from' => now(),
