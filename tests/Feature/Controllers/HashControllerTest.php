@@ -38,12 +38,12 @@ describe('HashController', function () {
         $response->assertJsonValidationErrors(['password']);
     });
 
-    it('fails store password when token is missing', function () {
+    it('fails storing password when token is missing', function () {
         $response = $this->postJson(route('vault.password.store', ['userId' => 'user1']), ['password' => $this->securePassword]);
         $response->assertUnauthorized();
     });
 
-    it('stores password with complexity requirements', function () {
+    it('stores password with complexity requirements met', function () {
         $this->updateAuthorizationHeaders();
 
         $response = $this->postJson(route('vault.password.store', ['userId' => 'user1']), ['password' => $this->securePassword]);
@@ -58,7 +58,7 @@ describe('HashController', function () {
         expect(Hash::query()->first()->hash)->not->toBe($this->securePassword);
     });
 
-    it('passes verification with correct password', function () {
+    it('succeeds verification with correct password', function () {
         $this->updateAuthorizationHeaders();
 
         $this->postJson(route('vault.password.store', ['userId' => 'user1']), ['password' => $this->securePassword])
