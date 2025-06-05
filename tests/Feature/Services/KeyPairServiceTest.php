@@ -14,6 +14,8 @@ use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
 use JuniorFontenele\LaravelVaultServer\Services\KeyPairService;
 
+covers(KeyPairService::class);
+
 beforeEach(function () {
     Key::query()->delete();
     Client::query()->delete();
@@ -60,9 +62,14 @@ describe('KeyPairService', function () {
         Event::fake();
         $service = app(KeyPairService::class);
         $client = Client::factory()->create();
+        $revokedKey = Key::factory()->create([
+            'client_id' => $client->id,
+            'is_revoked' => true,
+        ]);
         $newKey = $service->create($client->id, 2048, 365);
         $found = $service->get($newKey->key->id);
         expect($found->id)->toBe($newKey->key->id);
+        expect(fn () => $service->get($revokedKey->id))->toThrow(KeyNotFoundException::class);
         Event::assertDispatched(KeyRetrieved::class);
     });
 

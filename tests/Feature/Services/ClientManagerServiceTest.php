@@ -17,6 +17,8 @@ use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Services\ClientManagerService;
 
+covers(ClientManagerService::class);
+
 beforeEach(function () {
     // Clean up the Client table before each test
     Client::query()->delete();

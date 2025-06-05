@@ -6,8 +6,11 @@ use JuniorFontenele\LaravelSecureJwt\CustomClaims;
 use JuniorFontenele\LaravelSecureJwt\Facades\SecureJwt;
 use JuniorFontenele\LaravelSecureJwt\JwtKey;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\KmsController;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
+
+covers(KmsController::class);
 
 beforeEach(function () {
     Key::query()->delete();

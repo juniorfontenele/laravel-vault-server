@@ -2,11 +2,14 @@
 
 declare(strict_types = 1);
 
+use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagementCommand;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
 use function Pest\Faker\fake;
+
+covers(VaultClientManagementCommand::class);
 
 describe('VaultClientManagement Command', function () {
     it('shows no clients found when there are no clients in list command', function () {

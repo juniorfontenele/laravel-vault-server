@@ -78,6 +78,7 @@
     "format": "@php vendor/bin/pint --ansi",
     "test": "XDEBUG_MODE=coverage vendor/bin/pest --ci --parallel",
     "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage --parallel",
+    "test-mutate": "XDEBUG_MODE=coverage vendor/bin/pest --mutate --parallel",
     "post-root-package-install": [
       "@php configure.php",
       "npm install"

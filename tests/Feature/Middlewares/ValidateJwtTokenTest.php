@@ -5,9 +5,12 @@ declare(strict_types = 1);
 use JuniorFontenele\LaravelSecureJwt\CustomClaims;
 use JuniorFontenele\LaravelSecureJwt\JwtKey;
 use JuniorFontenele\LaravelSecureJwt\Services\JwtService;
+use JuniorFontenele\LaravelVaultServer\Http\Middlewares\ValidateJwtToken;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 use phpseclib3\Crypt\RSA;
 use Ramsey\Uuid\Uuid;
+
+covers(ValidateJwtToken::class);
 
 beforeEach(function () {
     Pepper::create([

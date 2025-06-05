@@ -6,6 +6,8 @@ use JuniorFontenele\LaravelVaultServer\Filters\Client\InactiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
 
+covers(ClientQueryBuilder::class);
+
 beforeEach(function () {
     $this->loadVaultMigrations();
 });

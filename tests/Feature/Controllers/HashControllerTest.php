@@ -3,9 +3,12 @@
 declare(strict_types = 1);
 
 use Illuminate\Support\Str;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\HashController;
 use JuniorFontenele\LaravelVaultServer\Models\Hash;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 use JuniorFontenele\LaravelVaultServer\Services\PepperService;
+
+covers(HashController::class);
 
 beforeEach(function () {
     Hash::query()->delete();

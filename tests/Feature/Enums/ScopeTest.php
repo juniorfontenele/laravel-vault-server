@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 
+covers(Scope::class);
+
 describe('Scope Enum', function () {
     it('converts scope to label', function () {
         expect(Scope::KEYS_READ->getLabel())->toBe('Read keys');

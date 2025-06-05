@@ -7,6 +7,8 @@ use JuniorFontenele\LaravelVaultServer\Events\Pepper\PepperRotated;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
+covers(PepperService::class);
+
 beforeEach(function () {
     Pepper::query()->delete();
 });

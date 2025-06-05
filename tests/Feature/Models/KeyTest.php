@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 use JuniorFontenele\LaravelVaultServer\Models\Key;
 
+covers(Key::class);
+
 describe('Key Model', function () {
     it('checks key validity flags', function () {
         $key = Key::factory()->make([

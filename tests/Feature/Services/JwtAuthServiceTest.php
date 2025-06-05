@@ -7,6 +7,8 @@ use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
 use JuniorFontenele\LaravelVaultServer\Services\JwtAuthService;
 
+covers(JwtAuthService::class);
+
 beforeEach(function () {
     Key::query()->delete();
     Client::query()->delete();

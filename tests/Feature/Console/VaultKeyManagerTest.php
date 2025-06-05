@@ -2,8 +2,11 @@
 
 declare(strict_types = 1);
 
+use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManagerCommand;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
+
+covers(VaultKeyManagerCommand::class);
 
 describe('VaultKeyManager Command', function () {
     it('shows error for unsupported action', function () {

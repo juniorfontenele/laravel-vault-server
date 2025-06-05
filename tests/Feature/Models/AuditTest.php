@@ -6,6 +6,8 @@ use JuniorFontenele\LaravelVaultServer\Enums\AuditAction;
 use JuniorFontenele\LaravelVaultServer\Models\Audit;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
+covers(Audit::class);
+
 beforeEach(function () {
     Audit::query()->delete();
     Client::query()->delete();

@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Hash as HashFacade;
 use Illuminate\Support\Str;
+use JuniorFontenele\LaravelVaultServer\Http\Controllers\ClientController;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
+
+covers(ClientController::class);
 
 beforeEach(function () {
     Client::query()->delete();

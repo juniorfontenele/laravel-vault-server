@@ -13,6 +13,8 @@ use JuniorFontenele\LaravelVaultServer\Models\Hash;
 use JuniorFontenele\LaravelVaultServer\Services\HashService;
 use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
+covers(HashService::class);
+
 beforeEach(function () {
     Hash::query()->delete();
     JuniorFontenele\LaravelVaultServer\Models\Pepper::query()->delete();

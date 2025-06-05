@@ -2,6 +2,10 @@
 
 declare(strict_types = 1);
 
+use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
+
+covers(VaultInstallCommand::class);
+
 describe('VaultInstallCommand', function () {
     it('publishes migrations and runs them when confirmed', function () {
         $this->artisan('vault-server:install')
@@ -51,7 +55,7 @@ describe('VaultInstallCommand', function () {
     });
 
     it('has correct command signature', function () {
-        $command = app(JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand::class);
+        $command = app(VaultInstallCommand::class);
 
         expect($command->getName())->toBe('vault-server:install');
         expect($command->getDescription())->toBe('Install the Vault module');
