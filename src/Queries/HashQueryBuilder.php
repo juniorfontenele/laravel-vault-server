@@ -2,10 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Hash;
+namespace JuniorFontenele\LaravelVaultServer\Queries;
 
 use JuniorFontenele\LaravelVaultServer\Models\Hash;
-use JuniorFontenele\LaravelVaultServer\Queries\AbstractQueryBuilder;
 
 class HashQueryBuilder extends AbstractQueryBuilder
 {

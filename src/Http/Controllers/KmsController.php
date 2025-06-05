@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use JuniorFontenele\LaravelVaultServer\Data\Key\KeyData;
 use JuniorFontenele\LaravelVaultServer\Data\Key\NewKeyData;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 
-class KmsController
+class KmsController extends Controller
 {
     public function show(string $kid)
     {

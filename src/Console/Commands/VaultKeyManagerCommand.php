@@ -7,20 +7,19 @@ namespace JuniorFontenele\LaravelVaultServer\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Filters\Client\ActiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\ByClientIdFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\NonRevokedFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
-
 use JuniorFontenele\LaravelVaultServer\Models\Key;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\NonRevoked;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\KeyQueryBuilder;
+use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
+use JuniorFontenele\LaravelVaultServer\Queries\KeyQueryBuilder;
 
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class VaultKeyManager extends Command
+class VaultKeyManagerCommand extends Command
 {
     protected $signature = 'vault-server:key
         {action? : Action to perform (generate|rotate|list|revoke|cleanup)}
@@ -181,7 +180,7 @@ class VaultKeyManager extends Command
     private function getAllKeysForClientId(string $clientId): Collection
     {
         return (new KeyQueryBuilder())
-            ->addFilter(new ByClientId($clientId))
+            ->addFilter(new ByClientIdFilter($clientId))
             ->build()
             ->get();
     }
@@ -195,8 +194,8 @@ class VaultKeyManager extends Command
     private function getActiveKeyForClientId(string $clientId): ?Key
     {
         return (new KeyQueryBuilder())
-            ->addFilter(new ByClientId($clientId))
-            ->addFilter(new NonRevoked())
+            ->addFilter(new ByClientIdFilter($clientId))
+            ->addFilter(new NonRevokedFilter())
             ->build()
             ->first();
     }

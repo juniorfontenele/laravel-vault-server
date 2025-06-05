@@ -8,17 +8,17 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
+use JuniorFontenele\LaravelVaultServer\Filters\Client\ActiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Client\InactiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\ActiveClientsFilter;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
 
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class VaultClientManagement extends Command
+class VaultClientManagementCommand extends Command
 {
     /**
      * The name and signature of the console command.

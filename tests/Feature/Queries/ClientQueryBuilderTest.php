@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
+use JuniorFontenele\LaravelVaultServer\Filters\Client\InactiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
 
 beforeEach(function () {
     $this->loadVaultMigrations();

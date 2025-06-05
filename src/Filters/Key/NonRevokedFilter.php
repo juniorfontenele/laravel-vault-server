@@ -2,15 +2,15 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Client\Filters;
+namespace JuniorFontenele\LaravelVaultServer\Filters\Key;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use JuniorFontenele\LaravelVaultServer\Contracts\QueryFilterInterface;
 
-class ActiveClientsFilter implements QueryFilterInterface
+class NonRevokedFilter implements QueryFilterInterface
 {
     public function apply(Builder $query): Builder
     {
-        return $query->where('is_active', '=', true);
+        return $query->where('is_revoked', '=', false);
     }
 }

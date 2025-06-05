@@ -2,10 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Client;
+namespace JuniorFontenele\LaravelVaultServer\Queries;
 
 use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Queries\AbstractQueryBuilder;
 
 class ClientQueryBuilder extends AbstractQueryBuilder
 {

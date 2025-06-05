@@ -11,6 +11,6 @@ describe('Scope Enum', function () {
 
     it('throws exception on invalid value', function () {
         expect(fn () => Scope::fromString('invalid'))
-            ->toThrow(JuniorFontenele\LaravelVaultServer\Events\Client\InvalidScopeException::class);
+            ->toThrow(JuniorFontenele\LaravelVaultServer\Exceptions\Client\InvalidScopeException::class);
     });
 });

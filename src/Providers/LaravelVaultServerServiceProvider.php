@@ -13,10 +13,10 @@ use JuniorFontenele\LaravelSecureJwt\Contracts\JwtClaimValidatorInterface;
 use JuniorFontenele\LaravelSecureJwt\Contracts\JwtDriverInterface;
 use JuniorFontenele\LaravelSecureJwt\Contracts\JwtNonceRepositoryInterface;
 use JuniorFontenele\LaravelSecureJwt\JwtConfig;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\Play;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagement;
+use JuniorFontenele\LaravelVaultServer\Console\Commands\PlayCommand;
+use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultClientManagementCommand;
 use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand;
-use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManager;
+use JuniorFontenele\LaravelVaultServer\Console\Commands\VaultKeyManagerCommand;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
@@ -114,10 +114,10 @@ class LaravelVaultServerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                VaultKeyManager::class,
-                VaultClientManagement::class,
+                VaultKeyManagerCommand::class,
+                VaultClientManagementCommand::class,
                 VaultInstallCommand::class,
-                Play::class,
+                PlayCommand::class,
             ]);
         }
     }

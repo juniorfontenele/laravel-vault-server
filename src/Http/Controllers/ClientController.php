@@ -5,12 +5,13 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthenticatedException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 
-class ClientController
+class ClientController extends Controller
 {
     public function provision(Request $request, string $clientId)
     {

@@ -5,13 +5,14 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultHash;
 
-class HashController
+class HashController extends Controller
 {
     public function verify(Request $request, string $userId)
     {

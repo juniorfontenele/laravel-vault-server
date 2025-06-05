@@ -19,9 +19,9 @@ use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientAlreadyProvisione
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthenticatedException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Filters\Client\InactiveClientsFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\ClientQueryBuilder;
-use JuniorFontenele\LaravelVaultServer\Queries\Client\Filters\InactiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
 
 class ClientManagerService
 {

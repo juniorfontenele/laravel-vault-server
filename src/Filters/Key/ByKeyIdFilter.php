@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Key\Filters;
+namespace JuniorFontenele\LaravelVaultServer\Filters\Key;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use JuniorFontenele\LaravelVaultServer\Contracts\QueryFilterInterface;
 
-class ByKeyId implements QueryFilterInterface
+class ByKeyIdFilter implements QueryFilterInterface
 {
     public function __construct(
         private string $keyId,

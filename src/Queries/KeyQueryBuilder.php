@@ -2,10 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Key;
+namespace JuniorFontenele\LaravelVaultServer\Queries;
 
 use JuniorFontenele\LaravelVaultServer\Models\Key;
-use JuniorFontenele\LaravelVaultServer\Queries\AbstractQueryBuilder;
 
 class KeyQueryBuilder extends AbstractQueryBuilder
 {

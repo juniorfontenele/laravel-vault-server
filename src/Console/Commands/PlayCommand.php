@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use JuniorFontenele\LaravelSecureJwt\Facades\SecureJwt;
 use JuniorFontenele\LaravelSecureJwt\JwtKey;
 
-class Play extends Command
+class PlayCommand extends Command
 {
     /**
      * The name and signature of the console command.

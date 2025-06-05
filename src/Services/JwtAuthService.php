@@ -13,7 +13,7 @@ use JuniorFontenele\LaravelSecureJwt\JwtKey;
 use JuniorFontenele\LaravelSecureJwt\SecureJwt;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthenticatedException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthorizedException;
-use JuniorFontenele\LaravelVaultServer\Exceptions\Jwt\InvalidJwtHeader;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Jwt\InvalidJwtHeaderException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
@@ -31,7 +31,7 @@ class JwtAuthService
      *
      * @param string $token
      * @return Key
-     * @throws InvalidJwtHeader
+     * @throws InvalidJwtHeaderException
      * @throws JwtInvalidKidException
      * @throws TokenBlacklistedException
      * @throws NonceUsedException
@@ -137,25 +137,25 @@ class JwtAuthService
      *
      * @param string $token
      * @return array{kid: string, alg: string, typ: string}
-     * @throws InvalidJwtHeader
+     * @throws InvalidJwtHeaderException
      */
     private function decodeHeaderFromBase64Token(string $token): array
     {
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
-            throw new InvalidJwtHeader();
+            throw new InvalidJwtHeaderException();
         }
 
         [$header, $payload, $signature] = $parts;
         $decodedHeader = json_decode(base64_decode($header), true);
 
         if ($decodedHeader === false) {
-            throw new InvalidJwtHeader();
+            throw new InvalidJwtHeaderException();
         }
 
         if (! isset($decodedHeader['kid'], $decodedHeader['alg'], $decodedHeader['typ'])) {
-            throw new InvalidJwtHeader();
+            throw new InvalidJwtHeaderException();
         }
 
         return $decodedHeader;

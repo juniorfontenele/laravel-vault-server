@@ -11,9 +11,9 @@ use JuniorFontenele\LaravelVaultServer\Events\Hash\HashVerified;
 use JuniorFontenele\LaravelVaultServer\Events\Hash\RehashNeeded;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\HashStoreException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Hash\RehashNeededException;
+use JuniorFontenele\LaravelVaultServer\Filters\Hash\HashForUserIdFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Hash;
-use JuniorFontenele\LaravelVaultServer\Queries\Hash\Filters\HashForUserId;
-use JuniorFontenele\LaravelVaultServer\Queries\Hash\HashQueryBuilder;
+use JuniorFontenele\LaravelVaultServer\Queries\HashQueryBuilder;
 
 class HashService
 {
@@ -38,7 +38,7 @@ class HashService
         $dummyHash = $this->hasher->make(bin2hex(random_bytes(16)));
 
         $hash = (new HashQueryBuilder())
-            ->addFilter(new HashForUserId($userId))
+            ->addFilter(new HashForUserIdFilter($userId))
             ->build()
             ->first();
 
@@ -113,7 +113,7 @@ class HashService
     public function delete(string $userId): void
     {
         (new HashQueryBuilder())
-            ->addFilter(new HashForUserId($userId))
+            ->addFilter(new HashForUserIdFilter($userId))
             ->build()
             ->delete();
 

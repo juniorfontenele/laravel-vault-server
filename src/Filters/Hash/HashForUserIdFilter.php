@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace JuniorFontenele\LaravelVaultServer\Queries\Hash\Filters;
+namespace JuniorFontenele\LaravelVaultServer\Filters\Hash;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use JuniorFontenele\LaravelVaultServer\Contracts\QueryFilterInterface;
 
-class HashForUserId implements QueryFilterInterface
+class HashForUserIdFilter implements QueryFilterInterface
 {
     public function __construct(
         protected string $userId

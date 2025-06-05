@@ -14,13 +14,13 @@ use JuniorFontenele\LaravelVaultServer\Events\Key\KeyRevoked;
 use JuniorFontenele\LaravelVaultServer\Events\Key\KeyRotated;
 use JuniorFontenele\LaravelVaultServer\Events\Key\RevokedKeysCleanedUp;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Key\KeyNotFoundException;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\ByClientIdFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\ByKeyIdFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\ExpiredFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\NonRevokedFilter;
+use JuniorFontenele\LaravelVaultServer\Filters\Key\RevokedFilter;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByClientId;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\ByKeyId;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\Expired;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\NonRevoked;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\Filters\Revoked;
-use JuniorFontenele\LaravelVaultServer\Queries\Key\KeyQueryBuilder;
+use JuniorFontenele\LaravelVaultServer\Queries\KeyQueryBuilder;
 use phpseclib3\Crypt\RSA;
 
 class KeyPairService
@@ -130,7 +130,7 @@ class KeyPairService
     public function cleanupExpiredKeys(): Collection
     {
         $expiredKeys = (new KeyQueryBuilder())
-            ->addFilter(new Expired())
+            ->addFilter(new ExpiredFilter())
             ->setSelectColumns(['id', 'client_id'])
             ->build()
             ->get();
@@ -147,7 +147,7 @@ class KeyPairService
     public function cleanupRevokedKeys(): Collection
     {
         $revokedKeys = (new KeyQueryBuilder())
-            ->addFilter(new Revoked())
+            ->addFilter(new RevokedFilter())
             ->setSelectColumns(['id', 'client_id'])
             ->build()
             ->get();
@@ -189,7 +189,7 @@ class KeyPairService
     private function findKeysByClientId(string $clientId): Collection
     {
         return (new KeyQueryBuilder())
-            ->addFilter(new ByClientId($clientId))
+            ->addFilter(new ByClientIdFilter($clientId))
             ->build()
             ->get();
     }
@@ -204,10 +204,10 @@ class KeyPairService
     private function findByKeyId(string $keyId, bool $onlyNonRevoked = true): Key
     {
         $query = (new KeyQueryBuilder())
-            ->addFilter(new ByKeyId($keyId));
+            ->addFilter(new ByKeyIdFilter($keyId));
 
         if ($onlyNonRevoked) {
-            $query->addFilter(new NonRevoked());
+            $query->addFilter(new NonRevokedFilter());
         }
 
         $key = $query->build()
