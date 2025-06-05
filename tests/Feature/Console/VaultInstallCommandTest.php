@@ -51,8 +51,8 @@ describe('VaultInstallCommand', function () {
     });
 
     it('has correct command signature', function () {
-        $command = app(\JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand::class);
-        
+        $command = app(JuniorFontenele\LaravelVaultServer\Console\Commands\VaultInstallCommand::class);
+
         expect($command->getName())->toBe('vault-server:install');
         expect($command->getDescription())->toBe('Install the Vault module');
     });
