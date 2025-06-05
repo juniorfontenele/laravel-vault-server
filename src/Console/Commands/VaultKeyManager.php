@@ -31,17 +31,21 @@ class VaultKeyManager extends Command
 
     protected $description = 'Vault Key Management';
 
-    public function handle()
+    public function handle(): int
     {
         $action = $this->getAction();
 
-        match ($action) {
+        return match ($action) {
             'generate' => $this->generate(),
             'rotate' => $this->rotate(),
             'list' => $this->listKeys(),
             'revoke' => $this->revokeKey(),
             'cleanup' => $this->cleanupKeys(),
-            default => $this->error("Action '{$action}' is not supported."),
+            default => (function () use ($action) {
+                $this->error("Action '{$action}' is not supported.");
+
+                return static::FAILURE;
+            })(),
         };
     }
 
@@ -62,7 +66,7 @@ class VaultKeyManager extends Command
         return $action;
     }
 
-    protected function getClient(): Client
+    protected function getClient(): ?Client
     {
         /** @var Collection<Client> $clients */
         $clients = (new ClientQueryBuilder())
@@ -71,9 +75,7 @@ class VaultKeyManager extends Command
             ->get();
 
         if ($clients->isEmpty()) {
-            $this->error('No active clients found.');
-
-            return static::FAILURE;
+            return null;
         }
 
         $clientUuid = $this->option('client') ?? search(
@@ -95,9 +97,15 @@ class VaultKeyManager extends Command
         return $client;
     }
 
-    protected function generate()
+    protected function generate(): int
     {
         $client = $this->getClient();
+
+        if (is_null($client)) {
+            $this->error('No active clients found.');
+
+            return static::SUCCESS;
+        }
 
         $days = $this->option('valid-days') ?? text(
             label: 'Validity period in days',
@@ -106,7 +114,9 @@ class VaultKeyManager extends Command
         );
 
         if (! is_numeric($days) || (int) $days <= 0) {
-            return $this->error('Invalid number of days');
+            $this->error('Invalid number of days');
+
+            return static::FAILURE;
         }
 
         $newKey = VaultKey::create(
@@ -122,23 +132,31 @@ class VaultKeyManager extends Command
         $this->line("Private Key:");
         $this->line($newKey->private_key);
         $this->warn("Keep the private key safe!");
+
+        return static::SUCCESS;
     }
 
-    protected function rotate()
+    protected function rotate(): int
     {
-        $this->generate();
+        return $this->generate();
     }
 
-    protected function listKeys()
+    protected function listKeys(): int
     {
         $client = $this->getClient();
+
+        if (is_null($client)) {
+            $this->error('No active clients found.');
+
+            return static::SUCCESS;
+        }
 
         $keys = $this->getAllKeysForClientId($client->id);
 
         if ($keys->isEmpty()) {
             $this->info('No keys found for this client.');
 
-            return;
+            return static::SUCCESS;
         }
 
         $this->table(['ID', 'Public Key', 'Revoked?', 'Valid From', 'Valid Until'], $keys->map(function (Key $keyModel): array {
@@ -150,6 +168,8 @@ class VaultKeyManager extends Command
                 'valid_until' => $keyModel->valid_until,
             ];
         })->toArray());
+
+        return static::SUCCESS;
     }
 
     /**
@@ -181,24 +201,32 @@ class VaultKeyManager extends Command
             ->first();
     }
 
-    protected function revokeKey()
+    protected function revokeKey(): int
     {
         $client = $this->getClient();
+
+        if (is_null($client)) {
+            $this->error('No active clients found.');
+
+            return static::SUCCESS;
+        }
 
         $key = $this->getActiveKeyForClientId($client->id);
 
         if (! $key instanceof Key) {
             $this->error("Key not found for client ID {$client->id}.");
 
-            return;
+            return static::SUCCESS;
         }
 
         VaultKey::revoke($key->id);
 
         $this->info("Key with ID {$key->id} revoked successfully.");
+
+        return static::SUCCESS;
     }
 
-    protected function cleanupKeys(): void
+    protected function cleanupKeys(): int
     {
         $expiredKeys = VaultKey::cleanupExpiredKeys();
 
@@ -215,5 +243,7 @@ class VaultKeyManager extends Command
         } else {
             $this->info("{$revokedKeys->count()} revoked key(s) removed successfully.");
         }
+
+        return static::SUCCESS;
     }
 }
