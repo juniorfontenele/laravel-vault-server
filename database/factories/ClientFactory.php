@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace JuniorFontenele\LaravelVaultServer\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JuniorFontenele\LaravelVaultServer\Models\ClientModel;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\JuniorFontenele\LaravelVaultServer\Models\Client>
@@ -15,9 +15,9 @@ class ClientFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<ClientModel>
+     * @var class-string<Client>
      */
-    protected $model = ClientModel::class;
+    protected $model = Client::class;
 
     /**
      * Define the model's default state.

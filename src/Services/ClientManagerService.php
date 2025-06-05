@@ -4,16 +4,24 @@ declare(strict_types = 1);
 
 namespace JuniorFontenele\LaravelVaultServer\Services;
 
-use Illuminate\Support\Facades\Event;
-use JuniorFontenele\LaravelVaultServer\Actions\Client\CreateClientAction;
-use JuniorFontenele\LaravelVaultServer\Application\DTOs\Client\ClientResponseDTO;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteClientUseCase;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\DeleteInactiveClientsUseCase;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\FindAllClientsUseCase;
-use JuniorFontenele\LaravelVaultServer\Application\UseCases\Client\ReprovisionClientUseCase;
-use JuniorFontenele\LaravelVaultServer\Data\Client\ClientCreatedData;
-use JuniorFontenele\LaravelVaultServer\Data\Client\CreateClientData;
-use JuniorFontenele\LaravelVaultServer\Exceptions\ClientException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Enum;
+use JuniorFontenele\LaravelVaultServer\Artifacts\NewClient;
+use JuniorFontenele\LaravelVaultServer\Artifacts\NewKey;
+use JuniorFontenele\LaravelVaultServer\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientCreated;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientDeleted;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientProvisioned;
+use JuniorFontenele\LaravelVaultServer\Events\Client\ClientTokenGenerated;
+use JuniorFontenele\LaravelVaultServer\Events\Client\InactiveClientsCleanup;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientAlreadyProvisionedException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthenticatedException;
+use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotFoundException;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
+use JuniorFontenele\LaravelVaultServer\Filters\Client\InactiveClientsFilter;
+use JuniorFontenele\LaravelVaultServer\Models\Client;
+use JuniorFontenele\LaravelVaultServer\Queries\ClientQueryBuilder;
 
 class ClientManagerService
 {
@@ -23,35 +31,109 @@ class ClientManagerService
      * @param string $name
      * @param string[] $allowedScopes
      * @param string $description
-     * @return ClientCreatedData
+     * @return NewClient
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function createClient(string $name, array $allowedScopes = [], string $description = ''): ClientCreatedData
+    public function createClient(string $name, array $allowedScopes = [], string $description = ''): NewClient
     {
-        $clientData = CreateClientData::fromArray([
-            'name' => $name,
-            'allowed_scopes' => $allowedScopes,
-            'description' => $description,
-        ]);
+        $provisionToken = $this->generateProvisionToken();
 
-        $clientCreatedData = app(CreateClientAction::class)->execute($clientData);
+        $validated = validator(
+            [
+                'name' => $name,
+                'allowed_scopes' => $allowedScopes,
+                'description' => $description,
+                'provision_token' => $provisionToken,
+            ],
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'allowed_scopes' => ['required', 'array'],
+                'allowed_scopes.*' => ['required', new Enum(Scope::class)],
+                'description' => ['nullable', 'string', 'max:1000'],
+                'provision_token' => ['required', 'string', 'size:32'],
+            ]
+        )->validate();
 
-        return $clientCreatedData;
+        $client = Client::create($validated);
+
+        event(new ClientCreated($client));
+
+        return new NewClient(
+            $client,
+            $provisionToken,
+        );
+    }
+
+    /**
+     * Provision a client.
+     *
+     * @param string $clientId Client ID
+     * @param string $provisionToken Provision token
+     * @return NewKey
+     * @throws ClientNotFoundException
+     * @throws ClientNotAuthenticatedException
+     * @throws ClientAlreadyProvisionedException
+     */
+    public function provisionClient(string $clientId, string $provisionToken): NewKey
+    {
+        $client = Client::find($clientId);
+
+        if (is_null($client)) {
+            throw new ClientNotFoundException($clientId);
+        }
+
+        if (is_null($client->provision_token)) {
+            throw new ClientAlreadyProvisionedException();
+        }
+
+        if (! password_verify($provisionToken, $client->provision_token)) {
+            throw new ClientNotAuthenticatedException();
+        }
+
+        $newKey = DB::transaction(function () use ($client): NewKey {
+            $client->provisioned_at = now();
+            $client->provision_token = null;
+            $client->save();
+
+            return VaultKey::create(
+                $client->id,
+                2048,
+                365
+            );
+        });
+
+        event(new ClientProvisioned($client));
+
+        return $newKey;
     }
 
     /**
      * Reprovision a client.
      *
      * @param string $clientId Client ID
-     * @return string Provision token
-     * @throws ClientException
+     * @return NewClient Containing the client and new provision token
+     * @throws ClientNotFoundException
      */
-    public function generateProvisionToken(string $clientId): string
+    public function reprovisionClient(string $clientId): NewClient
     {
-        $client = app(ReprovisionClientUseCase::class)->execute($clientId);
+        $client = Client::find($clientId);
 
-        Event::dispatch('vault.client.token.generated', [$client]);
+        if (is_null($client)) {
+            throw new ClientNotFoundException($clientId);
+        }
 
-        return $client->provisionToken;
+        $provisionToken = $this->generateProvisionToken();
+
+        $client->provision_token = $provisionToken;
+        $client->provisioned_at = null;
+        $client->save();
+
+        event(new ClientTokenGenerated($client));
+
+        return new NewClient(
+            $client,
+            $provisionToken,
+        );
     }
 
     /**
@@ -59,35 +141,54 @@ class ClientManagerService
      *
      * @param string $clientId Client ID
      * @return void
+     * @throws ClientNotFoundException
      */
     public function deleteClient(string $clientId): void
     {
-        app(DeleteClientUseCase::class)->execute($clientId);
+        $client = Client::find($clientId);
 
-        Event::dispatch('vault.client.deleted', [$clientId]);
+        if (is_null($client)) {
+            throw new ClientNotFoundException($clientId);
+        }
+
+        $client->delete();
+
+        event(new ClientDeleted($client->id));
     }
 
     /**
      * Cleanup inactive clients.
      *
-     * @return int
+     * @return Collection<string> The IDs of the deleted clients
      */
-    public function cleanupInactiveClients(): int
+    public function cleanupInactiveClients(): Collection
     {
-        $deletedClients = app(DeleteInactiveClientsUseCase::class)->execute();
+        $query = (new ClientQueryBuilder())
+            ->addFilter(new InactiveClientsFilter())
+            ->setSelectColumns(['id'])
+            ->build();
 
-        Event::dispatch('vault.client.cleanup', [$deletedClients]);
+        $inactiveClientsIds = $query->pluck('id');
 
-        return count($deletedClients);
+        $query->delete();
+
+        event(new InactiveClientsCleanup($inactiveClientsIds->toArray()));
+
+        return $inactiveClientsIds;
     }
 
     /**
      * Get all clients.
      *
-     * @return ClientResponseDTO[]
+     * @return Collection<Client>
      */
-    public function getAllClients(): array
+    public function all(): Collection
     {
-        return app(FindAllClientsUseCase::class)->execute();
+        return Client::all();
+    }
+
+    private function generateProvisionToken(): string
+    {
+        return bin2hex(random_bytes(length: 16));
     }
 }

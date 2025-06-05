@@ -15,7 +15,7 @@ class VaultInstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'vault:install {--force}';
+    protected $signature = 'vault-server:install {--force}';
 
     /**
      * The console command description.
@@ -29,6 +29,11 @@ class VaultInstallCommand extends Command
      */
     public function handle(): void
     {
+        $this->call('vendor:publish', [
+            '--tag' => 'vault-migrations',
+            '--force' => $this->option('force'),
+        ]);
+
         $runMigrations = confirm(
             'Do you want to run the migrations now? (y/n)',
             true,
@@ -36,7 +41,7 @@ class VaultInstallCommand extends Command
 
         if ($runMigrations) {
             $this->call('migrate', [
-                '--realpath' => __DIR__ . '/../../../database/migrations',
+                '--force' => $this->option('force'),
             ]);
         }
 
