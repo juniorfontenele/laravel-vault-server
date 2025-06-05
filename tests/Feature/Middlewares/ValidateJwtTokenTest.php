@@ -9,8 +9,6 @@ use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 use phpseclib3\Crypt\RSA;
 use Ramsey\Uuid\Uuid;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 beforeEach(function () {
     Pepper::create([
         'version' => 1,
@@ -19,7 +17,7 @@ beforeEach(function () {
     ]);
 });
 
-describe('ValidateJwtToken middleware', function () {
+describe('ValidateJwtToken Middleware', function () {
     it('rejects requests without token', function () {
         $response = $this->postJson(route('vault.password.store', ['userId' => 'userX']), [
             'password' => 'secret',

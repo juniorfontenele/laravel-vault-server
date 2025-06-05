@@ -25,8 +25,6 @@ beforeEach(function () {
     JuniorFontenele\LaravelVaultServer\Models\Pepper::unsetEventDispatcher();
 });
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 describe('HashService', function () {
     it('stores and verifies a hash', function () {
         Event::fake();

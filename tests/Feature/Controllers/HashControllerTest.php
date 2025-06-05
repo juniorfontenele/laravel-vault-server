@@ -7,8 +7,6 @@ use JuniorFontenele\LaravelVaultServer\Models\Hash;
 use JuniorFontenele\LaravelVaultServer\Models\Pepper;
 use JuniorFontenele\LaravelVaultServer\Services\PepperService;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 beforeEach(function () {
     Hash::query()->delete();
     Pepper::query()->delete();

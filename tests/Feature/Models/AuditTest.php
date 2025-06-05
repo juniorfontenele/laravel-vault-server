@@ -6,14 +6,12 @@ use JuniorFontenele\LaravelVaultServer\Enums\AuditAction;
 use JuniorFontenele\LaravelVaultServer\Models\Audit;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 beforeEach(function () {
     Audit::query()->delete();
     Client::query()->delete();
 });
 
-describe('AuditModel', function () {
+describe('Audit Model', function () {
     it('creates audit records on model events', function () {
         $client = Client::factory()->create();
 

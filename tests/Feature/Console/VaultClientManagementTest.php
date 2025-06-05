@@ -5,8 +5,6 @@ declare(strict_types = 1);
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 describe('VaultClientManagement Command', function () {
     it('shows no clients found when there are no clients in list command', function () {
         $this->artisan('vault-server:client', ['action' => 'list'])

@@ -11,8 +11,6 @@ beforeEach(function () {
     Pepper::query()->delete();
 });
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 describe('PepperService', function () {
     it('rotates pepper and dispatches event', function () {
         Event::fake();

@@ -9,8 +9,6 @@ use JuniorFontenele\LaravelVaultServer\Facades\VaultKey;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 use JuniorFontenele\LaravelVaultServer\Models\Key;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 beforeEach(function () {
     Key::query()->delete();
     Client::query()->delete();

@@ -19,8 +19,6 @@ beforeEach(function () {
     Client::query()->delete();
 });
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 describe('KeyPairService', function () {
     it('creates a key and dispatches event', function () {
         Event::fake();

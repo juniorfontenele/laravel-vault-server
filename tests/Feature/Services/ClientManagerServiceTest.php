@@ -22,8 +22,6 @@ beforeEach(function () {
     Client::query()->delete();
 });
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 describe('ClientManagerService', function () {
     it('creates a client', function () {
         Event::fake();

@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Hash as HashFacade;
 use Illuminate\Support\Str;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
 
-uses(JuniorFontenele\LaravelVaultServer\Tests\TestCase::class);
-
 beforeEach(function () {
     Client::query()->delete();
 });
