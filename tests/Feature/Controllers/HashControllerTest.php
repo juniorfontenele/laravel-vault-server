@@ -20,6 +20,7 @@ beforeEach(function () {
     ]);
 
     $this->securePassword = Str::password(16, true, true, true);
+    $this->securePassword .= '1Aa!'; // Ensure it meets complexity requirements
 });
 
 describe('HashController', function () {
