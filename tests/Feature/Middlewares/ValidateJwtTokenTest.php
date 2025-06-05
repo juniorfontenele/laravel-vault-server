@@ -24,6 +24,7 @@ describe('ValidateJwtToken Middleware', function () {
         ]);
 
         $response->assertUnauthorized();
+        $response->assertJson(['message' => 'Unauthorized']);
     });
 
     it('rejects requests with invalid token', function () {
@@ -43,7 +44,8 @@ describe('ValidateJwtToken Middleware', function () {
                 'password' => 'secret',
             ]);
 
-        expect($response->status())->toBe(422);
+        $response->assertUnauthorized();
+        $response->assertJson(['message' => 'Unauthorized']);
     });
 });
 // success scenario covered in other integration tests

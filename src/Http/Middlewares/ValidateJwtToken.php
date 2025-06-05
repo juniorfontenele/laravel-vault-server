@@ -7,68 +7,44 @@ namespace JuniorFontenele\LaravelVaultServer\Http\Middlewares;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use JuniorFontenele\LaravelSecureJwt\Exceptions\JwtException;
-use JuniorFontenele\LaravelSecureJwt\Exceptions\JwtValidationException;
 use JuniorFontenele\LaravelVaultServer\Exceptions\Client\ClientNotAuthorizedException;
 use JuniorFontenele\LaravelVaultServer\Facades\VaultAuth;
+use Throwable;
 
 class ValidateJwtToken
 {
     public function handle(Request $request, Closure $next, ?string $requestedScope = null)
     {
-        try {
-            $token = $request->bearerToken();
+        $token = $request->bearerToken();
 
-            if (empty($token)) {
-                return response()->json(['error' => 'Token not provided'], 401);
-            }
-
-            VaultAuth::attempt($token);
-
-            if (! is_null($requestedScope)) {
-                VaultAuth::authorize($requestedScope);
-            }
-
-            return $next($request);
-        } catch (JwtValidationException $e) {
-            Log::error('Token validation failed', [
-                'error' => 'Token validation failed',
-                'message' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'error' => 'Token validation failed',
-                'message' => $e->getMessage(),
-            ], 422);
-        } catch (JwtException $e) {
-            Log::error('Invalid token', [
-                'error' => 'Invalid token',
-                'message' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'error' => 'Invalid token',
-                'message' => $e->getMessage(),
-            ], 422);
-        } catch (ClientNotAuthorizedException $e) {
-            Log::error('Client not authorized', [
-                'error' => 'Client not authorized',
-                'message' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'error' => 'Client not authorized',
-                'message' => $e->getMessage(),
-            ], 403);
-        } catch (\Exception $e) {
-            Log::error('An error occurred while validating the token', [
-                'error' => 'An error occurred while validating the token',
-                'message' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'error' => 'An error occurred while validating the token',
-            ], 422);
+        if (empty($token)) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
+
+        try {
+            VaultAuth::attempt($token);
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        if (! is_null($requestedScope)) {
+            try {
+                VaultAuth::authorize($requestedScope);
+            } catch (ClientNotAuthorizedException $e) {
+                Log::error('Client not authorized for scope', [
+                    'scope' => $requestedScope,
+                    'client_id' => VaultAuth::getKey()->client_id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return response()->json([
+                    'message' => 'Forbidden: Insufficient scope permissions',
+                ], 403);
+            }
+        }
+
+        return $next($request);
     }
 }
