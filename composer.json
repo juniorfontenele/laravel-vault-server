@@ -76,8 +76,8 @@
     "analyze": "@php vendor/bin/phpstan analyze --verbose --ansi --memory-limit=2G",
     "analyze-commit": "@php vendor/bin/phpstan analyze --no-progress --no-ansi --memory-limit=2G",
     "format": "@php vendor/bin/pint --ansi",
-    "test": "vendor/bin/pest --ci",
-    "test-coverage": "vendor/bin/pest --coverage",
+    "test": "XDEBUG_MODE=coverage vendor/bin/pest --ci --parallel",
+    "test-coverage": "XDEBUG_MODE=coverage vendor/bin/pest --coverage --parallel",
     "post-root-package-install": [
       "@php configure.php",
       "npm install"
