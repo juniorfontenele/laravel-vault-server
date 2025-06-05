@@ -43,7 +43,7 @@ class VaultClientManagement extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): int
     {
         $action = $this->argument('action') ?? select(
             'Select an action',
@@ -57,17 +57,21 @@ class VaultClientManagement extends Command
             required: true,
         );
 
-        match ($action) {
+        return match ($action) {
             'create' => $this->createClient(),
             'delete' => $this->deleteClient(),
             'provision' => $this->provisionClient(),
             'list' => $this->listClients(),
             'cleanup' => $this->cleanupClients(),
-            default => $this->error("Action '{$action}' not supported."),
+            default => (function () use ($action): int {
+                $this->error("Action '{$action}' not supported.");
+
+                return static::FAILURE;
+            })(),
         };
     }
 
-    protected function createClient(): void
+    protected function createClient(): int
     {
         $name = $this->option('name');
         $description = $this->option('description');
@@ -95,7 +99,7 @@ class VaultClientManagement extends Command
         if (empty($scopes[0])) {
             $this->error('--scopes is required');
 
-            return;
+            return static::FAILURE;
         }
 
         $newClient = VaultClientManager::createClient(
@@ -107,16 +111,18 @@ class VaultClientManagement extends Command
         $this->info("Client '{$name}' created successfully.");
         $this->info("Client ID: {$newClient->client->id}");
         $this->info("Provision Token: {$newClient->plaintext_provision_token}");
+
+        return static::SUCCESS;
     }
 
-    protected function listClients(): void
+    protected function listClients(): int
     {
         $clients = $this->getAllActiveClients();
 
         if ($clients->isEmpty()) {
             $this->info('No clients found.');
 
-            return;
+            return static::SUCCESS;
         }
 
         $rows = $clients->map(function (Client $client): array {
@@ -129,16 +135,18 @@ class VaultClientManagement extends Command
         })->toArray();
 
         $this->table(['ID', 'Name', 'Provisioned', 'Scopes'], $rows);
+
+        return static::SUCCESS;
     }
 
-    protected function deleteClient(): void
+    protected function deleteClient(): int
     {
         $clients = $this->getAllClients();
 
         if ($clients->count() === 0) {
             $this->info('No clients found to delete.');
 
-            return;
+            return static::SUCCESS;
         }
 
         $clientUuid = $this->option('client') ?? search(
@@ -152,32 +160,42 @@ class VaultClientManagement extends Command
             required: true,
         );
 
+        if (! $clients->contains('id', $clientUuid)) {
+            $this->error("Client with UUID {$clientUuid} not found.");
+
+            return static::FAILURE;
+        }
+
         VaultClientManager::deleteClient($clientUuid);
 
         $this->info("Client with UUID {$clientUuid} deleted successfully.");
+
+        return static::SUCCESS;
     }
 
-    protected function cleanupClients(): void
+    protected function cleanupClients(): int
     {
         $deletedClients = VaultClientManager::cleanupInactiveClients();
 
         if ($deletedClients->count() === 0) {
             $this->info('No inactive clients found.');
 
-            return;
+            return static::SUCCESS;
         }
 
         $this->info("Deleted {$deletedClients->count()} inactive clients.");
+
+        return static::SUCCESS;
     }
 
-    protected function provisionClient(): void
+    protected function provisionClient(): int
     {
         $clients = $this->getAllActiveClients();
 
         if ($clients->isEmpty()) {
             $this->info('No clients found to provision.');
 
-            return;
+            return static::SUCCESS;
         }
 
         $clientUuid = $this->option('client') ?? search(
@@ -191,10 +209,18 @@ class VaultClientManagement extends Command
             required: true,
         );
 
+        if (! $clients->contains('id', $clientUuid)) {
+            $this->error("Client with UUID {$clientUuid} not found.");
+
+            return static::FAILURE;
+        }
+
         $newClient = VaultClientManager::reprovisionClient($clientUuid);
 
         $this->info("Client ID: {$newClient->client->id}");
         $this->info("Provision Token: {$newClient->plaintext_provision_token}");
+
+        return static::SUCCESS;
     }
 
     /**

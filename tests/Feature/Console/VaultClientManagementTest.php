@@ -3,7 +3,10 @@
 declare(strict_types = 1);
 
 use JuniorFontenele\LaravelVaultServer\Enums\Scope;
+use JuniorFontenele\LaravelVaultServer\Facades\VaultClientManager;
 use JuniorFontenele\LaravelVaultServer\Models\Client;
+
+use function Pest\Faker\fake;
 
 describe('VaultClientManagement Command', function () {
     it('shows no clients found when there are no clients in list command', function () {
@@ -74,5 +77,79 @@ describe('VaultClientManagement Command', function () {
         expect($client)->not->toBeNull();
         expect($client->description)->toBe($description);
         expect($client->allowed_scopes)->toBe($scopes);
+    });
+
+    it('cannot reprovision inexistent client', function () {
+        Client::factory()->create();
+
+        $this->artisan('vault-server:client', [
+            'action' => 'provision',
+            '--client' => 'nonexistent-client',
+        ])
+            ->assertExitCode(1)
+            ->expectsOutput('Client with UUID nonexistent-client not found.');
+    });
+
+    it('can reprovision existing client', function () {
+        $newClient = VaultClientManager::createClient(fake()->word(), [
+            Scope::KEYS_READ->value,
+            Scope::KEYS_ROTATE->value,
+        ]);
+
+        VaultClientManager::provisionClient($newClient->client->id, $newClient->plaintext_provision_token);
+
+        $this->artisan('vault-server:client', [
+            'action' => 'provision',
+            '--client' => $newClient->client->id,
+        ])
+            ->assertExitCode(0)
+            ->expectsOutput("Client ID: {$newClient->client->id}")
+            ->expectsOutputToContain('Provision Token: ');
+
+        $newClient->client->refresh();
+        expect($newClient->client->provisioned_at)->toBeNull()
+            ->and($newClient->client->provision_token)->not->toBeNull();
+    });
+
+    it('cannot delete inexistent client', function () {
+        Client::factory()->create();
+
+        $this->artisan('vault-server:client', [
+            'action' => 'delete',
+            '--client' => 'nonexistent-client',
+        ])
+            ->assertExitCode(1)
+            ->expectsOutput('Client with UUID nonexistent-client not found.');
+    });
+
+    it('can delete existing client', function () {
+        $client = Client::factory()->create();
+
+        $this->artisan('vault-server:client', [
+            'action' => 'delete',
+            '--client' => $client->id,
+        ])
+            ->assertExitCode(0)
+            ->expectsOutput("Client with UUID {$client->id} deleted successfully.");
+
+        expect(Client::find($client->id))->toBeNull();
+    });
+
+    it('cleanups inactive clients', function () {
+        $activeClient = Client::factory()->create(['is_active' => true]);
+        $inactiveClient = Client::factory()->create(['is_active' => false]);
+
+        $this->artisan('vault-server:client', ['action' => 'cleanup'])
+            ->assertExitCode(0)
+            ->expectsOutput("Deleted 1 inactive clients.");
+
+        expect(Client::find($activeClient->id))->not->toBeNull();
+        expect(Client::find($inactiveClient->id))->toBeNull();
+    });
+
+    it('shows error for unsupported action', function () {
+        $this->artisan('vault-server:client', ['action' => 'unsupported'])
+            ->assertExitCode(1)
+            ->expectsOutput("Action 'unsupported' not supported.");
     });
 });
